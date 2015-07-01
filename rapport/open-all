@@ -1,0 +1,9 @@
+#!/usr/bin/vim -S
+
+edit rapport.tex
+tabe cslthse-msc.cls
+tabe MyMSc.bib
+tabe open-all
+tabe compile
+
+tabfirst

@@ -1,0 +1,10 @@
+#!/usr/bin/vim -S
+
+edit main.tex
+tabe moderncv.cls
+tabe moderncvstylebanking.sty
+tabe moderncvcolorred.sty
+tabe compile
+tabe open-all
+tabe personal-letter.tex
+tabfirst
