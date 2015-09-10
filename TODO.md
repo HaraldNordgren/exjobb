@@ -44,9 +44,6 @@
 ### Step 4
 - decFile is defined in RunEncodingGeneric.py
 
-## Questions
-- What are layers?
-
 
 # <s>Building the transcoding chain</s>
 
