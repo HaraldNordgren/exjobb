@@ -4,6 +4,11 @@
 
 # Python (Kista)
 
+## RunSimGT
+- Original ('RaceHorses_832x480_30') stoppas in i RunSimSamsung. Skapar HQ bitstream och decodar.
+- Skala ner
+- j
+
 ## Ta fram ankare
 - En koding per testsekvens, ska helst göras bara en gång. Ger HQ bit, som sedan avkodas.
 - Generera nerskalade versioner. För S=832x480 (S*2/3=320...)
@@ -55,7 +60,7 @@
 - Optionally downscale to a smaller resolution.
 
 ### Step 2
-- Transcode by encoding to derive LQ bitstream with coefficients using HM with RDOQ=0, since the guided transcoder don’t deploy RDOQ.
+- Transcode by encoding to derive LQ bitstream with coefficients using HM with RDOQ=0 (since the guided transcoder don’t deploy RDOQ).
 - Then remove the coefficients using one of the compiled versions of d65_gt (prune).
 
 ### Step 3
