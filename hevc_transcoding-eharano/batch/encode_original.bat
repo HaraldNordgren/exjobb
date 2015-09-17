@@ -1,7 +1,7 @@
 @echo off
 
 if "%6"=="" (
-	echo Usage: %0 ^<original-file^> ^<cfg-file^> ^<height^> ^<width^> ^<framerate^> ^<frames^>
+	echo Usage: %0 ^<original-file^> ^<cfg-file^> ^<width^> ^<height^> ^<framerate^> ^<frames^>
 	exit /b
 )
 
@@ -13,8 +13,9 @@ set original_shortpath=%~n1
 set cfg_longpath=%2
 set cfg_shortpath=%~n2
 
-set height=%3
-set width=%4
+set width=%3
+set height=%4
+
 set framerate=%5
 set frames=%6
 

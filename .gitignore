@@ -11,6 +11,7 @@ hevc_transcoding-eharano/*
 !hevc_transcoding-eharano/batch
 !hevc_transcoding-eharano/sandbox
 !hevc_transcoding-eharano/shell
+!hevc_transcoding-eharano/python
 
 !hevc_transcoding-eharano/VideoSimScript
 hevc_transcoding-eharano/VideoSimScript/*/
