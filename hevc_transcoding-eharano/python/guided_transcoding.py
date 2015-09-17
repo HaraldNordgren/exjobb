@@ -24,6 +24,8 @@ hq_bitstream_shortpath = os.path.splitext(hq_bitstream_base)[0]
 
 (width, height) = downscaling.dimensions_from_filename(hq_bitstream_base)
 
+print (width, height)
+
 """
 if height != 1080:
 	raise Exception("Expected 1080p video")
@@ -87,11 +89,14 @@ reconstructed_file_decoded = "%s/%s.yuv" % (sequence_folder, reconstructed_file_
 
 ## Decode HQ bitstream ##
 hq_decode_cmd = "%s -b %s -o %s" % (hm_decoder, hq_bitstream, hq_bitstream_decoded)
-subprocess.call(hq_decode_cmd)
+subprocess.call(hq_decode_cmd, shell=True)
 
 ## Downscale ##
-#downscaling_cmd = "%s %s %s %s %s %d" % (downscaler, width, height, hq_bitstream_decoded, downscaled_file, downscale_parameter)
-#subprocess.call(downscaling_cmd)
+
+"""
+downscaling_cmd = "%s %s %s %s %s %d" % (downscaler, width, height, hq_bitstream_decoded, downscaled_file, downscale_parameter)
+subprocess.call(downscaling_cmd)
+"""
 
 downscaling.perform_downscaling(width, height, hq_bitstream_decoded, downscaled_file, downscale_parameter)
 sys.exit(0)
@@ -99,25 +104,25 @@ sys.exit(0)
 ## Re-encode with RDOQ=0 ##
 rdoq_0_opts = "-fr 5 -f 10 -wdt %d -hgt %d --RDOQ=0 -SBH 0 --RDOQTS=0" % (downscaled_width, downscaled_height)
 rdoq_0_cmd = "%s -c %s -i %s -b %s %s" % (hm_encoder, cfg, downscaled_file, rdoq_0_file, rdoq_0_opts)
-subprocess.call(rdoq_0_cmd)
+subprocess.call(rdoq_0_cmd, shell=True)
 
 ## Prune ##
 prune_cmd = "%s -i %s -n %s" % (d65_gt_pruning, rdoq_0_file, pruned_file)
-subprocess.call(prune_cmd)
+subprocess.call(prune_cmd, shell=True)
 
 ## Decode HQ bitstream in decoding order and downscale ##
 dec_order_cmd = "%s -i %s -o %s" % (d65_gt_dec_order, hq_bitstream, hq_bitstream_decoded_dec_order)
-subprocess.call(dec_order_cmd)
+subprocess.call(dec_order_cmd, shell=True)
 
 dec_order_downscale_cmd = "%s %d %d %s %s %d" % (downscaler, width, height, hq_bitstream_decoded_dec_order, hq_bitstream_decoded_dec_order_downscaled, downscale_parameter)
-subprocess.call(dec_order_downscale_cmd)
+subprocess.call(dec_order_downscale_cmd, shell=True)
 
 ## Perform guided transcoding and decode ##
 res_reconstruct_cmd = "%s -i %s -u %s -n %s" % (d65_gt_res_reconstruct, pruned_file, hq_bitstream_decoded_dec_order_downscaled, reconstructed_file)
-subprocess.call(res_reconstruct_cmd)
+subprocess.call(res_reconstruct_cmd, shell=True)
 
 res_reconstruct_decode_cmd = "%s -b %s -o %s" % (hm_decoder, reconstructed_file, reconstructed_file_decoded)
-subprocess.call(res_reconstruct_decode_cmd)
+subprocess.call(res_reconstruct_decode_cmd, shell=True)
 
 
 ## Cleanup ##

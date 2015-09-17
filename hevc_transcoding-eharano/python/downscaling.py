@@ -1,5 +1,6 @@
 import os, re
 import subprocess
+import glob
 
 from binaries import *
 
@@ -45,20 +46,24 @@ def filename_replace_dimensions(original_name, scaled_width, scaled_height):
 	return "%s%dx%d%s" % (name_start, scaled_width, scaled_height, name_end)
 
 def perform_downscaling(width, height, input_file, output_file, downscale_parameters):
-	old_file = input_file
-	tmp_file = input_file + ".tmp"
+	
+	downscale_tmp_start = "downscale_tmp_"
 
-	for p in downscale_parameters:
-		downscaling_cmd = "%s %s %s %s %s %d" % (downscaler, width, height, old_file, tmp_file, p)
-		subprocess.call(downscaling_cmd)
+	downscale_files = [input_file]
+	for i in range(len(downscale_parameters)-1):
+		downscale_files.append(downscale_tmp_start + str(i))
+	downscale_files.append(output_file)
+
+	for i in range(len(downscale_parameters)):
+		downscaling_cmd = "%s %s %s %s %s %d" % (downscaler, width, height, downscale_files[i], downscale_files[i+1], downscale_parameters[i])
+		subprocess.call(downscaling_cmd, shell=True)
 
 		print (width, height)
-		(width, height) = convert_dimensions(width, height, p)
+		(width, height) = convert_dimensions(width, height, downscale_parameters[i])
+		
 		print "converted"
 		print (width, height)
-		
-		old_file = tmp_file
-
 		print "\n\n"
 
-	os.rename(tmp_file, output_file)
+	#for tmp_file in glob.glob(downscale_tmp_start + "*"):
+	#	os.remove(tmp_file)
