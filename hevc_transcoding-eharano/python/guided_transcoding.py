@@ -9,9 +9,7 @@ from definitions import *
 from binaries import *
 
 
-if os.path.basename(os.path.normpath(os.getcwd())) != "hevc_transcoding-eharano":
-	print "Run from \"hevc_transcoding-eharano\" directory"
-	sys.exit(1)
+paths.assert_hevc_directory()
 
 if len(sys.argv) != 2:
 	print "Usage: %s <hq_bitstream>" % os.path.basename(sys.argv[0])
@@ -53,8 +51,8 @@ subprocess.call(dec_order_cmd, shell=True)
 
 
 """
-[1], [0], [1,0] means half, two-thirds and one-third downscaling.
-This corresponds to 720p, 540p and 360p, respectively, for a 1080p video.
+[1], [0], [1,0] means two-thirds, half and one-third downscaling.
+This corresponds to 720p, 536p and 360p for a 1080p video.
 """
 
 downscale_parameter_set = [[1], [0], [1,0]]

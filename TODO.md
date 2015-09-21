@@ -1,7 +1,9 @@
 # Kista
 
 ## Monday
-- Email from Julian should contain a usable command-lin video player, check that out.
+- Email from Julian should contain a usable command-line video player, check that out.
+- Change to "if not m: then Exception" in filenames.py for less indentation.
+- Print filenames to see that they are corrects, especially the "_transcoded" ones.
 
 ## Python
 - Iterate over different QPs, create folders for each and store output.
