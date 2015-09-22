@@ -1,10 +1,5 @@
-import sys, os, re
-import subprocess
-import shutil
-
-import downscaling
-import filenames
-import paths
+import sys, os, re, subprocess, shutil
+import downscaling, filenames, paths
 
 from definitions import *
 from binaries import *
@@ -17,20 +12,18 @@ if len(sys.argv) != 2:
     sys.exit(1)
 
 
-# Set up environment
-
 hq_bitstream = sys.argv[1]
-
-#print hq_bitstream
-#sys.exit(0)
 
 hq_bitstream_base = os.path.basename(hq_bitstream)
 hq_bitstream_shortpath = os.path.splitext(hq_bitstream_base)[0]
 
 (width, height) = filenames.extract_dimensions(hq_bitstream_base)
-#assert height == 1080, "Expected 1080p video"
 
-paths.create_if_needed(output_folder)
+if height != 1080:
+	raise Exception("Expected 1080p video")
+
+
+#paths.create_if_needed(output_folder)
 
 sequence_folder = "%s/%s" % (output_folder, hq_bitstream_shortpath)
 paths.remove_and_recreate_directory(sequence_folder)
@@ -51,6 +44,9 @@ err_log_file = open(err_log, 'a+')
 ## Decode HQ bitstream
 hq_decode_cmd = "%s -b %s -o %s" % (hm_decoder, hq_bitstream, hq_bitstream_decoded)
 subprocess.call(hq_decode_cmd, shell=True, stderr=err_log_file)
+
+print hq_decode_cmd
+sys.exit(0)
 
 ## Decode HQ bitstream in decoding order
 dec_order_cmd = "%s -i %s -o %s" % (d65_gt_dec_order, hq_bitstream, hq_bitstream_decoded_dec_order)
