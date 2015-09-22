@@ -1,0 +1,427 @@
+Index: source/Components/Filters/H264DecoderFilter/H264Decoder.cpp
+===================================================================
+--- source/Components/Filters/H264DecoderFilter/H264Decoder.cpp	(revision 11183)
++++ source/Components/Filters/H264DecoderFilter/H264Decoder.cpp	(working copy)
+@@ -15,8 +15,12 @@
+ #include "..\Include\MuMCA_FilterDefinitions.h"
+ #include "H264Decoder.h"
+ #include "H264decoderInputPullPin.h"
++#include "h264rtp.h"
++#if USE_D65
++#include "d65_api.h"
++#else
+ #include "dech264_d64_api.h"
+-#include "h264rtp.h"
++#endif
+ #include "..\..\..\MumcaInterfaceTypeLib\MumcaInterfacesAndTypeLib_i.c"
+ #include <assert.h>
+ #include <Aviriff.h>
+@@ -220,13 +224,20 @@
+   //m_outputFrCounter.SetLogInterval(1000);
+ 
+   AddMicklePoint(L"Frame and Packets Mickling PAC", L"Mickling.H264Mickler.1.0");
+-
++#if USE_D65
++  D65_DecoderParameters_t Parameters;
++#else
+   D64_DecoderParameters_t Parameters;
++#endif
+   Parameters.Free_Function_p = NULL;
+   Parameters.Malloc_Function_p = NULL;
+   
+   m_Decoder_p = NULL;
++#if USE_D65
++  D65_Initialize(&m_Decoder_p, &Parameters);
++#else
+   D64_Initialize(&m_Decoder_p, &Parameters);
++#endif
+   
+   // Reset variables
+   m_FrameTSDiff = 1000000; // = 0.1s 
+@@ -270,22 +281,32 @@
+ // ******************************************************************************
+ HRESULT CH264Decoder::ResetAndInitFilter()
+ {
++#if USE_D65
++  D65_DecoderParameters_t Parameters;
++#else
+   D64_DecoderParameters_t Parameters;
++#endif
+   Parameters.Free_Function_p = NULL;
+   Parameters.Malloc_Function_p = NULL;
+   
+   // Release encoder/payload handler
+   if(m_Decoder_p != NULL)
+   {
++#if USE_D65
++    D65_Release(m_Decoder_p);
++#else
+     D64_Release(m_Decoder_p);
++#endif
+     m_Decoder_p = NULL;
+   }
+ 
+   m_reorderingBuffer.clear();
+   
+-  
++#if USE_D65
++  D65_Initialize(&m_Decoder_p, &Parameters);
++#else  
+   D64_Initialize(&m_Decoder_p, &Parameters);
+-  
++#endif  
+   // Reset variables
+   m_PicsDecoded = 0;
+   // Mickling
+@@ -606,14 +627,20 @@
+   BYTE *pSource;
+   long lSourceSize;
+   pOut->GetPointer(&pDest);
++#if USE_D65
++  D65_ReturnCode_t DecoderStatus;
++  D65_ReturnImage_t *DecodedPicture_p = NULL;
++  D65_ReturnImage_t DecodedPicture2;
++#else
+   D64_ReturnCode_t DecoderStatus;
+   D64_ReturnImage_t *DecodedPicture_p = NULL;
+   D64_ReturnImage_t DecodedPicture2;
++#endif
+   char msg[100];
+   REFERENCE_TIME TimeStart;
+   REFERENCE_TIME TimeEnd;
+   bool isIDR = false;
+-  int lostData;
++  int lostData = 0;
+   
+   DecodedPicture2.Y = NULL;
+   DecodedPicture2.Cb = NULL;
+@@ -628,7 +655,11 @@
+     pIn->GetPointer(&pSource);
+     pIn->GetTime(&TimeStart, &TimeEnd);
+     
++#if USE_D65
++    D65_InputNAL_t InputNAL;
++#else
+     D64_InputNAL_t InputNAL;
++#endif
+     InputNAL.LastSliceInPictureFlag=0;
+     InputNAL.NALData_p = (uint8*)pSource;
+     InputNAL.NALSize = (uint32)lSourceSize;
+@@ -649,8 +680,14 @@
+       }
+     }
+     
++#if USE_D65
++    if((InputNAL.NALData_p[0] & 0x7E) >= 32 &&
++       (InputNAL.NALData_p[0] & 0x7E) <= 46)
++      isIDR = true;
++#else
+     if((InputNAL.NALData_p[0] & 0x1F) == 5)
+       isIDR = true;
++#endif
+ 
+     sprintf(msg, "Decoding NAL of size %d\n", InputNAL.NALSize);
+     //OutputDebugString(msg);
+@@ -668,20 +705,25 @@
+        if(BitstreamFile_p == NULL)
+        {
+           USES_CONVERSION;
+-          std::string fileName = W2A(m_strBitstreamFilename);
+-          BitstreamFile_p = fopen(fileName.c_str(), "wb");
+-          //BitstreamFile_p = fopen("c:\\bitstream.264", "wb"); 
++          //std::string fileName = W2A(m_strBitstreamFilename);
++          //BitstreamFile_p = fopen(fileName.c_str(), "wb");
++          BitstreamFile_p = fopen("c:\\bitstream.265", "wb"); 
+        }
+        const static unsigned char startcode[4] = {0,0,0,1};
+        fwrite(startcode, 1, 4, BitstreamFile_p);
+        fwrite(InputNAL.NALData_p, 1, InputNAL.NALSize, BitstreamFile_p);
+     }
+ 
+-    
++#if USE_D65
++    DecoderStatus = D65_DecodeNAL(m_Decoder_p,
++      &InputNAL,
++      &DecodedPicture_p);
++#else
+     DecoderStatus = D64_DecodeNAL(m_Decoder_p,
+       &InputNAL,
+       &DecodedPicture_p,
+       &lostData);
++#endif
+ 
+     
+     if(lostData)
+@@ -692,7 +734,7 @@
+       m_firPolicy.reportLoss();
+     }
+ 
+-    sprintf(msg, "D64_DecodeNAL returned %d\n", DecoderStatus);
++    sprintf(msg, "DecodeNAL returned %d\n", DecoderStatus);
+     //OutputDebugString(msg);
+     
+     if(DecodedPicture_p == NULL)
+@@ -702,7 +744,11 @@
+     break;
+     
+   case 2:
++#if USE_D65
++    DecodedPicture_p = NULL;
++#else
+     DecodedPicture_p = D64_ForceOutOneDecodedPicture(m_Decoder_p);
++#endif
+     if(DecodedPicture_p == NULL)
+     {
+       m_Flush = 0;
+@@ -868,17 +914,77 @@
+ 	   ML_INFO << "IYUV";
+ 	   static int fh = -1;
+ 	   static int pic_count = 0;
++     int y;
+       int sizeCr = (m_iFrameSizeWidth>>1)*(m_iFrameSizeHeight>>1);
+-      memcpy(pDest, DecodedPicture_p->Y, sizeCr<<2);
+-      pDest += sizeCr<<2;
+-      memcpy(pDest, DecodedPicture_p->Cb, sizeCr);
+-      pDest += sizeCr;
+-      memcpy(pDest, DecodedPicture_p->Cr, sizeCr);
++
++      //memcpy(pDest, DecodedPicture_p->Y, sizeCr<<2);
++      //pDest += sizeCr<<2;
++      //memcpy(pDest, DecodedPicture_p->Cb, sizeCr);
++      //pDest += sizeCr;
++      //memcpy(pDest, DecodedPicture_p->Cr, sizeCr);
++
++
++        // Write decoded image on file
++        for(y=0 ; y< DecodedPicture_p->Y_Height_image ; y++)
++        {
++          memcpy(pDest, 
++                 DecodedPicture_p->Y + y*DecodedPicture_p->Y_Width_memory,
++                 DecodedPicture_p->Y_Width_image);
++          pDest+=DecodedPicture_p->Y_Width_memory;
++        }
++        for(y=0 ; y< DecodedPicture_p->Y_Height_image/2 ; y++)
++        {
++          memcpy(pDest, 
++                 DecodedPicture_p->Cb + y*(DecodedPicture_p->Y_Width_memory>>1),
++                 DecodedPicture_p->Y_Width_image/2);
++          pDest+=(DecodedPicture_p->Y_Width_memory>>1);
++        }
++        for(y=0 ; y< DecodedPicture_p->Y_Height_image/2 ; y++)
++        {
++          memcpy(pDest, 
++                 DecodedPicture_p->Cr + y*(DecodedPicture_p->Y_Width_memory>>1),
++                 DecodedPicture_p->Y_Width_image/2);
++          pDest+=(DecodedPicture_p->Y_Width_memory>>1);
++        }
++
+    }
+ 
+   else
+   {
+-      yuv420_argb32_sse(pDest, DecodedPicture_p->Y, DecodedPicture_p->Cb, DecodedPicture_p->Cr,
++     int y;
++    unsigned char* dest;
++    
++    DecodedPicture2.Y  = (unsigned char*) malloc(m_iFrameSizeHeight*m_iFrameSizeWidth);
++    DecodedPicture2.Cb = (unsigned char*) malloc(m_iFrameSizeHeight*m_iFrameSizeWidth >> 1);
++    DecodedPicture2.Cr = (unsigned char*) malloc(m_iFrameSizeHeight*m_iFrameSizeWidth >> 1);
++        dest = DecodedPicture2.Y;
++        for(y=0 ; y< DecodedPicture_p->Y_Height_image ; y++)
++        {
++          memcpy(dest, 
++                 DecodedPicture_p->Y + y*DecodedPicture_p->Y_Width_memory,
++                 DecodedPicture_p->Y_Width_image);
++          dest+=DecodedPicture_p->Y_Width_image;
++        }
++        dest = DecodedPicture2.Cb;
++        for(y=0 ; y< DecodedPicture_p->Y_Height_image/2 ; y++)
++        {
++          memcpy(dest, 
++                 DecodedPicture_p->Cb + y*(DecodedPicture_p->Y_Width_memory>>1),
++                 DecodedPicture_p->Y_Width_image/2);
++          dest+=(DecodedPicture_p->Y_Width_image>>1);
++        }
++        dest = DecodedPicture2.Cr;
++        for(y=0 ; y< DecodedPicture_p->Y_Height_image/2 ; y++)
++        {
++          memcpy(dest, 
++                 DecodedPicture_p->Cr + y*(DecodedPicture_p->Y_Width_memory>>1),
++                 DecodedPicture_p->Y_Width_image/2);
++          dest+=(DecodedPicture_p->Y_Width_image>>1);
++        }
++        
++      //DecodedPicture_p = &DecodedPicture2;
++
++      yuv420_argb32_sse(pDest, DecodedPicture2.Y, DecodedPicture2.Cb, DecodedPicture2.Cr,
+            m_iFrameSizeWidth, m_iFrameSizeHeight);
+      //yuv420_argb32_mmx(pDest, DecodedPicture_p->Y, DecodedPicture_p->Cb, DecodedPicture_p->Cr,
+      //m_iFrameSizeWidth, m_iFrameSizeHeight, m_iFrameSizeWidth*4, m_iFrameSizeWidth, m_iFrameSizeWidth/2);
+@@ -1015,7 +1121,11 @@
+ 
+   if(m_Decoder_p != NULL)
+   {
++#if USE_D65
++    //D65_Release(m_Decoder_p);
++#else
+     D64_Release(m_Decoder_p);
++#endif
+     m_Decoder_p = NULL;
+   }
+   
+@@ -1229,6 +1339,7 @@
+      // Check if sequence number has skipped forward. In that case we may request retransmission.
+      // We use the m_firPolicy to report loss and then we ask it for the sequence number to use
+      // if and when to send a FIR
++     //if (! firstSequenceNumber && (sequenceNumber != nextInSequence))// && (Rtp::DirectShow::Video::Reordering::Utilities::FrameIsIntra(pInPacket, length) == false))
+      if (! firstSequenceNumber && (sequenceNumber != nextInSequence) && (Rtp::DirectShow::Video::Reordering::Utilities::FrameIsIntra(pInPacket, length) == false))
+      {
+         ML_INFO << boost::wformat(L"Reporting loss when received sequence number is %d (expected %d)") % sequenceNumber  % nextInSequence;
+@@ -1303,7 +1414,7 @@
+       else // RTP packet
+       {
+         //Check minimum length
+-        if(length<14) // RTP header 12, payload header 1, payload 1. 
++        if(length<13) // RTP header 12, payload header 1, payload 1. 
+         {
+           OutputDebugString("Stream Error: packet too small\n");
+           return S_FALSE;
+@@ -1571,7 +1682,7 @@
+ void CH264Decoder::detectIntraInBitstream(BYTE *packet, long length)
+ {
+    DECL_MUMCA_LOG;
+-   if (length > 14)
++   if (length > 12)
+    {
+       BYTE *payload = packet;
+       int checkIndex = 0;
+@@ -1622,7 +1733,7 @@
+ void CH264Decoder::reportLossIfNotSequenceParameterSet(BYTE *packet, long length)
+ {
+    DECL_MUMCA_LOG;
+-   if (length > 14)
++   if (length > 12)
+    {
+       BYTE *payload = packet;
+       int checkIndex = 0;
+Index: source/Components/Filters/H264DecoderFilter/H264Decoder.vcproj
+===================================================================
+--- source/Components/Filters/H264DecoderFilter/H264Decoder.vcproj	(revision 11183)
++++ source/Components/Filters/H264DecoderFilter/H264Decoder.vcproj	(working copy)
+@@ -74,7 +74,7 @@
+ 			/>
+ 			<Tool
+ 				Name="VCLinkerTool"
+-				AdditionalDependencies="libdecimal.lib libirc.lib libmmd.lib svml_dispmd.lib d64_lib.lib strmbase.lib quartz.lib vfw32.lib winmm.lib version.lib comctl32.lib olepro32.lib MBCAT.lib ws2_32.lib"
++				AdditionalDependencies="libdecimal.lib libirc.lib libmmd.lib svml_dispmd.lib d65_lib.lib d64_lib.lib strmbase.lib quartz.lib vfw32.lib winmm.lib version.lib comctl32.lib olepro32.lib MBCAT.lib ws2_32.lib"
+ 				OutputFile="$(SolutionDir)\bin\Release\H264Decoder.ax"
+ 				LinkIncremental="1"
+ 				SuppressStartupBanner="true"
+@@ -177,7 +177,7 @@
+ 			/>
+ 			<Tool
+ 				Name="VCLinkerTool"
+-				AdditionalDependencies="libdecimal.lib libirc.lib libmmdd.lib svml_dispmd.lib d64_libd.lib strmbasd.lib quartz.lib vfw32.lib winmm.lib version.lib comctl32.lib olepro32.lib MBCATd.lib ws2_32.lib"
++				AdditionalDependencies="libdecimal.lib libirc.lib libmmdd.lib svml_dispmd.lib d65_lib.lib d64_libd.lib strmbasd.lib quartz.lib vfw32.lib winmm.lib version.lib comctl32.lib olepro32.lib MBCATd.lib ws2_32.lib"
+ 				OutputFile="$(SolutionDir)\bin\Debug\H264Decoder.ax"
+ 				LinkIncremental="2"
+ 				SuppressStartupBanner="true"
+Index: source/Components/Filters/H264DecoderFilter/h264rtp.c
+===================================================================
+--- source/Components/Filters/H264DecoderFilter/h264rtp.c	(revision 11183)
++++ source/Components/Filters/H264DecoderFilter/h264rtp.c	(working copy)
+@@ -660,8 +660,13 @@
+          return 0;
+       }
+       //Send straight to decoder
++#if USE_D65
++      nal.NALSize = length-1;
++      nal.NALData_p = data+1;
++#else
+       nal.NALSize = length;
+       nal.NALData_p = data;
++#endif
+       nal.TimeStamp = TimeStamp;
+       nal.SequenceNumber = SequenceNumber;
+       nal.CRCError = CRCError;
+@@ -1831,6 +1836,10 @@
+             SequenceNumber,
+             TimeStamp) == -1)
+             return_value = -1;
++         //{
++         //   *outNAL_p = NULL; 
++         //   return -1;//return_value = -1;
++         //}
+       }
+    }
+    
+Index: source/Components/Filters/H264DecoderFilter/h264rtp.h
+===================================================================
+--- source/Components/Filters/H264DecoderFilter/h264rtp.h	(revision 11183)
++++ source/Components/Filters/H264DecoderFilter/h264rtp.h	(working copy)
+@@ -10,6 +10,8 @@
+ 
+ #define H264_MALLOC malloc
+ 
++#define USE_D65     1
++
+ #include <string.h> 
+ #include "stdlib.h"
+ #include "stdio.h"
+Index: source/Components/Filters/H264DecoderFilter/SDPConfigInfo.cpp
+===================================================================
+--- source/Components/Filters/H264DecoderFilter/SDPConfigInfo.cpp	(revision 11183)
++++ source/Components/Filters/H264DecoderFilter/SDPConfigInfo.cpp	(working copy)
+@@ -9,7 +9,9 @@
+ #include "MumcaLogging.h"
+ #include "H264Decoder.h"
+ #include "h264rtp.h"
++#if !USE_D65
+ #include "dech264_d64_api.h"
++#endif
+ #include <assert.h>
+ 
+ #pragma warning(disable: 4995)
+@@ -47,8 +49,10 @@
+   
+   unsigned char binString[100];
+   
++#if !USE_D65
+   D64_Profile_t Profile;
+   D64_Level_t Level;
++#endif
+   uint32 PictureHeight;
+   uint32 PictureWidth;
+   
+@@ -85,12 +89,14 @@
+     nal.NALData_p = m_ConfigInfo+4;
+     nal.NALSize = ((*(m_ConfigInfo+2) & 0xFF) << 8) | (*(m_ConfigInfo+3) & 0xFF);
+     
++#if !USE_D65
+     D64_ParseSequenceParameterSet(m_Decoder_p,
+       (D64_InputNAL_t *)(&nal),
+       &Profile,
+       &Level,
+       &PictureHeight,
+       &PictureWidth);
++#endif
+     
+     m_iFrameSizeWidth = PictureWidth;
+     m_iFrameSizeHeight = PictureHeight;
+@@ -172,13 +178,15 @@
+       
+       nal = parsePS((uint8*)spropParameterSets, parlength);
+       
++#if !USE_D65
+       D64_ParseSequenceParameterSet(m_Decoder_p,
+         (D64_InputNAL_t *)(&nal),
+         &Profile,
+         &Level,
+         &PictureHeight,
+         &PictureWidth);
+-      
++#endif
++
+       m_iFrameSizeWidth = PictureWidth;
+       m_iFrameSizeHeight = PictureHeight;
+     }

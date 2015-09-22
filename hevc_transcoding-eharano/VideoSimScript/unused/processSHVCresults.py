@@ -1,0 +1,46 @@
+# Copy values from SHVC results files into a single excel file
+# The single sheet can then be copied into SHVC template
+# xlrd and xlwt needs to be installed (xlwt0.7.4 and xlrd 0.9.0 have been tested)
+# Example:
+#
+#  example without single layer (and without snr scalability):
+#  python processSHVCresults.py "SHVC Test" processed_XX_Test.xls result_JCTVC_i_main_spatial1m5x_qpOff0_RunSimSHM2.0-L1_i_main_spatial1m5x_qpOff0_RunSimSHM2.0XX-L1.xls result_JCTVC_i_main_spatial1m5x_qpOff2_RunSimSHM2.0-L1_i_main_spatial1m5x_qpOff2_RunSimSHM2.0XX-L1.xls result_JCTVC_i_main_spatial2x_qpOff0_RunSimSHM2.0-L1_i_main_spatial2x_qpOff0_RunSimSHM2.0XX-L1.xls result_JCTVC_i_main_spatial2x_qpOff2_RunSimSHM2.0-L1_i_main_spatial2x_qpOff2_RunSimSHM2.0XX-L1.xls result_JCTVC_ld_main_spatial1m5x_qpOff0_RunSimSHM2.0-L1_ld_main_spatial1m5x_qpOff0_RunSimSHM2.0XX-L1.xls result_JCTVC_ld_main_spatial1m5x_qpOff2_RunSimSHM2.0-L1_ld_main_spatial1m5x_qpOff2_RunSimSHM2.0XX-L1.xls result_JCTVC_ld_main_spatial2x_qpOff0_RunSimSHM2.0-L1_ld_main_spatial2x_qpOff0_RunSimSHM2.0XX-L1.xls result_JCTVC_ld_main_spatial2x_qpOff2_RunSimSHM2.0-L1_ld_main_spatial2x_qpOff2_RunSimSHM2.0XX-L1.xls result_JCTVC_ra_main_spatial1m5x_qpOff0_RunSimSHM2.0-L1_ra_main_spatial1m5x_qpOff0_RunSimSHM2.0XX-L1.xls result_JCTVC_ra_main_spatial1m5x_qpOff2_RunSimSHM2.0-L1_ra_main_spatial1m5x_qpOff2_RunSimSHM2.0XX-L1.xls result_JCTVC_ra_main_spatial2x_qpOff0_RunSimSHM2.0-L1_ra_main_spatial2x_qpOff0_RunSimSHM2.0XX-L1.xls result_JCTVC_ra_main_spatial2x_qpOff2_RunSimSHM2.0-L1_ra_main_spatial2x_qpOff2_RunSimSHM2.0XX-L1.xls
+#  
+#  example when single layer is used:
+#  python processSHVCresults.py "SHVC Test" processed_XX_Test.xls result_JCTVC_i_main_el_dqp_0_RunSimHM8.1-L0_i_main_spatial1m5x_qpOff0_RunSimSHM1.0XX-L1.xls result_JCTVC_i_main_el_dqp_0_RunSimHM8.1-L0_i_main_spatial2x_qpOff0_RunSimSHM1.0XX-L1.xls result_JCTVC_i_main_el_dqp_2_RunSimHM8.1-L0_i_main_spatial1m5x_qpOff2_RunSimSHM1.0XX-L1.xls result_JCTVC_i_main_el_dqp_2_RunSimHM8.1-L0_i_main_spatial2x_qpOff2_RunSimSHM1.0XX-L1.xls result_JCTVC_ld_main_el_dqp_0_RunSimHM8.1-L0_ld_main_snr_qpOff-6_RunSimSHM1.0XX-L1.xls result_JCTVC_ld_main_el_dqp_0_RunSimHM8.1-L0_ld_main_spatial1m5x_qpOff0_RunSimSHM1.0XX-L1.xls result_JCTVC_ld_main_el_dqp_0_RunSimHM8.1-L0_ld_main_spatial2x_qpOff0_RunSimSHM1.0XX-L1.xls result_JCTVC_ld_main_el_dqp_2_RunSimHM8.1-L0_ld_main_snr_qpOff-4_RunSimSHM1.0XX-L1.xls result_JCTVC_ld_main_el_dqp_2_RunSimHM8.1-L0_ld_main_spatial1m5x_qpOff2_RunSimSHM1.0XX-L1.xls result_JCTVC_ld_main_el_dqp_2_RunSimHM8.1-L0_ld_main_spatial2x_qpOff2_RunSimSHM1.0XX-L1.xls result_JCTVC_ld_P_main_el_dqp_0_RunSimHM8.1-L0_ld_P_main_snr_qpOff-6_RunSimSHM1.0XX-L1.xls result_JCTVC_ld_P_main_el_dqp_0_RunSimHM8.1-L0_ld_P_main_spatial1m5x_qpOff0_RunSimSHM1.0XX-L1.xls result_JCTVC_ld_P_main_el_dqp_0_RunSimHM8.1-L0_ld_P_main_spatial2x_qpOff0_RunSimSHM1.0XX-L1.xls result_JCTVC_ld_P_main_el_dqp_2_RunSimHM8.1-L0_ld_P_main_snr_qpOff-4_RunSimSHM1.0XX-L1.xls result_JCTVC_ld_P_main_el_dqp_2_RunSimHM8.1-L0_ld_P_main_spatial1m5x_qpOff2_RunSimSHM1.0XX-L1.xls result_JCTVC_ld_P_main_el_dqp_2_RunSimHM8.1-L0_ld_P_main_spatial2x_qpOff2_RunSimSHM1.0XX-L1.xls result_JCTVC_ra_main_el_dqp_0_RunSimHM8.1-L0_ra_main_snr_qpOff-6_RunSimSHM1.0XX-L1.xls result_JCTVC_ra_main_el_dqp_0_RunSimHM8.1-L0_ra_main_spatial1m5x_qpOff0_RunSimSHM1.0XX-L1.xls result_JCTVC_ra_main_el_dqp_0_RunSimHM8.1-L0_ra_main_spatial2x_qpOff0_RunSimSHM1.0XX-L1.xls result_JCTVC_ra_main_el_dqp_2_RunSimHM8.1-L0_ra_main_snr_qpOff-4_RunSimSHM1.0XX-L1.xls result_JCTVC_ra_main_el_dqp_2_RunSimHM8.1-L0_ra_main_spatial1m5x_qpOff2_RunSimSHM1.0XX-L1.xls result_JCTVC_ra_main_el_dqp_2_RunSimHM8.1-L0_ra_main_spatial2x_qpOff2_RunSimSHM1.0XX-L1.xls
+#  python processSHVCresults.py "SHVC Anchor" processed_XX_Anchor.xls result_JCTVC_i_main_el_dqp_0_RunSimHM8.1-L0_i_main_spatial1m5x_qpOff0_RunSimSHM1.0XX-L1.xls result_JCTVC_i_main_el_dqp_0_RunSimHM8.1-L0_i_main_spatial2x_qpOff0_RunSimSHM1.0XX-L1.xls result_JCTVC_i_main_el_dqp_2_RunSimHM8.1-L0_i_main_spatial1m5x_qpOff2_RunSimSHM1.0XX-L1.xls result_JCTVC_i_main_el_dqp_2_RunSimHM8.1-L0_i_main_spatial2x_qpOff2_RunSimSHM1.0XX-L1.xls result_JCTVC_ld_main_el_dqp_0_RunSimHM8.1-L0_ld_main_snr_qpOff-6_RunSimSHM1.0XX-L1.xls result_JCTVC_ld_main_el_dqp_0_RunSimHM8.1-L0_ld_main_spatial1m5x_qpOff0_RunSimSHM1.0XX-L1.xls result_JCTVC_ld_main_el_dqp_0_RunSimHM8.1-L0_ld_main_spatial2x_qpOff0_RunSimSHM1.0XX-L1.xls result_JCTVC_ld_main_el_dqp_2_RunSimHM8.1-L0_ld_main_snr_qpOff-4_RunSimSHM1.0XX-L1.xls result_JCTVC_ld_main_el_dqp_2_RunSimHM8.1-L0_ld_main_spatial1m5x_qpOff2_RunSimSHM1.0XX-L1.xls result_JCTVC_ld_main_el_dqp_2_RunSimHM8.1-L0_ld_main_spatial2x_qpOff2_RunSimSHM1.0XX-L1.xls result_JCTVC_ld_P_main_el_dqp_0_RunSimHM8.1-L0_ld_P_main_snr_qpOff-6_RunSimSHM1.0XX-L1.xls result_JCTVC_ld_P_main_el_dqp_0_RunSimHM8.1-L0_ld_P_main_spatial1m5x_qpOff0_RunSimSHM1.0XX-L1.xls result_JCTVC_ld_P_main_el_dqp_0_RunSimHM8.1-L0_ld_P_main_spatial2x_qpOff0_RunSimSHM1.0XX-L1.xls result_JCTVC_ld_P_main_el_dqp_2_RunSimHM8.1-L0_ld_P_main_snr_qpOff-4_RunSimSHM1.0XX-L1.xls result_JCTVC_ld_P_main_el_dqp_2_RunSimHM8.1-L0_ld_P_main_spatial1m5x_qpOff2_RunSimSHM1.0XX-L1.xls result_JCTVC_ld_P_main_el_dqp_2_RunSimHM8.1-L0_ld_P_main_spatial2x_qpOff2_RunSimSHM1.0XX-L1.xls result_JCTVC_ra_main_el_dqp_0_RunSimHM8.1-L0_ra_main_snr_qpOff-6_RunSimSHM1.0XX-L1.xls result_JCTVC_ra_main_el_dqp_0_RunSimHM8.1-L0_ra_main_spatial1m5x_qpOff0_RunSimSHM1.0XX-L1.xls result_JCTVC_ra_main_el_dqp_0_RunSimHM8.1-L0_ra_main_spatial2x_qpOff0_RunSimSHM1.0XX-L1.xls result_JCTVC_ra_main_el_dqp_2_RunSimHM8.1-L0_ra_main_snr_qpOff-4_RunSimSHM1.0XX-L1.xls result_JCTVC_ra_main_el_dqp_2_RunSimHM8.1-L0_ra_main_spatial1m5x_qpOff2_RunSimSHM1.0XX-L1.xls result_JCTVC_ra_main_el_dqp_2_RunSimHM8.1-L0_ra_main_spatial2x_qpOff2_RunSimSHM1.0XX-L1.xls
+#  python processSHVCresults.py "Single layer" processed_SingleLayer.xls result_JCTVC_i_main_el_dqp_0_RunSimHM8.1-L0_i_main_spatial1m5x_qpOff0_RunSimSHM1.0XX-L1.xls result_JCTVC_i_main_el_dqp_0_RunSimHM8.1-L0_i_main_spatial2x_qpOff0_RunSimSHM1.0XX-L1.xls result_JCTVC_i_main_el_dqp_2_RunSimHM8.1-L0_i_main_spatial1m5x_qpOff2_RunSimSHM1.0XX-L1.xls result_JCTVC_i_main_el_dqp_2_RunSimHM8.1-L0_i_main_spatial2x_qpOff2_RunSimSHM1.0XX-L1.xls result_JCTVC_ld_main_el_dqp_0_RunSimHM8.1-L0_ld_main_snr_qpOff-6_RunSimSHM1.0XX-L1.xls result_JCTVC_ld_main_el_dqp_0_RunSimHM8.1-L0_ld_main_spatial1m5x_qpOff0_RunSimSHM1.0XX-L1.xls result_JCTVC_ld_main_el_dqp_0_RunSimHM8.1-L0_ld_main_spatial2x_qpOff0_RunSimSHM1.0XX-L1.xls result_JCTVC_ld_main_el_dqp_2_RunSimHM8.1-L0_ld_main_snr_qpOff-4_RunSimSHM1.0XX-L1.xls result_JCTVC_ld_main_el_dqp_2_RunSimHM8.1-L0_ld_main_spatial1m5x_qpOff2_RunSimSHM1.0XX-L1.xls result_JCTVC_ld_main_el_dqp_2_RunSimHM8.1-L0_ld_main_spatial2x_qpOff2_RunSimSHM1.0XX-L1.xls result_JCTVC_ld_P_main_el_dqp_0_RunSimHM8.1-L0_ld_P_main_snr_qpOff-6_RunSimSHM1.0XX-L1.xls result_JCTVC_ld_P_main_el_dqp_0_RunSimHM8.1-L0_ld_P_main_spatial1m5x_qpOff0_RunSimSHM1.0XX-L1.xls result_JCTVC_ld_P_main_el_dqp_0_RunSimHM8.1-L0_ld_P_main_spatial2x_qpOff0_RunSimSHM1.0XX-L1.xls result_JCTVC_ld_P_main_el_dqp_2_RunSimHM8.1-L0_ld_P_main_snr_qpOff-4_RunSimSHM1.0XX-L1.xls result_JCTVC_ld_P_main_el_dqp_2_RunSimHM8.1-L0_ld_P_main_spatial1m5x_qpOff2_RunSimSHM1.0XX-L1.xls result_JCTVC_ld_P_main_el_dqp_2_RunSimHM8.1-L0_ld_P_main_spatial2x_qpOff2_RunSimSHM1.0XX-L1.xls result_JCTVC_ra_main_el_dqp_0_RunSimHM8.1-L0_ra_main_snr_qpOff-6_RunSimSHM1.0XX-L1.xls result_JCTVC_ra_main_el_dqp_0_RunSimHM8.1-L0_ra_main_spatial1m5x_qpOff0_RunSimSHM1.0XX-L1.xls result_JCTVC_ra_main_el_dqp_0_RunSimHM8.1-L0_ra_main_spatial2x_qpOff0_RunSimSHM1.0XX-L1.xls result_JCTVC_ra_main_el_dqp_2_RunSimHM8.1-L0_ra_main_snr_qpOff-4_RunSimSHM1.0XX-L1.xls result_JCTVC_ra_main_el_dqp_2_RunSimHM8.1-L0_ra_main_spatial1m5x_qpOff2_RunSimSHM1.0XX-L1.xls result_JCTVC_ra_main_el_dqp_2_RunSimHM8.1-L0_ra_main_spatial2x_qpOff2_RunSimSHM1.0XX-L1.xls
+
+import xlrd, xlwt,sys
+
+args = sys.argv
+numargs = len(args)
+
+wbout = xlwt.Workbook(encoding = 'ascii')
+wbout_sheet = wbout.add_sheet('Processed')
+
+sheet_name = args[1]
+
+out_name = args[2]
+
+for num in range(3,numargs):
+
+ print args[num]
+ wb = xlrd.open_workbook(args[num])
+ 
+ wbsheet = wb.sheet_by_name(sheet_name)
+ rows = wbsheet.nrows
+ cols = wbsheet.ncols  
+ print 'rows=%d cols=%d\n'  % (rows,cols)
+
+ # read all rows
+ for therow in range(0,rows):
+   cell_type0 = wbsheet.cell_type(therow,0)
+   if(cell_type0!=0):
+    for thecol in range(0,cols):        
+      cell_value = wbsheet.cell_value(therow,thecol)
+      cell_type = wbsheet.cell_type(therow,thecol)
+      wbout_sheet.write(therow, thecol, label = cell_value)
+
+wbout.save(out_name)
+ 

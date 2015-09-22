@@ -1,0 +1,51 @@
+the third argument indicates i:intra, l: low-delay, r:random access, 
+the fourth mse psnr avail anchor 1 and 2 if shall be used otherwise 0, 
+the fifth mse psnr avail test 1 and 2 if shall be used otherwise 0"
+
+# Using ExcelPlot JCTVC
+# set domap=0 in ExcelPlot.py
+
+# for lossy  PSNR clipped value is read from log file for both anchor and test (1)
+# for loss less MSE PSNR value is read from log file for both anchor and test (2) 
+
+# below layout that can be copied into SCC result template sheet 
+
+
+# scc lossy yuv
+
+python RunEvalGenericJCTVCSCClog.py Results/i_yuv_RunSimSCM3.0-L0.txt Results/i_yuv_RunSimSCM3.0-L0.txt i 1 1
+python RunEvalGenericJCTVCSCClog.py Results/ld_yuv_RunSimSCM3.0-L0.txt Results/ld_yuv_RunSimSCM3.0-L0.txt l 1 1
+python RunEvalGenericJCTVCSCClog.py Results/ra_yuv_RunSimSCM3.0-L0.txt Results/ra_yuv_RunSimSCM3.0-L0.txt r 1 1
+
+# scc lossy rgb
+
+python RunEvalGenericJCTVCSCClog.py Results/i_rgb_RunSimSCM3.0-L0.txt Results/i_rgb_RunSimSCM3.0-L0.txt i 1 1
+python RunEvalGenericJCTVCSCClog.py Results/ld_rgb_RunSimSCM3.0-L0.txt Results/ld_rgb_RunSimSCM3.0-L0.txt l 1 1
+python RunEvalGenericJCTVCSCClog.py Results/ra_rgb_RunSimSCM3.0-L0.txt Results/ra_rgb_RunSimSCM3.0-L0.txt r 1 1
+
+# scc lossless yuv
+
+python RunEvalGenericJCTVCSCClog.py Results/i_ll_yuv_RunSimSCM3.0-L0.txt Results/i_ll_yuv_RunSimSCM3.0-L0.txt i 2 2
+python RunEvalGenericJCTVCSCClog.py Results/ld_ll_yuv_RunSimSCM3.0-L0.txt Results/ld_ll_yuv_RunSimSCM3.0-L0.txt l 2 2
+python RunEvalGenericJCTVCSCClog.py Results/ra_ll_yuv_RunSimSCM3.0-L0.txt Results/ra_ll_yuv_RunSimSCM3.0-L0.txt r 2 2
+
+# scc lossless rgb
+
+python RunEvalGenericJCTVCSCClog.py Results/i_ll_rgb_RunSimSCM3.0-L0.txt Results/i_ll_rgb_RunSimSCM3.0-L0.txt i 2 2
+python RunEvalGenericJCTVCSCClog.py Results/ld_ll_rgb_RunSimSCM3.0-L0.txt Results/ld_ll_rgb_RunSimSCM3.0-L0.txt l 2 2
+python RunEvalGenericJCTVCSCClog.py Results/ra_ll_rgb_RunSimSCM3.0-L0.txt Results/ra_ll_rgb_RunSimSCM3.0-L0.txt r 2 2
+
+
+
+# 420 scc lossy yuv
+
+python RunEvalGenericJCTVCSCClog.py Results/i_yuv_420_RunSimSCM3.0-L0.txt Results/i_yuv_420_RunSimSCM3.0-L0.txt i 1 1
+python RunEvalGenericJCTVCSCClog.py Results/ld_yuv_420_RunSimSCM3.0-L0.txt Results/ld_yuv_420_RunSimSCM3.0-L0.txt l 1 1
+python RunEvalGenericJCTVCSCClog.py Results/ra_yuv_420_RunSimSCM3.0-L0.txt Results/ra_yuv_420_RunSimSCM3.0-L0.txt r 1 1
+
+# 420 scc lossless yuv
+
+python RunEvalGenericJCTVCSCClog.py Results/i_ll_yuv_420_RunSimSCM3.0-L0.txt Results/i_ll_yuv_420_RunSimSCM3.0-L0.txt i 2 2
+python RunEvalGenericJCTVCSCClog.py Results/ld_ll_yuv_420_RunSimSCM3.0-L0.txt Results/ld_ll_yuv_420_RunSimSCM3.0-L0.txt l 2 2
+python RunEvalGenericJCTVCSCClog.py Results/ra_ll_yuv_420_RunSimSCM3.0-L0.txt Results/ra_ll_yuv_420_RunSimSCM3.0-L0.txt r 2 2
+

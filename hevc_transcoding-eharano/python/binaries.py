@@ -1,28 +1,40 @@
-import os
+import os, platform
 
-if 0:
 
-	hm_encoder				= os.path.abspath("bin/windows/HM-16.6/TAppEncoder.exe")
-	hm_decoder				= os.path.abspath("bin/windows/HM-16.6/TAppDecoder.exe")
+def get_abspath(binary_path):
+    return os.path.abspath(system_path + "/" + binary_path)
 
-	downscaler				= os.path.abspath("bin/windows/downScale/downScale.exe")
 
-	d65_gt_pruning			= os.path.abspath("d65_gt/bin/d65_dec_pruning.exe")
-	d65_gt_dec_order		= os.path.abspath("d65_gt/bin/d65_dec_dec_order.exe")
-	d65_gt_res_reconstruct	= os.path.abspath("d65_gt/bin/d65_dec_residual_reconstruct.exe")
+if platform.system() == "Windows":
 
-	#d65_gt_pruning			= os.path.abspath("bin/windows/d65_gt/d65_dec_pruning.exe")
-	#d65_gt_dec_order		= os.path.abspath("bin/windows/d65_gt/d65_dec_dec_order.exe")
-	#d65_gt_res_reconstruct	= os.path.abspath("bin/windows/d65_gt/d65_dec_residual_reconstruct.exe")
+    system_path             = "bin/windows"
 
+    hm_encoder              = get_abspath("HM-16.6/TAppEncoder.exe")
+    hm_decoder              = get_abspath("HM-16.6/TAppDecoder.exe")
+    downscaler              = get_abspath("downScale/downScale.exe")
+    d65_gt_pruning          = get_abspath("d65_gt/d65_dec_pruning.exe")
+    d65_gt_dec_order        = get_abspath("d65_gt/d65_dec_dec_order.exe")
+    d65_gt_res_reconstruct  = get_abspath("d65_gt/d65_dec_residual_reconstruct.exe")
+    ffplay                  = get_abspath("ffmpeg/ffplay.exe")
+
+elif platform.system() == "Linux":
+
+    system_path             = "bin/linux"
+
+    #hm_encoder              = get_abspath("HM-16.6/TAppEncoderStatic")
+    #hm_decoder              = get_abspath("HM-16.6/TAppDecoderStatic")
+    downscaler              = get_abspath("downScale/downScale")
+    #d65_gt_pruning          = get_abspath("d65_gt/d65_dec_pruning")
+    #d65_gt_dec_order        = get_abspath("d65_gt/d65_dec_dec_order")
+    #d65_gt_res_reconstruct  = get_abspath("d65_gt/d65_dec_residual_reconstruct")
+    ffplay                  = "echo ffplay"
+
+    hm_encoder              = os.path.abspath("HM-16.6/bin/TAppEncoderStatic")
+    hm_decoder              = os.path.abspath("HM-16.6/bin/TAppDecoderStatic")
+    d65_gt_pruning          = os.path.abspath("d65_gt/build_pruning/d65_dec")
+    d65_gt_dec_order        = os.path.abspath("d65_gt/build_dec_order/d65_dec")
+    d65_gt_res_reconstruct  = os.path.abspath("d65_gt/build_residual_reconstruct/d65_dec")
 
 else:
 
-	hm_encoder				= "echo hm_encoder"
-	hm_decoder				= "echo hm_decoder"
-
-	downscaler				= "echo downscaler"
-
-	d65_gt_pruning			= "echo d65_gt_pruning"
-	d65_gt_dec_order		= "echo d65_gt_dec_order"
-	d65_gt_res_reconstruct	= "echo d65_gt_res_reconstruct"
+    raise Exception("Uknown platform")

@@ -1,0 +1,78 @@
+# the third argument indicates i1,i2:intra 1.5x and 2x, p0,p1,p2: low-delay P snr,1.5x,2x, r0,r1,r2:random access snr, 1.5x, 2x b0,b1,b2: snr, 1.5x, 2x low-delay B,
+# the fourth indicates delta qp (lowest is 0), 
+# the fifth indicates is anchor is scalable (1 or 0)
+
+# below layout that can be copied into SHVC result template sheet (Test) processSHVCresults.py can be used for this
+
+
+python RunEvalGenericSHVClog.py Results/ld_main_spatial1m5x_qpOff0_RunSimSHM2.0-L1.txt Results/ld_main_spatial1m5x_qpOff0_RunSimSHM2.0-L1.txt b1 0 1
+python RunEvalGenericSHVClog.py Results/ld_main_spatial1m5x_qpOff2_RunSimSHM2.0-L1.txt Results/ld_main_spatial1m5x_qpOff2_RunSimSHM2.0-L1.txt b1 1 1
+
+python RunEvalGenericSHVClog.py Results/ld_main_spatial2x_qpOff0_RunSimSHM2.0-L1.txt Results/ld_main_spatial2x_qpOff0_RunSimSHM2.0-L1.txt b2 0 1
+python RunEvalGenericSHVClog.py Results/ld_main_spatial2x_qpOff2_RunSimSHM2.0-L1.txt Results/ld_main_spatial2x_qpOff2_RunSimSHM2.0-L1.txt b2 1 1
+
+#Note single layer anchor is not correct for snr but not needed for templat
+#python RunEvalGenericSHVClog.py Results/ld_main_snr_qpOff-6_RunSimSHM2.0-L1.txt Results/ld_main_snr_qpOff-6_RunSimSHM2.0-L1.txt b0 0 1
+#python RunEvalGenericSHVClog.py Results/ld_main_snr_qpOff-4_RunSimSHM2.0-L1.txt Results/ld_main_snr_qpOff-4_RunSimSHM2.0-L1.txt b0 1 1
+
+python RunEvalGenericSHVClog.py  Results/ra_main_spatial1m5x_qpOff0_RunSimSHM2.0-L1.txt Results/ra_main_spatial1m5x_qpOff0_RunSimSHM2.0-L1.txt r1 0 1
+python RunEvalGenericSHVClog.py  Results/ra_main_spatial1m5x_qpOff2_RunSimSHM2.0-L1.txt Results/ra_main_spatial1m5x_qpOff2_RunSimSHM2.0-L1.txt r1 1 1
+
+python RunEvalGenericSHVClog.py  Results/ra_main_spatial2x_qpOff0_RunSimSHM2.0-L1.txt Results/ra_main_spatial2x_qpOff0_RunSimSHM2.0-L1.txt r2 0 1
+python RunEvalGenericSHVClog.py  Results/ra_main_spatial2x_qpOff2_RunSimSHM2.0-L1.txt Results/ra_main_spatial2x_qpOff2_RunSimSHM2.0-L1.txt r2 1 1
+
+#Note single layer anchor is not correct for snr but not needed for template
+#python RunEvalGenericSHVClog.py Results/ra_main_snr_qpOff-6_RunSimSHM2.0-L1.txt Results/ra_main_snr_qpOff-6_RunSimSHM2.0-L1.txt r0 0 1
+#python RunEvalGenericSHVClog.py Results/ra_main_snr_qpOff-4_RunSimSHM2.0-L1.txt Results/ra_main_snr_qpOff-4_RunSimSHM2.0-L1.txt r0 1 1
+
+python RunEvalGenericSHVClog.py  Results/i_main_spatial1m5x_qpOff0_RunSimSHM2.0-L1.txt Results/i_main_spatial1m5x_qpOff0_RunSimSHM2.0-L1.txt i1 0 1
+python RunEvalGenericSHVClog.py  Results/i_main_spatial1m5x_qpOff2_RunSimSHM2.0-L1.txt Results/i_main_spatial1m5x_qpOff2_RunSimSHM2.0-L1.txt i1 1 1
+
+python RunEvalGenericSHVClog.py  Results/i_main_spatial2x_qpOff0_RunSimSHM2.0-L1.txt Results/i_main_spatial2x_qpOff0_RunSimSHM2.0-L1.txt i2 0 1
+python RunEvalGenericSHVClog.py  Results/i_main_spatial2x_qpOff2_RunSimSHM2.0-L1.txt Results/i_main_spatial2x_qpOff2_RunSimSHM2.0-L1.txt i2 1 1
+
+
+--------
+
+#Below old stuff:
+# below will compute the cost but also make layout that can be copied into SHVC result template sheet (Test)
+
+python RunEvalGenericSHVClog.py ../../../JCTVC-Anchors/HM8.0/VideoSimScriptSingle/Results/ld_P_main_el_dqp_0_RunSimHM8.1-L0.txt Results/ld_P_main_spatial1m5x_qpOff0_RunSimSHM1.0-L1.txt p1 0 0
+python RunEvalGenericSHVClog.py ../../../JCTVC-Anchors/HM8.0/VideoSimScriptSingle/Results/ld_P_main_el_dqp_2_RunSimHM8.1-L0.txt Results/ld_P_main_spatial1m5x_qpOff2_RunSimSHM1.0-L1.txt p1 1 0
+
+python RunEvalGenericSHVClog.py ../../../JCTVC-Anchors/HM8.0/VideoSimScriptSingle/Results/ld_P_main_el_dqp_0_RunSimHM8.1-L0.txt Results/ld_P_main_spatial2x_qpOff0_RunSimSHM1.0-L1.txt p2 0 0
+python RunEvalGenericSHVClog.py ../../../JCTVC-Anchors/HM8.0/VideoSimScriptSingle/Results/ld_P_main_el_dqp_2_RunSimHM8.1-L0.txt Results/ld_P_main_spatial2x_qpOff2_RunSimSHM1.0-L1.txt p2 1 0
+
+#Note single layer anchor is not correct for snr but not needed for template
+#python RunEvalGenericSHVClog.py ../../../JCTVC-Anchors/HM8.0/VideoSimScriptSingle/Results/ld_P_main_el_dqp_0_RunSimHM8.1-L0.txt Results/ld_P_main_snr_qpOff-6_RunSimSHM1.0-L1.txt p0 0 0
+#python RunEvalGenericSHVClog.py ../../../JCTVC-Anchors/HM8.0/VideoSimScriptSingle/Results/ld_P_main_el_dqp_2_RunSimHM8.1-L0.txt Results/ld_P_main_snr_qpOff-4_RunSimSHM1.0-L1.txt p0 1 0
+
+
+python RunEvalGenericSHVClog.py ../../../JCTVC-Anchors/HM8.0/VideoSimScriptSingle/Results/ra_main_el_dqp_0_RunSimHM8.1-L0.txt Results/ra_main_spatial1m5x_qpOff0_RunSimSHM1.0-L1.txt r1 0 0
+python RunEvalGenericSHVClog.py ../../../JCTVC-Anchors/HM8.0/VideoSimScriptSingle/Results/ra_main_el_dqp_2_RunSimHM8.1-L0.txt Results/ra_main_spatial1m5x_qpOff2_RunSimSHM1.0-L1.txt r1 1 0
+
+python RunEvalGenericSHVClog.py ../../../JCTVC-Anchors/HM8.0/VideoSimScriptSingle/Results/ra_main_el_dqp_0_RunSimHM8.1-L0.txt Results/ra_main_spatial2x_qpOff0_RunSimSHM1.0-L1.txt r2 0 0
+python RunEvalGenericSHVClog.py ../../../JCTVC-Anchors/HM8.0/VideoSimScriptSingle/Results/ra_main_el_dqp_2_RunSimHM8.1-L0.txt Results/ra_main_spatial2x_qpOff2_RunSimSHM1.0-L1.txt r2 1 0
+
+#Note single layer anchor is not correct for snr but not needed for template
+#python RunEvalGenericSHVClog.py ../../../JCTVC-Anchors/HM8.0/VideoSimScriptSingle/Results/ra_main_el_dqp_0_RunSimHM8.1-L0.txt Results/ra_main_snr_qpOff-6_RunSimSHM1.0-L1.txt r0 0 0
+#python RunEvalGenericSHVClog.py ../../../JCTVC-Anchors/HM8.0/VideoSimScriptSingle/Results/ra_main_el_dqp_2_RunSimHM8.1-L0.txt Results/ra_main_snr_qpOff-4_RunSimSHM1.0-L1.txt r0 1 0
+
+python RunEvalGenericSHVClog.py ../../../JCTVC-Anchors/HM8.0/VideoSimScriptSingle/Results/i_main_el_dqp_0_RunSimHM8.1-L0.txt Results/i_main_spatial1m5x_qpOff0_RunSimSHM1.0-L1.txt i1 0 0
+python RunEvalGenericSHVClog.py ../../../JCTVC-Anchors/HM8.0/VideoSimScriptSingle/Results/i_main_el_dqp_2_RunSimHM8.1-L0.txt Results/i_main_spatial1m5x_qpOff2_RunSimSHM1.0-L1.txt i1 1 0
+
+python RunEvalGenericSHVClog.py ../../../JCTVC-Anchors/HM8.0/VideoSimScriptSingle/Results/i_main_el_dqp_0_RunSimHM8.1-L0.txt Results/i_main_spatial2x_qpOff0_RunSimSHM1.0-L1.txt i2 0 0
+python RunEvalGenericSHVClog.py ../../../JCTVC-Anchors/HM8.0/VideoSimScriptSingle/Results/i_main_el_dqp_2_RunSimHM8.1-L0.txt Results/i_main_spatial2x_qpOff2_RunSimSHM1.0-L1.txt i2 1 0
+
+# optional
+#python RunEvalGenericSHVClog.py ../../../JCTVC-Anchors/HM8.0/VideoSimScriptSingle/Results/ld_main_el_dqp_0_RunSimHM8.1-L0.txt Results/ld_main_spatial1m5x_qpOff0_RunSimSHM1.0-L1.txt b1 0 0
+#python RunEvalGenericSHVClog.py ../../../JCTVC-Anchors/HM8.0/VideoSimScriptSingle/Results/ld_main_el_dqp_2_RunSimHM8.1-L0.txt Results/ld_main_spatial1m5x_qpOff2_RunSimSHM1.0-L1.txt b1 1 0
+
+#python RunEvalGenericSHVClog.py ../../../JCTVC-Anchors/HM8.0/VideoSimScriptSingle/Results/ld_main_el_dqp_0_RunSimHM8.1-L0.txt Results/ld_main_spatial2x_qpOff0_RunSimSHM1.0-L1.txt b2 0 0
+#python RunEvalGenericSHVClog.py ../../../JCTVC-Anchors/HM8.0/VideoSimScriptSingle/Results/ld_main_el_dqp_2_RunSimHM8.1-L0.txt Results/ld_main_spatial2x_qpOff2_RunSimSHM1.0-L1.txt b2 1 0
+
+#Note single layer anchor is not correct for snr but not needed for template
+#python RunEvalGenericSHVClog.py ../../../JCTVC-Anchors/HM8.0/VideoSimScriptSingle/Results/ld_main_el_dqp_0_RunSimHM8.1-L0.txt Results/ld_main_snr_qpOff-6_RunSimSHM1.0-L1.txt b0 0 0
+#python RunEvalGenericSHVClog.py ../../../JCTVC-Anchors/HM8.0/VideoSimScriptSingle/Results/ld_main_el_dqp_2_RunSimHM8.1-L0.txt Results/ld_main_snr_qpOff-4_RunSimSHM1.0-L1.txt b0 1 0
+
+

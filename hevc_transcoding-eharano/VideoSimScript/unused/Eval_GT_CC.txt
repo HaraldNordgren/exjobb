@@ -1,0 +1,28 @@
+# the third argument indicates i1,i2:intra 1.5x and 2x, p0,p1,p2: low-delay P snr,1.5x,2x, r0,r1,r2:random access snr, 1.5x, 2x b0,b1,b2: snr, 1.5x, 2x low-delay B,
+# the fourth indicates delta qp (lowest is 0), 
+# the fifth indicates is anchor is scalable (1 or 0)
+
+# below layout that can be copied into SHVC result template sheet (Test) processSHVCresults.py can be used for this
+
+#RA example
+
+#encoder side
+
+python RunEvalGenericSHVClog.py  Results/ra_main_spatial1m5x_qpOff0_RunSimSHM4_transc-L1.txt Results/ra_main_spatial1m5x_qpOff0_RunSimSHM4_transc-L1.txt r1 0 1
+python RunEvalGenericSHVClog.py  Results/ra_main_spatial1m5x_qpOff2_RunSimSHM4_transc-L1.txt Results/ra_main_spatial1m5x_qpOff2_RunSimSHM4_transc-L1.txt r1 1 1
+
+python RunEvalGenericSHVClog.py  Results/ra_main_spatial2x_qpOff0_RunSimSHM4_transc-L1.txt Results/ra_main_spatial2x_qpOff0_RunSimSHM4_transc-L1.txt r2 0 1
+python RunEvalGenericSHVClog.py  Results/ra_main_spatial2x_qpOff2_RunSimSHM4_transc-L1.txt Results/ra_main_spatial2x_qpOff2_RunSimSHM4_transc-L1.txt r2 1 1
+
+# transcoder side
+python RunEvalGenericSHVClogtrn.py  Results/ra_main_spatial1m5x_qpOff0_RunSimSHM4_transc-L1.txt Results/ra_main_spatial1m5x_qpOff0_RunSimSHM4_transc-L1.txt r1 0 1
+python RunEvalGenericSHVClogtrn.py  Results/ra_main_spatial1m5x_qpOff2_RunSimSHM4_transc-L1.txt Results/ra_main_spatial1m5x_qpOff2_RunSimSHM4_transc-L1.txt r1 1 1
+
+python RunEvalGenericSHVClogtrn.py  Results/ra_main_spatial2x_qpOff0_RunSimSHM4_transc-L1.txt Results/ra_main_spatial2x_qpOff0_RunSimSHM4_transc-L1.txt r2 0 1
+python RunEvalGenericSHVClogtrn.py  Results/ra_main_spatial2x_qpOff2_RunSimSHM4_transc-L1.txt Results/ra_main_spatial2x_qpOff2_RunSimSHM4_transc-L1.txt r2 1 1
+
+
+
+
+
+

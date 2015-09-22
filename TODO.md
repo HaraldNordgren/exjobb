@@ -1,10 +1,9 @@
 # Kista
 
 ## Tuesday
-- Email from Julian should contain a usable command-line video player, check that out.
-- Change to "if not m: then Exception" in filenames.py for less indentation.
-- Print filenames to see that they are corrects, especially the "_transcoded" ones.
-- Change tabs to spaces
+- Checkout code on cluster
+- Compile binaries in unix
+- Run transcoding
 
 ## Python
 - Iterate over different QPs, create folders for each and store output.

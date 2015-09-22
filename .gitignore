@@ -1,17 +1,31 @@
 *.swp
+*.pyc
+*.yuv
+*.obj
+*.manifest
+*.user
+*.idb
+*.dep
+*.pdb
+*.ncb
+*.suo
+*.sln
+*.o
 *~
 *#
 
-*.pyc
+**/.svn/
+**/.settings/
+**/.cproject/
+**/.project/
 
 videos
 software
 
-hevc_transcoding-eharano/*
-!hevc_transcoding-eharano/batch
-!hevc_transcoding-eharano/sandbox
-!hevc_transcoding-eharano/shell
-!hevc_transcoding-eharano/python
+hevc_transcoding-eharano/output_data
+hevc_transcoding-eharano/sample_videos
 
-!hevc_transcoding-eharano/VideoSimScript
-hevc_transcoding-eharano/VideoSimScript/*/
+hevc_transcoding-eharano/VideoSimScript/jobs
+hevc_transcoding-eharano/VideoSimScript/Results
+
+hevc_transcoding-eharano/VideoSimScript/unused/cfg_*/

@@ -1,0 +1,5 @@
+
+coding_tree_unit (7.3.9.2) has two arguments that are immediately assigned, why?
+
+Assignment of PartMode to part_mode seems to be missing when part_mode is present, see semantics of part_mode
+ 
