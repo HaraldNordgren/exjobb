@@ -1,6 +1,7 @@
 #!/bin/bash
 
 api=d65_lib/d65_api.h
+binary=d65_dec
 
 function build_version {
     name=$1
@@ -17,6 +18,9 @@ function build_version {
     
     cmake CMakeLists.txt -DCMAKE_BUILD_TYPE=Release .. 
     make
+
+    mv $binary ${binary}_$name
+    cd ..
 }
 
 build_version dec_order    1 0 0
