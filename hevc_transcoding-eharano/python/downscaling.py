@@ -42,5 +42,5 @@ def perform_downscaling(width, height, input_file, output_file, downscale_parame
     for tmp_file in glob.glob(downscale_tmp_start + "*"):
         os.remove(tmp_file)
 
-def height_divisible_by_eight(nbr):
+def get_height_divisible_by_eight(nbr):
     return nbr / 8 * 8
