@@ -19,10 +19,10 @@ function build_version {
     cmake CMakeLists.txt -DCMAKE_BUILD_TYPE=Release .. 
     make
 
-    mv $binary ${binary}_$name
+    #mv $binary ${binary}_$name
     cd ..
 }
 
-build_version dec_order    1 0 0
-build_version pruning      0 1 0
-build_version residual_rec 0 0 1
+build_version dec_order            1 0 0
+build_version pruning              0 1 0
+build_version residual_reconstruct 0 0 1
