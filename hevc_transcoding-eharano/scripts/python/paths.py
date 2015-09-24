@@ -1,5 +1,4 @@
-import os, sys
-import shutil
+import os, sys, shutil
 
 def create_if_needed(directory):
     if not os.path.exists(directory):

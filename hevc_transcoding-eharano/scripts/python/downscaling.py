@@ -1,8 +1,5 @@
-import os, glob
-import subprocess
-
-from binaries import *
-
+import os, subprocess, glob
+import binaries
 
 def do_conversion(width, height, parameter):
     if (parameter == 0):
@@ -33,7 +30,8 @@ def perform_downscaling(width, height, input_file, output_file, downscale_parame
     downscale_files.append(output_file)
 
     for i in range(len(downscale_parameters)):
-        downscaling_cmd = "%s %s %s %s %s %d 1" % (downscaler, width, height, downscale_files[i], downscale_files[i+1], downscale_parameters[i])
+        downscaling_cmd = "%s %s %s %s %s %d 1" % \
+            (binaries.downscaler, width, height, downscale_files[i], downscale_files[i+1], downscale_parameters[i])
         subprocess.call(downscaling_cmd, shell=True)
 
         (width, height) = do_conversion(width, height, downscale_parameters[i])

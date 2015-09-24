@@ -1,6 +1,11 @@
 # Kista
 
-## Wednesday
+## Reorganization
+- Moved HM-16.6, d65_gt, d65mt_dev to software.
+- Moved batch, shell, python to scripts
+- Moved run.py out of python folder to scripts
+
+## Friday
 - Move svn repo to cluster.
 - Ask Ruoyang about the Assert failures in the decoder.
 - Get the transcoding to work on the cluster

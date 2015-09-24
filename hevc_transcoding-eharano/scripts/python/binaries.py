@@ -30,12 +30,12 @@ elif platform.system() == "Linux":
     #d65_gt_res_reconstruct  = get_abspath("d65_gt/d65_dec_residual_reconstruct")
     #ffplay                  = "echo ffplay"
 
-    hm_encoder              = os.path.abspath("HM-16.6/bin/TAppEncoderStatic")
-    hm_decoder              = os.path.abspath("HM-16.6/bin/TAppDecoderStatic")
+    hm_encoder              = os.path.abspath("software/HM-16.6/bin/TAppEncoderStatic")
+    hm_decoder              = os.path.abspath("software/HM-16.6/bin/TAppDecoderStatic")
     downscaler              = os.path.abspath("bin/linux/downScale/downScale")
-    d65_gt_pruning          = os.path.abspath("d65_gt/build_pruning/d65_dec")
-    d65_gt_dec_order        = os.path.abspath("d65_gt/build_dec_order/d65_dec")
-    d65_gt_res_reconstruct  = os.path.abspath("d65_gt/build_residual_reconstruct/d65_dec")
+    d65_gt_pruning          = os.path.abspath("software/d65_gt/build_pruning/d65_dec")
+    d65_gt_dec_order        = os.path.abspath("software/d65_gt/build_dec_order/d65_dec")
+    d65_gt_res_reconstruct  = os.path.abspath("software/d65_gt/build_residual_reconstruct/d65_dec")
     ffplay                  = os.path.abspath("bin/linux/ffmpeg/ffplay")
     ffmpeg                  = os.path.abspath("bin/linux/ffmpeg/ffmpeg")
 
