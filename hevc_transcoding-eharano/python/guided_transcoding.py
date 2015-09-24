@@ -70,7 +70,7 @@ downscale_parameter_list = [[1], [0], [1,0]]
 
 for downscale_parameters in downscale_parameter_list:
 
-    # Calculate downscaled dimensions and create folders
+    # Generate downscaled dimensions and create folders
     
     (downscaled_width, downscaled_height) = downscaling.convert_dimensions(width, height, downscale_parameters)
     downscaled_height = downscaling.get_height_divisible_by_eight(downscaled_height)
@@ -110,15 +110,16 @@ for downscale_parameters in downscale_parameter_list:
     subprocess.call(prune_cmd, shell=True, stderr=err_log)
 
 
-    # Decode pruned bitstream (DEBUGGING)
+    if DEBUGGING:
+        # Decode pruned bitstream
 
-    pruned_file_decoded_shortpath = "%s_dec" % pruned_file_shortpath
-    pruned_file_decoded = "%s/%s.yuv" % (downscale_folder, pruned_file_decoded_shortpath)
+        pruned_file_decoded_shortpath = "%s_dec" % pruned_file_shortpath
+        pruned_file_decoded = "%s/%s.yuv" % (downscale_folder, pruned_file_decoded_shortpath)
 
-    prune_decoding_cmd = "%s -b %s -o %s" % (hm_decoder, pruned_file, pruned_file_decoded)
-    subprocess.call(prune_decoding_cmd, shell=True, stderr=err_log)
+        prune_decoding_cmd = "%s -b %s -o %s" % (hm_decoder, pruned_file, pruned_file_decoded)
+        subprocess.call(prune_decoding_cmd, shell=True, stderr=err_log)
 
-    raw_video.mux(pruned_file_decoded, downscaled_width, downscaled_height)
+        raw_video.mux(pruned_file_decoded, downscaled_width, downscaled_height)
 
 
     # Branch 2

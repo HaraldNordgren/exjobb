@@ -28,5 +28,6 @@ output_file = "%s/%s_%s.bin" % (bitstream_folder, output_file_shortpath, cfg_mod
 
 paths.create_if_needed(bitstream_folder)
 
-encode_cmd = "%s -c %s -i %s -b %s -fr %s -f %s -hgt %s -wdt %s -SBH 1" % (hm_encoder, cfg_file, original_file, output_file, framerate, frames, height, width)
+encode_cmd = "%s -c %s -i %s -b %s -fr %s -f %s -hgt %s -wdt %s -SBH 1" % \
+	(hm_encoder, cfg_file, original_file, output_file, framerate, frames, height, width)
 subprocess.call(encode_cmd, shell=True)
