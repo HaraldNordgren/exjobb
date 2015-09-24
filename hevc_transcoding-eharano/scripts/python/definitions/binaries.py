@@ -16,7 +16,7 @@ if platform.system() == "Windows":
     d65_gt_dec_order        = get_abspath("d65_gt/d65_dec_dec_order.exe")
     d65_gt_res_reconstruct  = get_abspath("d65_gt/d65_dec_residual_reconstruct.exe")
     ffplay                  = get_abspath("ffmpeg/ffplay.exe")
-    ffmpeg                  = "echo ffmpeg"
+    ffmpeg                  = get_abspath("ffmpeg/ffmpeg.exe")
 
 elif platform.system() == "Linux":
 

@@ -4,6 +4,8 @@
 - Moved HM-16.6, d65_gt, d65mt_dev to software.
 - Moved batch, shell, python to scripts
 - Moved run.py out of python folder to scripts
+- Moved binaries, definitions to new definitions folder.
+- Split definitions.py into three files.
 
 ## Friday
 - Move svn repo to cluster.

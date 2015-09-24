@@ -2,17 +2,16 @@
 
 reset
 
-#echo "## Deleting output folder"
-#rm output_data -r
-#echo
+# Define bitstream
 
-
-## These fail: ##
+## These fail:
 #bitstream=bitstreams/BQTerrace_1920x1080_5_randomaccess.bin
 
-## These work: ##
+## These work:
 #bitstream=bitstreams/BQTerrace_1920x1080_1_intra.bin
-bitstream=BQTerrace_1920x1080_1_randomaccess.bin
+#bitstream=BQTerrace_1920x1080_1_randomaccess.bin
+bitstream="BQTerrace_1920x1080_10_intra.bin"
+
 
 echo "## Running transcoding ##"
-python python/guided_transcoding.py $bitstream
+python scripts/python/guided_transcoding.py $bitstream

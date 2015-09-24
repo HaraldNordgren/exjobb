@@ -6,7 +6,7 @@ cfg_regex           = re.compile("encoder_([a-z]+)_.*")
 
 def extract_dimensions(filename):
     m = dimensions_regex.match(filename)
-    
+
     if not m:
         raise Exception('Input dimensions could not be determined')
 
