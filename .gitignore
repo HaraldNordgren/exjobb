@@ -19,13 +19,10 @@
 **/.cproject/
 **/.project/
 
-videos
-software
+hevc_transcoding-eharano/output_data/
+hevc_transcoding-eharano/sample_videos/
 
-hevc_transcoding-eharano/output_data
-hevc_transcoding-eharano/sample_videos
-
-hevc_transcoding-eharano/VideoSimScript/jobs
-hevc_transcoding-eharano/VideoSimScript/Results
+hevc_transcoding-eharano/VideoSimScript/jobs/
+hevc_transcoding-eharano/VideoSimScript/Results/
 
 hevc_transcoding-eharano/VideoSimScript/unused/cfg_*/

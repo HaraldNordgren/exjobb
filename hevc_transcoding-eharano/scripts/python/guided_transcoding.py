@@ -1,5 +1,6 @@
 import sys, os, subprocess
 import downscaling, filenames, paths, raw_video
+import encode_original_module
 
 import definitions.config       as config
 import definitions.debug        as debug
@@ -18,7 +19,7 @@ def transcode(hq_bitstream):
     	raise Exception("Expected 1080p video")
 
 
-    # Folders and logs
+    # Create folders and logs
 
     sequence_folder = "%s/%s" % (directories.output_folder, hq_bitstream_shortpath)
     paths.remove_and_recreate_directory(sequence_folder)
@@ -29,7 +30,7 @@ def transcode(hq_bitstream):
 
     # Preprocessing
 
-    ## Decode HQ bitstream
+    ## Decode HQ bitstream (Sender side)
 
     hq_bitstream_decoded_shortpath = "%s_dec" % hq_bitstream_shortpath
     hq_bitstream_decoded = "%s/%s.yuv" % (sequence_folder, hq_bitstream_decoded_shortpath)
@@ -40,7 +41,7 @@ def transcode(hq_bitstream):
     raw_video.mux(hq_bitstream_decoded)
 
 
-    ## Decode HQ bitstream in decoding order
+    ## Decode HQ bitstream in decoding order (Receiver side)
 
     hq_bitstream_decoded_dec_order_shortpath = "%s_dec_dec_order" % hq_bitstream_shortpath
     hq_bitstream_decoded_dec_order = "%s/%s.yuv" % (sequence_folder, hq_bitstream_decoded_dec_order_shortpath)
@@ -74,7 +75,7 @@ def transcode(hq_bitstream):
 
         # Branch 1
         
-        ## Downscale decoded HQ bistream
+        ## Downscale decoded HQ bistream (Sender side)
         
         downscaled_file_shortpath = filenames.replace_dimensions(hq_bitstream_decoded_shortpath, downscaled_width, downscaled_height)
         downscaled_file = "%s/%s.yuv" % (downscale_folder, downscaled_file_shortpath)
@@ -84,17 +85,19 @@ def transcode(hq_bitstream):
         raw_video.mux(downscaled_file)
 
 
-        ## Re-encode with RDOQ=0
+        ## Re-encode with RDOQ=0 (Sender side)
 
         rdoq_0_file_shortpath = "%s_rdoq_0" % (downscaled_file_shortpath)
         rdoq_0_file = "%s/%s.bin" % (downscale_folder, rdoq_0_file_shortpath)
 
+        # "-f" option should be uneccesary here, try removing it when everything else works.
         rdoq_0_cmd = "%s -c %s -i %s -b %s -fr %d -f %d -wdt %d -hgt %d --RDOQ=0 -SBH 0 --RDOQTS=0" % (binaries.hm_encoder, config.cfg_file, 
             downscaled_file, rdoq_0_file, config.framerate, config.frames, downscaled_width, downscaled_height)
         subprocess.call(rdoq_0_cmd, shell=True, stderr=err_log)
 
 
-        ## Prune
+        ## Prune (Sender side)
+        ## This is the bitstream to transmit alongside hq_bitstream.
 
         pruned_file_shortpath = "%s_pruned" % rdoq_0_file_shortpath
         pruned_file = "%s/%s.bin" % (downscale_folder, pruned_file_shortpath)
@@ -117,7 +120,7 @@ def transcode(hq_bitstream):
 
         # Branch 2
 
-        ## Downscale decoding order HQ bitstream
+        ## Downscale decoding order HQ bitstream (Receiver side)
 
         hq_bitstream_decoded_dec_order_downscaled_shortpath = \
             filenames.replace_dimensions(hq_bitstream_decoded_dec_order_shortpath, downscaled_width, downscaled_height)
@@ -130,7 +133,7 @@ def transcode(hq_bitstream):
 
         # Put together the branches
 
-        ## Reconstruct residual
+        ## Reconstruct residual (Receiver side)
 
         reconstructed_file_shortpath = "%s_transcoded" % filenames.replace_dimensions(hq_bitstream_shortpath, downscaled_width, downscaled_height)
         reconstructed_file = "%s/%s.bin" % (downscale_folder, reconstructed_file_shortpath)
@@ -140,7 +143,7 @@ def transcode(hq_bitstream):
         subprocess.call(res_reconstruct_cmd, shell=True, stderr=err_log)
 
 
-        ## Decode transcoded video
+        ## Decode transcoded video (Receiver side)
 
         reconstructed_file_decoded_shortpath = "%s_dec" % reconstructed_file_shortpath
         reconstructed_file_decoded = "%s/%s.yuv" % (downscale_folder, reconstructed_file_decoded_shortpath)
@@ -167,3 +170,21 @@ def transcode(hq_bitstream):
     #os.remove(hq_bitstream_decoded_dec_order)
 
     err_log.close()
+
+def iterate():
+
+    sequences = ['MPEG_CfP_seqs/orig-draft-cfp_2009-07-23/BQTerrace_1920x1080_60.yuv']
+    
+    QP_hq = [22, 27, 32, 37]
+    QP_lq = [qp + 2 for qp in QP_hq]
+
+    for sequence in sequences:
+
+        encode_original_module.encode_original(sequence, config.cfg_file, QP_hq)
+
+        #for s in [720, 536, 360]:
+        #    for qp_lq in QP_lq:
+
+                #print "%s_%d_%s_%d" % (sequence, qp_hq, s, qp_lq)
+
+                #Reencode
