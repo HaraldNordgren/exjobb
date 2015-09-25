@@ -37,7 +37,7 @@ ENDIF(WIN32)
 
 IF(MSVC)
 ELSE(MSVC)
-  SET(CMAKE_C_FLAGS "-O3 -msse -msse2 -msse3 -msse4 -msse4.1")
+  SET(CMAKE_C_FLAGS "-m32 -O3 -msse -msse2 -msse3 -msse4 -msse4.1")
 ENDIF(MSVC)
 
 # D65

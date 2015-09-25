@@ -1,0 +1,15 @@
+objects/NALwrite.d.o: \
+ /home/eharano/exjobb/hevc_transcoding-eharano/software/HM-16.6/build/linux/lib/TLibEncoder/../../../../source/Lib/TLibEncoder/NALwrite.cpp \
+ /home/eharano/exjobb/hevc_transcoding-eharano/software/HM-16.6/build/linux/lib/TLibEncoder/../../../../source/Lib/TLibCommon/NAL.h \
+ /home/eharano/exjobb/hevc_transcoding-eharano/software/HM-16.6/build/linux/lib/TLibEncoder/../../../../source/Lib/TLibCommon/CommonDef.h \
+ /home/eharano/exjobb/hevc_transcoding-eharano/software/HM-16.6/build/linux/lib/TLibEncoder/../../../../source/Lib/TLibCommon/TypeDef.h \
+ /home/eharano/exjobb/hevc_transcoding-eharano/software/HM-16.6/build/linux/lib/TLibEncoder/../../../../source/Lib/TLibCommon/TComBitStream.h \
+ /home/eharano/exjobb/hevc_transcoding-eharano/software/HM-16.6/build/linux/lib/TLibEncoder/../../../../source/Lib/TLibEncoder/NALwrite.h \
+ /home/eharano/exjobb/hevc_transcoding-eharano/software/HM-16.6/build/linux/lib/TLibEncoder/../../../../source/Lib/TLibCommon/CommonDef.h
+ /home/eharano/exjobb/hevc_transcoding-eharano/software/HM-16.6/build/linux/lib/TLibEncoder/../../../../source/Lib/TLibEncoder/NALwrite.cpp :
+ /home/eharano/exjobb/hevc_transcoding-eharano/software/HM-16.6/build/linux/lib/TLibEncoder/../../../../source/Lib/TLibCommon/NAL.h :
+ /home/eharano/exjobb/hevc_transcoding-eharano/software/HM-16.6/build/linux/lib/TLibEncoder/../../../../source/Lib/TLibCommon/CommonDef.h :
+ /home/eharano/exjobb/hevc_transcoding-eharano/software/HM-16.6/build/linux/lib/TLibEncoder/../../../../source/Lib/TLibCommon/TypeDef.h :
+ /home/eharano/exjobb/hevc_transcoding-eharano/software/HM-16.6/build/linux/lib/TLibEncoder/../../../../source/Lib/TLibCommon/TComBitStream.h :
+ /home/eharano/exjobb/hevc_transcoding-eharano/software/HM-16.6/build/linux/lib/TLibEncoder/../../../../source/Lib/TLibEncoder/NALwrite.h :
+ /home/eharano/exjobb/hevc_transcoding-eharano/software/HM-16.6/build/linux/lib/TLibEncoder/../../../../source/Lib/TLibCommon/CommonDef.h :

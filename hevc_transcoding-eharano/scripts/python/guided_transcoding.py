@@ -15,9 +15,10 @@ def transcode(hq_bitstream):
 
     (width, height) = filenames.extract_dimensions(hq_bitstream_basename)
 
+    """
     if height != 1080:
     	raise Exception("Expected 1080p video")
-
+    """
 
     # Create folders and logs
 
@@ -59,8 +60,8 @@ def transcode(hq_bitstream):
     This corresponds to 720p, 536p and 360p for a 1080p video.
     """
 
-    downscale_parameter_list = [[1], [0], [1,0]]
-    #downscale_parameter_list = [[0], [0,0]]
+    #downscale_parameter_list = [[1], [0], [1,0]]
+    downscale_parameter_list = [[0], [0,0]]
 
     for downscale_parameters in downscale_parameter_list:
 
@@ -90,9 +91,8 @@ def transcode(hq_bitstream):
         rdoq_0_file_shortpath = "%s_rdoq_0" % (downscaled_file_shortpath)
         rdoq_0_file = "%s/%s.bin" % (downscale_folder, rdoq_0_file_shortpath)
 
-        # "-f" option should be uneccesary here, try removing it when everything else works.
         rdoq_0_cmd = "%s -c %s -i %s -b %s -fr %d -f %d -wdt %d -hgt %d --RDOQ=0 -SBH 0 --RDOQTS=0" % (binaries.hm_encoder, config.cfg_file, 
-            downscaled_file, rdoq_0_file, config.framerate, config.frames, downscaled_width, downscaled_height)
+            downscaled_file, rdoq_0_file, config.framerate, config.all_frames, downscaled_width, downscaled_height)
         subprocess.call(rdoq_0_cmd, shell=True, stderr=err_log)
 
 
@@ -153,34 +153,42 @@ def transcode(hq_bitstream):
 
         raw_video.mux(reconstructed_file_decoded)
 
-
-        # Cleanup
-        #os.remove(downscaled_file)
-        #os.remove(rdoq_0_file)
-        #os.remove(pruned_file)
-        #os.remove(hq_bitstream_decoded_dec_order_downscaled)
-        #os.remove(reconstructed_file)
-
-        # Play transcoded file
-        #raw_video.play_yuv(reconstructed_file_decoded)
-
-
-    # Cleanup
-    #os.remove(hq_bitstream_decoded)
-    #os.remove(hq_bitstream_decoded_dec_order)
-
     err_log.close()
 
 def iterate():
 
-    sequences = ['MPEG_CfP_seqs/orig-draft-cfp_2009-07-23/BQTerrace_1920x1080_60.yuv']
+    sequences = ['sample_videos/MPEG_CfP_seqs/orig-draft-cfp_2009-07-23/BQSquare_416x240_60.yuv']
     
     QP_hq = [22, 27, 32, 37]
     QP_lq = [qp + 2 for qp in QP_hq]
 
     for sequence in sequences:
 
-        encode_original_module.encode_original(sequence, config.cfg_file, QP_hq)
+        original_file_basename = os.path.basename(original_file)
+        original_file_shortpath = os.path.splitext(original_file_basename)[0]
+
+        (width, height)  = filenames.extract_dimensions(original_file_shortpath)
+
+        cfg_file_basename = os.path.basename(cfg_file)
+        cfg_mode = filenames.extract_cfg_mode(cfg_file_basename)
+
+        output_file_framerate_replaced = filenames.replace_framerate(original_file_shortpath, config.framerate)
+        output_file_info_added = "%s_%s_%d-frames" % (output_file_framerate_replaced, cfg_mode, config.frames)
+
+        output_folder = "%s/%s" % (directories.bitstream_folder, output_file_info_added)
+        paths.create_if_needed(output_folder)
+
+        for qp_hq in QP_hq:
+
+            # Output file
+
+            output_file_shortpath = "%s_qp-%d" % (output_file_info_added, qp)
+            output_file = "%s/%s.bin" % (output_folder, output_file_shortpath)
+
+            encode_cmd = "%s -c %s -i %s -b %s -fr %s -f %s -hgt %s -wdt %s -SBH 1" % \
+                (binaries.hm_encoder, cfg_file, original_file, output_file, config.framerate, config.frames, height, width)
+            subprocess.call(encode_cmd, shell=True)
+            #subprocess.call("touch " + output_file, shell=True)
 
         #for s in [720, 536, 360]:
         #    for qp_lq in QP_lq:

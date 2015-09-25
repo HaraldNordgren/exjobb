@@ -1,0 +1,5 @@
+objects/program_options_lite.d.o: \
+ /home/eharano/exjobb/hevc_transcoding-eharano/software/HM-16.6/build/linux/lib/TAppCommon/../../../../source/Lib/TAppCommon/program_options_lite.cpp \
+ /home/eharano/exjobb/hevc_transcoding-eharano/software/HM-16.6/build/linux/lib/TAppCommon/../../../../source/Lib/TAppCommon/program_options_lite.h
+ /home/eharano/exjobb/hevc_transcoding-eharano/software/HM-16.6/build/linux/lib/TAppCommon/../../../../source/Lib/TAppCommon/program_options_lite.cpp :
+ /home/eharano/exjobb/hevc_transcoding-eharano/software/HM-16.6/build/linux/lib/TAppCommon/../../../../source/Lib/TAppCommon/program_options_lite.h :

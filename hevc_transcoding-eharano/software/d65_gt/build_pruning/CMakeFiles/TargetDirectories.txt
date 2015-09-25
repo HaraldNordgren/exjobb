@@ -1,0 +1,2 @@
+/home/eharano/exjobb/hevc_transcoding-eharano/software/d65_gt/build_pruning/CMakeFiles/d65_dec.dir
+/home/eharano/exjobb/hevc_transcoding-eharano/software/d65_gt/build_pruning/CMakeFiles/d65_lib.dir

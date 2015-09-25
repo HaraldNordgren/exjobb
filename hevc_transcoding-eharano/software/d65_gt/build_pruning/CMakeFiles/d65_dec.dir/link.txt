@@ -1,0 +1,1 @@
+/usr/bin/cc  -m32 -O3 -msse -msse2 -msse3 -msse4 -msse4.1 -O3 -DNDEBUG    CMakeFiles/d65_dec.dir/d65_dec/decoder.c.o  -o d65_dec -rdynamic libd65_lib.a -lpthread 

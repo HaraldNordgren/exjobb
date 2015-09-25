@@ -1,0 +1,44 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+../d65_lib/d65_api.h
+stdlib.h
+../d65_lib/stdlib.h
+stdio.h
+../d65_lib/stdio.h
+d65_internal.h
+../d65_lib/d65_internal.h
+
+../d65_lib/d65_internal.h
+stdio.h
+../d65_lib/stdio.h
+setjmp.h
+-
+d65_api.h
+../d65_lib/d65_api.h
+pthread.h
+../d65_lib/pthread.h
+openHevcWrapper.h
+../d65_lib/openHevcWrapper.h
+
+/home/eharano/exjobb/hevc_transcoding-eharano/software/d65_gt/d65_dec/decoder.c
+stdio.h
+-
+stdlib.h
+-
+string.h
+-
+d65_api.h
+/home/eharano/exjobb/hevc_transcoding-eharano/software/d65_gt/d65_dec/d65_api.h
+windows.h
+-
+sys/types.h
+-
+sys/timeb.h
+-
+

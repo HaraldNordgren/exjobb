@@ -21,8 +21,10 @@
 
 hevc_transcoding-eharano/output_data/
 hevc_transcoding-eharano/sample_videos/
+hevc_transcoding-eharano/test_data/
 
 hevc_transcoding-eharano/VideoSimScript/jobs/
 hevc_transcoding-eharano/VideoSimScript/Results/
-
 hevc_transcoding-eharano/VideoSimScript/unused/cfg_*/
+
+hevc_transcoding-eharano/software/HM-16.6/bin/

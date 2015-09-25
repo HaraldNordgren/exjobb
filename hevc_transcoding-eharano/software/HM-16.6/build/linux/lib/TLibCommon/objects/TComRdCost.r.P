@@ -1,0 +1,31 @@
+objects/TComRdCost.r.o: \
+ /home/eharano/exjobb/hevc_transcoding-eharano/software/HM-16.6/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComRdCost.cpp \
+ /home/eharano/exjobb/hevc_transcoding-eharano/software/HM-16.6/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComRom.h \
+ /home/eharano/exjobb/hevc_transcoding-eharano/software/HM-16.6/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/CommonDef.h \
+ /home/eharano/exjobb/hevc_transcoding-eharano/software/HM-16.6/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TypeDef.h \
+ /home/eharano/exjobb/hevc_transcoding-eharano/software/HM-16.6/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComRdCost.h \
+ /home/eharano/exjobb/hevc_transcoding-eharano/software/HM-16.6/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComPattern.h \
+ /home/eharano/exjobb/hevc_transcoding-eharano/software/HM-16.6/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComMv.h \
+ /home/eharano/exjobb/hevc_transcoding-eharano/software/HM-16.6/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComSlice.h \
+ /home/eharano/exjobb/hevc_transcoding-eharano/software/HM-16.6/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComList.h \
+ /home/eharano/exjobb/hevc_transcoding-eharano/software/HM-16.6/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComChromaFormat.h \
+ /home/eharano/exjobb/hevc_transcoding-eharano/software/HM-16.6/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComRectangle.h \
+ /home/eharano/exjobb/hevc_transcoding-eharano/software/HM-16.6/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/ContextTables.h \
+ /home/eharano/exjobb/hevc_transcoding-eharano/software/HM-16.6/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/Debug.h \
+ /home/eharano/exjobb/hevc_transcoding-eharano/software/HM-16.6/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/CommonDef.h \
+ /home/eharano/exjobb/hevc_transcoding-eharano/software/HM-16.6/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComRdCostWeightPrediction.h
+ /home/eharano/exjobb/hevc_transcoding-eharano/software/HM-16.6/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComRdCost.cpp :
+ /home/eharano/exjobb/hevc_transcoding-eharano/software/HM-16.6/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComRom.h :
+ /home/eharano/exjobb/hevc_transcoding-eharano/software/HM-16.6/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/CommonDef.h :
+ /home/eharano/exjobb/hevc_transcoding-eharano/software/HM-16.6/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TypeDef.h :
+ /home/eharano/exjobb/hevc_transcoding-eharano/software/HM-16.6/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComRdCost.h :
+ /home/eharano/exjobb/hevc_transcoding-eharano/software/HM-16.6/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComPattern.h :
+ /home/eharano/exjobb/hevc_transcoding-eharano/software/HM-16.6/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComMv.h :
+ /home/eharano/exjobb/hevc_transcoding-eharano/software/HM-16.6/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComSlice.h :
+ /home/eharano/exjobb/hevc_transcoding-eharano/software/HM-16.6/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComList.h :
+ /home/eharano/exjobb/hevc_transcoding-eharano/software/HM-16.6/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComChromaFormat.h :
+ /home/eharano/exjobb/hevc_transcoding-eharano/software/HM-16.6/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComRectangle.h :
+ /home/eharano/exjobb/hevc_transcoding-eharano/software/HM-16.6/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/ContextTables.h :
+ /home/eharano/exjobb/hevc_transcoding-eharano/software/HM-16.6/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/Debug.h :
+ /home/eharano/exjobb/hevc_transcoding-eharano/software/HM-16.6/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/CommonDef.h :
+ /home/eharano/exjobb/hevc_transcoding-eharano/software/HM-16.6/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComRdCostWeightPrediction.h :

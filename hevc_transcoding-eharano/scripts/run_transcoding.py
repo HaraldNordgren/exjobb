@@ -12,8 +12,10 @@ python.paths.assert_hevc_directory()
 subprocess.call("reset", shell=True)
 
 #bitstream = "/BQTerrace_1920x1080_1_randomaccess.bin"
-bitstream = "/BQTerrace_1920x1080_10_intra.bin"
+#bitstream = "/BQTerrace_1920x1080_10_intra.bin"
+bitstream = "/BQTerrace_1920x1080_10_intra2.bin"
 
 bitstream_fullpath = os.path.abspath(python.definitions.directories.bitstream_folder + bitstream)
 
+print "## Running transcoding ##"
 python.guided_transcoding.transcode(bitstream_fullpath)

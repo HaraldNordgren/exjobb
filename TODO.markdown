@@ -11,6 +11,7 @@
 - Maybe move svn repo to cluster.
 - Ask Ruoyang about the Assert failures in the decoder.
 - Get the transcoding to work on the cluster.
+- "All" option for frames in hm_encoder?
 
 ## Transmission
 

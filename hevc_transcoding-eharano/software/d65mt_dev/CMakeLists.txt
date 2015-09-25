@@ -35,6 +35,11 @@ ELSE(WIN32)
   SET(PTHREAD_LIBS pthread)
 ENDIF(WIN32)
 
+IF(MSVC)
+ELSE(MSVC)
+  SET(CMAKE_C_FLAGS "-m32 -O3 -msse -msse2 -msse3 -msse4 -msse4.1")
+ENDIF(MSVC)
+
 # D65
 INCLUDE_DIRECTORIES(d65_lib#for decoder app
                     ${PTHREAD_INCLUDE})

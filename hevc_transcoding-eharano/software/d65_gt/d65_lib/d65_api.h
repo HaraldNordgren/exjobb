@@ -63,9 +63,9 @@
 
 */
 
-#define D65_OUTPUT_IN_DEC_ORDER 1 // read the guideline above before use !
+#define D65_OUTPUT_IN_DEC_ORDER 0 // read the guideline above before use !
 #define GT_RESIDUAL_PRUNING     0 // read the guideline above before use !
-#define GT_RESIDUAL_RECONSTRUCT 0 // read the guideline above before use !
+#define GT_RESIDUAL_RECONSTRUCT 1 // read the guideline above before use !
 
 /******************************************************************************
 * Includes
