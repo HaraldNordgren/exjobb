@@ -1,6 +1,5 @@
 *.swp
 *.pyc
-*.yuv
 *.obj
 *.manifest
 *.user
@@ -19,6 +18,8 @@
 **/.cproject/
 **/.project/
 
+hevc_transcoding-eharano/rec.yuv
+
 hevc_transcoding-eharano/output_data/
 hevc_transcoding-eharano/sample_videos/
 hevc_transcoding-eharano/test_data/
@@ -28,3 +29,7 @@ hevc_transcoding-eharano/VideoSimScript/Results/
 hevc_transcoding-eharano/VideoSimScript/unused/cfg_*/
 
 hevc_transcoding-eharano/software/HM-16.6/bin/
+hevc_transcoding-eharano/software/HM-16.6/build/vc9/Win32/
+hevc_transcoding-eharano/software/HM-16.6/build/linux/**/objects
+
+hevc_transcoding-eharano/software/d65_gt/build_dec_*/

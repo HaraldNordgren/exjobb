@@ -1,17 +1,13 @@
 # Kista
 
 ## Reorganization
-- Moved HM-16.6, d65-gt, d65mt-dev to software.
-- Moved batch, shell, python to scripts
-- Moved run.py out of python folder to scripts
-- Moved binaries, definitions to new definitions folder.
-- Split definitions.py into three files.
+- Move windows binaries from bin to software structure.
 
 ## Friday
 - Maybe move svn repo to cluster.
 - Ask Ruoyang about the Assert failures in the decoder.
 - Get the transcoding to work on the cluster.
-- "All" option for frames in hm_encoder?
+- "All" option for frames in hm-encoder?
 
 ## Transmission
 
