@@ -35,6 +35,6 @@ output_file = "%s/%s_%s.bin" % (directories.bitstream_folder, output_file_shortp
 
 paths.create_if_needed(directories.bitstream_folder)
 
-encode_cmd = "%s -c %s -i %s -b %s -fr %s -f %s -hgt %s -wdt %s -SBH 1" % \
-	(binaries.hm_encoder, config.cfg_file, original_file, output_file, config.framerate, config.frames, height, width)
+encode_cmd = "%s -c %s -i %s -b %s -fr %s -f %s -wdt %s -hgt %s -SBH 1" % \
+	(binaries.hm_encoder, config.cfg_file, original_file, output_file, config.framerate, config.frames, width, height)
 subprocess.call(encode_cmd, shell=True)

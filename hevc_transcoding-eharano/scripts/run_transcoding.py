@@ -14,6 +14,9 @@ subprocess.call("reset", shell=True)
 #bitstream = "/BQTerrace_1920x1080_1_randomaccess.bin"
 #bitstream = "/BQTerrace_1920x1080_10_intra.bin"
 bitstream = "/BQTerrace_1920x1080_10_intra2.bin"
+#bitstream = "/BQSquare_416x240_5.bin"
+#bitstream = "/BQTerrace_1920x1080_5_intra.bin"
+#bitstream = "/BQTerrace_1920x1080_1_randomaccess.bin"
 
 bitstream_fullpath = os.path.abspath(python.definitions.directories.bitstream_folder + bitstream)
 

@@ -21,3 +21,4 @@ else:
 
 bitstream_folder    = os.path.abspath("bitstreams")
 output_folder       = os.path.abspath("output_data")
+test_data           = os.path.abspath("test_data")

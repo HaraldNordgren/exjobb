@@ -61,7 +61,8 @@ def transcode(hq_bitstream):
     """
 
     #downscale_parameter_list = [[1], [0], [1,0]]
-    downscale_parameter_list = [[0], [0,0]]
+    #downscale_parameter_list = [ [1,0,0], [1,0,0,0] ]
+    downscale_parameter_list = [ [0,0] ]
 
     for downscale_parameters in downscale_parameter_list:
 

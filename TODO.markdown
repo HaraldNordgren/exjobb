@@ -1,13 +1,7 @@
 # Kista
 
-## Reorganization
-- Move windows binaries from bin to software structure.
-
-## Friday
-- Maybe move svn repo to cluster.
-- Ask Ruoyang about the Assert failures in the decoder.
-- Get the transcoding to work on the cluster.
-- "All" option for frames in hm-encoder?
+## Monday
+- Find out why double downscaling fails (Creeping colors)
 
 ## Transmission
 

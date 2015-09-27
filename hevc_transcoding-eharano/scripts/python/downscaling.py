@@ -43,6 +43,8 @@ def perform_downscaling(width, height, input_file, output_file, downscale_parame
             (binaries.downscaler, width, height, downscale_files[i], downscale_files[i+1], downscale_parameters[i])
         subprocess.call(downscaling_cmd, shell=True)
 
+        #print "*** %s ***" % downscaling_cmd
+
         (width, height) = do_conversion(width, height, downscale_parameters[i])
 
     for tmp_file in glob.glob(downscale_tmp_start + "*"):

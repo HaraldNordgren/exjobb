@@ -9,16 +9,20 @@ function regex_replace {
 
 function build_version {
     name=$1
+    build_folder=build_$name
+    
     dec_order=$2
     pruning=$3
     residual_reconstruct=$4
+
+    rm $build_folder -r
 
     regex_replace 'D65_OUTPUT_IN_DEC_ORDER' $dec_order
     regex_replace 'GT_RESIDUAL_PRUNING'     $pruning
     regex_replace 'GT_RESIDUAL_RECONSTRUCT' $residual_reconstruct
 
-    mkdir build_$name
-    cd build_$name
+    mkdir $build_folder
+    cd $build_folder
     
     cmake CMakeLists.txt -DCMAKE_BUILD_TYPE=Release .. 
     make

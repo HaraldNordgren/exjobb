@@ -1,4 +1,5 @@
 *.swp
+*.avi
 *.pyc
 *.obj
 *.manifest
@@ -29,7 +30,8 @@ hevc_transcoding-eharano/VideoSimScript/Results/
 hevc_transcoding-eharano/VideoSimScript/unused/cfg_*/
 
 hevc_transcoding-eharano/software/HM-16.6/bin/
+hevc_transcoding-eharano/software/HM-16.6/lib/
 hevc_transcoding-eharano/software/HM-16.6/build/vc9/Win32/
-hevc_transcoding-eharano/software/HM-16.6/build/linux/**/objects
+hevc_transcoding-eharano/software/HM-16.6/build/linux/**/objects/
 
-hevc_transcoding-eharano/software/d65_gt/build_dec_*/
+hevc_transcoding-eharano/software/d65_gt/build_*/
