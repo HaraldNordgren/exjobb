@@ -2,7 +2,7 @@ import re
 
 dimensions_regex    = re.compile("(.*_)(\d+)x(\d+)(.*)")
 framerate_regex     = re.compile("(.*_)(\d+)($|_.*)")
-cfg_regex           = re.compile("encoder_([a-z]+)_.*")
+cfg_regex           = re.compile(".*encoder_([a-z]+)_.*")
 
 def extract_dimensions(filename):
     m = dimensions_regex.match(filename)
@@ -22,6 +22,14 @@ def extract_cfg_mode(filename):
         raise Exception('Cfg mode could not be determined')
 
     return m.group(1)
+
+def extract_framerate(filename):
+    m = framerate_regex.match(filename)
+
+    if not m:
+        raise Exception('Framerate could not be determined')
+
+    return int(m.group(2))
 
 def replace_dimensions(original_name, scaled_width, scaled_height):
     m = dimensions_regex.match(original_name)

@@ -1,5 +1,5 @@
 import sys, os, subprocess
-import downscaling, filenames, paths, raw_video
+import downscaling, filenames, paths, raw_video, time_string, command_line
 import encode_original_module
 
 import definitions.config       as config
@@ -8,25 +8,37 @@ import definitions.directories  as directories
 import definitions.binaries     as binaries
 
 
+"""
+[1], [0], [1,0] means two-thirds, half and one-third downscaling.
+This corresponds to 720p, 536p and 360p for a 1080p video.
+"""
+
+#downscale_parameter_list = [[1], [0], [1,0]]
+#downscale_parameter_list = [ [1,0,0], [1,0,0,0] ]
+downscale_parameter_list = [ [0], [0,0] ]
+
+
 def transcode(hq_bitstream):
+
+    cfg_mode = filenames.extract_cfg_mode(config.cfg_file)
+
+    if not cfg_mode in hq_bitstream:
+        print 'Incompatible cfg modes: %s with "%s"' % (hq_bitstream, cfg_mode)
+        sys.exit(1)
+
+
+    print "Bitstream: %s\n" % hq_bitstream
 
     hq_bitstream_basename = os.path.basename(hq_bitstream)
     hq_bitstream_shortpath = os.path.splitext(hq_bitstream_basename)[0]
 
     (width, height) = filenames.extract_dimensions(hq_bitstream_basename)
+    framerate = filenames.extract_framerate(hq_bitstream_basename)
 
-    """
-    if height != 1080:
-    	raise Exception("Expected 1080p video")
-    """
-
-    # Create folders and logs
-
-    sequence_folder = "%s/%s" % (directories.output_folder, hq_bitstream_shortpath)
+    sequence_folder = "%s/%s_gt_%s" % (directories.output_folder, hq_bitstream_shortpath, time_string.current())
     paths.remove_and_recreate_directory(sequence_folder)
 
-    err_log_path = "%s/err.txt" % sequence_folder
-    err_log = open(err_log_path, 'a+')
+    err_log_path = "%s/error_log.txt" % sequence_folder
 
 
     # Preprocessing
@@ -37,9 +49,9 @@ def transcode(hq_bitstream):
     hq_bitstream_decoded = "%s/%s.yuv" % (sequence_folder, hq_bitstream_decoded_shortpath)
 
     hq_decode_cmd = "%s -b %s -o %s" % (binaries.hm_decoder, hq_bitstream, hq_bitstream_decoded)
-    subprocess.call(hq_decode_cmd, shell=True, stderr=err_log)
+    command_line.call_indented(hq_decode_cmd, err_log_path=err_log_path)
 
-    raw_video.mux(hq_bitstream_decoded)
+    raw_video.mux(hq_bitstream_decoded, err_log_path=err_log_path)
 
 
     ## Decode HQ bitstream in decoding order (Receiver side)
@@ -48,21 +60,12 @@ def transcode(hq_bitstream):
     hq_bitstream_decoded_dec_order = "%s/%s.yuv" % (sequence_folder, hq_bitstream_decoded_dec_order_shortpath)
 
     dec_order_cmd = "%s -i %s -o %s" % (binaries.d65_gt_dec_order, hq_bitstream, hq_bitstream_decoded_dec_order)
-    subprocess.call(dec_order_cmd, shell=True, stderr=err_log)
+    command_line.call_indented(dec_order_cmd, err_log_path=err_log_path)
 
-    raw_video.mux(hq_bitstream_decoded_dec_order)
+    raw_video.mux(hq_bitstream_decoded_dec_order, err_log_path=err_log_path)
 
 
     # Downscaling and transcoding loop
-
-    """
-    [1], [0], [1,0] means two-thirds, half and one-third downscaling.
-    This corresponds to 720p, 536p and 360p for a 1080p video.
-    """
-
-    #downscale_parameter_list = [[1], [0], [1,0]]
-    #downscale_parameter_list = [ [1,0,0], [1,0,0,0] ]
-    downscale_parameter_list = [ [0,0] ]
 
     for downscale_parameters in downscale_parameter_list:
 
@@ -71,7 +74,7 @@ def transcode(hq_bitstream):
         (downscaled_width, downscaled_height) = downscaling.convert_dimensions(width, height, downscale_parameters)
         downscaled_height = downscaling.get_height_divisible_by_eight(downscaled_height)
 
-        downscale_folder = "%s/%d" % (sequence_folder, downscaled_height)
+        downscale_folder = "%s/%dp" % (sequence_folder, downscaled_height)
         paths.create_if_needed(downscale_folder)
 
 
@@ -82,9 +85,9 @@ def transcode(hq_bitstream):
         downscaled_file_shortpath = filenames.replace_dimensions(hq_bitstream_decoded_shortpath, downscaled_width, downscaled_height)
         downscaled_file = "%s/%s.yuv" % (downscale_folder, downscaled_file_shortpath)
 
-        downscaling.perform_downscaling(width, height, hq_bitstream_decoded, downscaled_file, downscale_parameters)
+        downscaling.perform_downscaling(width, height, hq_bitstream_decoded, downscaled_file, downscale_parameters, err_log_path=err_log_path)
 
-        raw_video.mux(downscaled_file)
+        raw_video.mux(downscaled_file, err_log_path=err_log_path)
 
 
         ## Re-encode with RDOQ=0 (Sender side)
@@ -92,9 +95,9 @@ def transcode(hq_bitstream):
         rdoq_0_file_shortpath = "%s_rdoq_0" % (downscaled_file_shortpath)
         rdoq_0_file = "%s/%s.bin" % (downscale_folder, rdoq_0_file_shortpath)
 
-        rdoq_0_cmd = "%s -c %s -i %s -b %s -fr %d -f %d -wdt %d -hgt %d --RDOQ=0 -SBH 0 --RDOQTS=0" % (binaries.hm_encoder, config.cfg_file, 
-            downscaled_file, rdoq_0_file, config.framerate, config.all_frames, downscaled_width, downscaled_height)
-        subprocess.call(rdoq_0_cmd, shell=True, stderr=err_log)
+        rdoq_0_cmd = "%s -c %s -i %s -b %s -fr %d -f %d -wdt %d -hgt %d --RDOQ=0 -SBH 0 --RDOQTS=0 --SEIDecodedPictureHash=2" % \
+            (binaries.hm_encoder, config.cfg_file, downscaled_file, rdoq_0_file, framerate, config.all_frames, downscaled_width, downscaled_height)
+        command_line.call_indented(rdoq_0_cmd, err_log_path=err_log_path)
 
 
         ## Prune (Sender side)
@@ -104,7 +107,7 @@ def transcode(hq_bitstream):
         pruned_file = "%s/%s.bin" % (downscale_folder, pruned_file_shortpath)
 
         prune_cmd = "%s -i %s -n %s" % (binaries.d65_gt_pruning, rdoq_0_file, pruned_file)
-        subprocess.call(prune_cmd, shell=True, stderr=err_log)
+        command_line.call_indented(prune_cmd, err_log_path=err_log_path)
 
 
         if debug.debug_1:
@@ -114,9 +117,9 @@ def transcode(hq_bitstream):
             pruned_file_decoded = "%s/%s.yuv" % (downscale_folder, pruned_file_decoded_shortpath)
 
             prune_decoding_cmd = "%s -b %s -o %s" % (binaries.hm_decoder, pruned_file, pruned_file_decoded)
-            subprocess.call(prune_decoding_cmd, shell=True, stderr=err_log)
+            command_line.call_indented(prune_decoding_cmd, err_log_path=err_log_path)
 
-            raw_video.mux(pruned_file_decoded)
+            raw_video.mux(pruned_file_decoded, err_log_path=err_log_path)
 
 
         # Branch 2
@@ -127,9 +130,10 @@ def transcode(hq_bitstream):
             filenames.replace_dimensions(hq_bitstream_decoded_dec_order_shortpath, downscaled_width, downscaled_height)
         hq_bitstream_decoded_dec_order_downscaled = "%s/%s.yuv" % (downscale_folder, hq_bitstream_decoded_dec_order_downscaled_shortpath)
 
-        downscaling.perform_downscaling(width, height, hq_bitstream_decoded_dec_order, hq_bitstream_decoded_dec_order_downscaled, downscale_parameters)
+        downscaling.perform_downscaling(width, height, hq_bitstream_decoded_dec_order, 
+            hq_bitstream_decoded_dec_order_downscaled, downscale_parameters, err_log_path=err_log_path)
 
-        raw_video.mux(hq_bitstream_decoded_dec_order_downscaled)
+        raw_video.mux(hq_bitstream_decoded_dec_order_downscaled, err_log_path=err_log_path)
 
 
         # Put together the branches
@@ -141,7 +145,7 @@ def transcode(hq_bitstream):
 
         res_reconstruct_cmd = "%s -i %s -u %s -n %s" % (binaries.d65_gt_res_reconstruct, pruned_file, 
             hq_bitstream_decoded_dec_order_downscaled, reconstructed_file)
-        subprocess.call(res_reconstruct_cmd, shell=True, stderr=err_log)
+        command_line.call_indented(res_reconstruct_cmd, err_log_path=err_log_path)
 
 
         ## Decode transcoded video (Receiver side)
@@ -150,11 +154,11 @@ def transcode(hq_bitstream):
         reconstructed_file_decoded = "%s/%s.yuv" % (downscale_folder, reconstructed_file_decoded_shortpath)
 
         res_reconstruct_decode_cmd = "%s -b %s -o %s" % (binaries.hm_decoder, reconstructed_file, reconstructed_file_decoded)
-        subprocess.call(res_reconstruct_decode_cmd, shell=True, stderr=err_log)
+        command_line.call_indented(res_reconstruct_decode_cmd, err_log_path=err_log_path)
 
-        raw_video.mux(reconstructed_file_decoded)
+        raw_video.mux(reconstructed_file_decoded, err_log_path=err_log_path)
 
-    err_log.close()
+    #err_log.close()
 
 def iterate():
 
@@ -186,7 +190,7 @@ def iterate():
             output_file_shortpath = "%s_qp-%d" % (output_file_info_added, qp)
             output_file = "%s/%s.bin" % (output_folder, output_file_shortpath)
 
-            encode_cmd = "%s -c %s -i %s -b %s -fr %s -f %s -hgt %s -wdt %s -SBH 1" % \
+            encode_cmd = "%s -c %s -i %s -b %s -fr %s -f %s -hgt %s -wdt %s -SBH 1 --SEIDecodedPictureHash=2" % \
                 (binaries.hm_encoder, cfg_file, original_file, output_file, config.framerate, config.frames, height, width)
             subprocess.call(encode_cmd, shell=True)
             #subprocess.call("touch " + output_file, shell=True)

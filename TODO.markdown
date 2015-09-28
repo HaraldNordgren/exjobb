@@ -1,7 +1,12 @@
 # Kista
 
 ## Monday
-- Find out why double downscaling fails (Creeping colors)
+- Find out why double downscaling fails. (Creeping colors)
+- 1080p downscaled to 264p causes errors. [0,0]
+- 240p downscaled to 24p causes errors. But maybe that's expected for such a small size?
+
+## Warnings
+- Ask Ruoyang about "--SEIDecodedPictureHash" and "--Level"
 
 ## Transmission
 

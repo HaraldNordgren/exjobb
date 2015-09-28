@@ -1,4 +1,5 @@
 import os, subprocess, glob
+import command_line
 
 import definitions.binaries as binaries
 
@@ -26,7 +27,7 @@ def convert_dimensions(width, height, parameters):
     
     return (width, height)
 
-def perform_downscaling(width, height, input_file, output_file, downscale_parameters):
+def perform_downscaling(width, height, input_file, output_file, downscale_parameters, err_log_path=None):
     
     output_folder = os.path.split(output_file)[0]
     downscale_tmp_start = "%s/downscaler_tmp_" % output_folder
@@ -41,9 +42,8 @@ def perform_downscaling(width, height, input_file, output_file, downscale_parame
         
         downscaling_cmd = "%s %s %s %s %s %d 1" % \
             (binaries.downscaler, width, height, downscale_files[i], downscale_files[i+1], downscale_parameters[i])
-        subprocess.call(downscaling_cmd, shell=True)
-
-        #print "*** %s ***" % downscaling_cmd
+        #subprocess.call(downscaling_cmd, shell=True)
+        command_line.call_indented(downscaling_cmd, err_log_path=err_log_path)
 
         (width, height) = do_conversion(width, height, downscale_parameters[i])
 

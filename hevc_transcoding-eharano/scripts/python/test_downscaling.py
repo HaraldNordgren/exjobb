@@ -1,10 +1,8 @@
-import subprocess, os, paths, raw_video
-import filenames, downscaling
+import subprocess, os, time
+import filenames, downscaling, paths, raw_video, time_string
 import definitions.directories as directories
 import definitions.binaries as binaries
 
-
-paths.create_if_needed(directories.test_data)
 
 input_file = "%s/BQTerrace_1920x1080_10_intra/BQTerrace_1920x1080_10_intra_dec.yuv" % directories.output_folder
 
@@ -12,6 +10,9 @@ input_file_basename = os.path.basename(input_file)
 input_file_shortpath = os.path.splitext(input_file_basename)[0]
 
 (width, height) = filenames.extract_dimensions(input_file_basename)
+
+downscaling_folder = "%s/%s_downscaling_test_%s" % (directories.output_folder, input_file_shortpath, time_string.current())
+paths.create_if_needed(downscaling_folder)
 
 parameters  = [0,1]
 half        = 0
@@ -25,13 +26,14 @@ for p in parameters:
         downscaled_height_1 = downscaling.get_height_divisible_by_eight(downscaled_height_1)
 
     intermediate_file_shortpath = filenames.replace_dimensions(input_file_basename, downscaled_width_1, downscaled_height_1)
-    intermediate_file = "%s/%s" % (directories.test_data, intermediate_file_shortpath)
+    intermediate_file = "%s/%s" % (downscaling_folder, intermediate_file_shortpath)
 
     #print "intermediate:\t%s" % intermediate_file
     
     downscaling_cmd_1 = "%s %s %s %s %s %d %d" % \
         (binaries.downscaler, width, height, input_file, intermediate_file, half, p)
-    subprocess.call(downscaling_cmd_1, shell=True)
+    #subprocess.call(downscaling_cmd_1, shell=True)
+    command_line.call_indented(downscaling_cmd_1)
 
     raw_video.mux(intermediate_file)
 
@@ -49,7 +51,8 @@ for p in parameters:
 
         downscaling_cmd_2 = "%s %s %s %s %s %d %d" % \
             (binaries.downscaler, downscaled_width_1, downscaled_height_1, intermediate_file, end_file, half, q)
-        subprocess.call(downscaling_cmd_2, shell=True)
+        #subprocess.call(downscaling_cmd_2, shell=True)
+        command_line.call_indented(downscaling_cmd_2)
 
         raw_video.mux(end_file)
 

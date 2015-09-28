@@ -1,7 +1,7 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 import os, sys, subprocess
-import filenames, paths
+import filenames, paths, command_line
 
 import definitions.config       as config
 import definitions.binaries     as binaries
@@ -30,11 +30,16 @@ cfg_mode = filenames.extract_cfg_mode(cfg_file_basename)
 
 # Output file
 
-output_file_shortpath = filenames.replace_framerate(original_file_shortpath, config.framerate)
-output_file = "%s/%s_%s.bin" % (directories.bitstream_folder, output_file_shortpath, cfg_mode)
+output_file_new_framerate = filenames.replace_framerate(original_file_shortpath, config.framerate)
+output_file_shortpath = "%s_%df_%s" % (output_file_new_framerate, config.frames, cfg_mode)
 
-paths.create_if_needed(directories.bitstream_folder)
+output_folder = "%s/%s" % (directories.bitstream_folder, output_file_shortpath)
+paths.create_if_needed(output_folder)
 
-encode_cmd = "%s -c %s -i %s -b %s -fr %s -f %s -wdt %s -hgt %s -SBH 1" % \
+output_file = "%s/%s.bin" % (output_folder, output_file_shortpath)
+print output_file
+
+encode_cmd = "%s -c %s -i %s -b %s -fr %s -f %s -wdt %s -hgt %s -SBH 1 --SEIDecodedPictureHash=2" % \
 	(binaries.hm_encoder, config.cfg_file, original_file, output_file, config.framerate, config.frames, width, height)
-subprocess.call(encode_cmd, shell=True)
+#subprocess.call(encode_cmd, shell=True)
+command_line.call_indented(encode_cmd)

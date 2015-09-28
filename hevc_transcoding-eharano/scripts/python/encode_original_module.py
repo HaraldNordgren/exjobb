@@ -31,7 +31,7 @@ def encode_original(original_file, cfg_file, QPs):
         output_file_shortpath = "%s_qp-%d" % (output_file_info_added, qp)
         output_file = "%s/%s.bin" % (output_folder, output_file_shortpath)
 
-        encode_cmd = "%s -c %s -i %s -b %s -fr %s -f %s -hgt %s -wdt %s -SBH 1" % \
+        encode_cmd = "%s -c %s -i %s -b %s -fr %s -f %s -hgt %s -wdt %s -SBH 1 --SEIDecodedPictureHash=2" % \
             (binaries.hm_encoder, cfg_file, original_file, output_file, config.framerate, config.frames, height, width)
         subprocess.call(encode_cmd, shell=True)
         #subprocess.call("touch " + output_file, shell=True)
