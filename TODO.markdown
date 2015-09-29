@@ -1,3 +1,6 @@
+# Tuseday
+- Post letter!
+
 # Ask Kennth
 - Mario's code, what does it do?
 
