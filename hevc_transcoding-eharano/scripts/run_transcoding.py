@@ -5,6 +5,7 @@ import os, subprocess
 import python.definitions.directories   as directories
 import python.paths                     as paths
 import python.guided_transcoding        as guided_transcoding
+import python.guided_transcoding_old    as guided_transcoding_old
 
 
 paths.assert_hevc_directory()
@@ -23,4 +24,5 @@ bitstream = "/BQTerrace_1920x1080_10_intra.bin"
 bitstream_fullpath = os.path.normpath(directories.bitstream_folder + bitstream)
 
 print "## Running transcoding ##"
-guided_transcoding.transcode(bitstream_fullpath)
+#guided_transcoding.transcode(bitstream_fullpath)
+guided_transcoding.transcode()

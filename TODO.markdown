@@ -1,60 +1,30 @@
-# Kista
+# Ask Kennth
+- Mario's code, what does it do?
 
-## Monday
+# Ask Ruoyang
+- What are "--SEIDecodedPictureHash" and "--Level".
+- They give warnings that clog stderr.
+
+# Downscaling problems
 - Find out why double downscaling fails. (Creeping colors)
 - 1080p downscaled to 264p causes errors. [0,0]
-- 240p downscaled to 24p causes errors. But maybe that's expected for such a small size?
+- 240p downscaled to 24p causes errors. Maybe expected for such a small size?
 
-## Warnings
-- Ask Ruoyang about "--SEIDecodedPictureHash" and "--Level"
 
-## Transmission
+# Create test anchor
 
-### Sender
-- Original video in encoded and transmitted. This is the HQ bitstream.
-- HQ bitstream is decoded, downscaled, reencoded with RDOQ=0 and pruned, then transmitted.
+## Mock test
+- Create downscaled originals in loop.
+- Calculate PSNR for each transcoded video by comparing to same-size original.
+- Can different length/framerate videos be compared this way?
+- Otherwise transcoding needs to encode all frames!
+- Filesize of transcoded file (bin) compared to what?
 
-### Reciever
-- HQ bitstream is decoded in dec order and downscaled.
-- Dec order, together with pruned version are used to reconstruct the video.
-
-## QPs
-- Iterate over different QPs, create folders for each and store output. Outside of current loop.
-- (-q) option is set for hm-decoder (what numbers?)
-- hm-decoder is only run twice: To encode original, and when encoded with RDOQ=0 before pruning.
-- First one is QP-hq, and second one QP-lq (QP-hq + 2 ?).
-
-## Create test anchor
+## Real test
 - Choose 1080p test sequences: BQTerrace, etc.
 - Downscale to create 720p, 540p and 360p "originals" of each sequence.
 - Use these to calculate PSNR.
 - BD (Two coder configs at four quantizer settings)
-
-## Preprocessing
-- Create HQ bitstreams for 1080p videos to speed up the transcoding chain.
-- Preferably ~10 seconds with reasonable framerate.
-
-
-# <s>Transcoding chain</s>
-
-## Preprocessing
-- Encode a test sequence to generate a HQ bitstream using HM.
-
-## Step 1
-- Decode to get reconstructed samples using HM or d65mt-dev.
-- Optionally downscale to a smaller resolution.
-
-## Step 2
-- Transcode by encoding to derive LQ bitstream with coefficients using HM with RDOQ=0 (since the guided transcoder don’t deploy RDOQ).
-- Then remove the coefficients using one of the compiled versions of d65-gt (prune).
-
-## Step 3
-- Next decode the HQ bitstream with another version of d65-gt (output in decoding order).
-- Optionally downscale to a smaller resolution.
-
-## Step 4
-- Then perform guided transcoding using d65-gt (generate residual) with pruned bitstream and downscaled HQ in decoding order.
-- Then that bitstream now is ready for transmission to the end device and can be decoding of d65mt-dev or HM decoder.
 
 
 # Uppsatsen
