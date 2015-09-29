@@ -13,7 +13,7 @@ if platform.system() == "Windows":
     d65_gt_dec_order        = path.normpath("software/d65_gt/bin/d65_dec_dec_order.exe")
     d65_gt_res_reconstruct  = path.normpath("software/d65_gt/bin/d65_dec_residual_reconstruct.exe")
     ffmpeg                  = path.normpath("software/ffmpeg/ffmpeg.exe")
-    ffplay                  = path.normpath("software/ffmpeg/ffplay.exe")
+    #ffplay                  = path.normpath("software/ffmpeg/ffplay.exe")
 
 elif platform.system() == "Linux":
 

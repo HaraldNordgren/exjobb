@@ -5,7 +5,6 @@ import os, subprocess
 import python.definitions.directories   as directories
 import python.paths                     as paths
 import python.guided_transcoding        as guided_transcoding
-import python.guided_transcoding_old    as guided_transcoding_old
 
 
 paths.assert_hevc_directory()
