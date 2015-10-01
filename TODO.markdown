@@ -19,6 +19,9 @@
 - "output-folder/scripts" for all the scripts
 - Move subdirectory structure and then file after running a command.
 
+## Cfg file
+- Send information about mode, frames, framerate through bsub too
+
 # Ask Kennth
 - Mario's code, what does it do?
 - What are "--SEIDecodedPictureHash" and "--Level".

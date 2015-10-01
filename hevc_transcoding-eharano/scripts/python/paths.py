@@ -20,3 +20,12 @@ def assert_hevc_directory():
     if directory != hevc_directory:
         print "Run from \"%s\" directory" % hevc_directory
         sys.exit(1)
+
+def create_full_directory(root_folder, modular_folder):
+    full_folder = "%s/%s" % (root_folder, modular_folder)
+    create_if_needed(full_folder)
+
+    return full_folder
+
+def get_full_file(root_folder, modular_folder):
+    return "%s/%s" % (root_folder, modular_folder)

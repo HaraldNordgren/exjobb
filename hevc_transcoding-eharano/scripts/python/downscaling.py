@@ -42,7 +42,6 @@ def perform_downscaling(width, height, input_file, output_file, downscale_parame
         
         downscaling_cmd = "%s %s %s %s %s %d 1" % \
             (binaries.downscaler, width, height, downscale_files[i], downscale_files[i+1], downscale_parameters[i])
-        #subprocess.call(downscaling_cmd, shell=True)
         command_line.call_indented(downscaling_cmd, err_log_path=err_log_path)
 
         (width, height) = do_conversion(width, height, downscale_parameters[i])

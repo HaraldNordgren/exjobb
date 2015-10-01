@@ -92,29 +92,14 @@ def transcode():
             command_line.call_indented(encode_hq_cmd, err_log_path=err_log_path)
 
 
-            # Encode downscaled originals too
+            # Init "Encode downscaled originals"
 
             downscaled_originals_encoded = []
 
             downscaled_originals_encoded_folder = "%s/downscaled_originals_encoded" % hq_bitstream_folder
             paths.create_if_needed(downscaled_originals_encoded_folder)
 
-            for i in range(len(downscaled_originals)):
-                
-                downscaled_original = downscaled_originals[i]
-
-                downscaled_original_basename = os.path.basename(downscaled_original)
-                downscaled_original_shortpath = os.path.splitext(downscaled_original_basename)[0]
-                downscaled_original_encoded = "%s/%s_%s.bin" % (downscaled_originals_encoded_folder, downscaled_original_shortpath, qp_hq_string)
-
-                (downscaled_width, downscaled_height) = downscaled_dimensions[i]
-
-                encode_downscaled_original_cmd = "%s -c %s -i %s -b %s -q %d -fr %s -f %s -wdt %s -hgt %s -SBH 1 --SEIDecodedPictureHash=2" % \
-                    (binaries.hm_encoder, config.cfg_file, downscaled_original, downscaled_original_encoded, 
-                    qp_hq, config.framerate, config.frames, downscaled_width, downscaled_height)
-                command_line.call_indented(encode_downscaled_original_cmd, err_log_path=err_log_path)
-
-                downscaled_originals_encoded.append(downscaled_original_encoded)
+            ##for i in range(len(downscaled_originals)):
 
 
             ## Decode HQ bitstream (Sender side)
@@ -143,6 +128,25 @@ def transcode():
 
             #for downscale_parameters in downscale_parameter_list:
             for i in range(len(downscale_parameter_list)):
+
+                # Encode downscaled originals
+
+                downscaled_original = downscaled_originals[i]
+
+                downscaled_original_basename = os.path.basename(downscaled_original)
+                downscaled_original_shortpath = os.path.splitext(downscaled_original_basename)[0]
+                downscaled_original_encoded = "%s/%s_%s.bin" % (downscaled_originals_encoded_folder, downscaled_original_shortpath, qp_hq_string)
+
+                (downscaled_width, downscaled_height) = downscaled_dimensions[i]
+
+                encode_downscaled_original_cmd = "%s -c %s -i %s -b %s -q %d -fr %s -f %s -wdt %s -hgt %s -SBH 1 --SEIDecodedPictureHash=2" % \
+                    (binaries.hm_encoder, config.cfg_file, downscaled_original, downscaled_original_encoded, 
+                    qp_hq, config.framerate, config.frames, downscaled_width, downscaled_height)
+                command_line.call_indented(encode_downscaled_original_cmd, err_log_path=err_log_path)
+
+                downscaled_originals_encoded.append(downscaled_original_encoded)
+
+
 
                 downscale_parameters = downscale_parameter_list[i]
 
