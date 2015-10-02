@@ -1,3 +1,7 @@
+# Bash
+- Useful aliases to add to bashrc at work
+- alias ll='ls -alF'
+
 # Modular transcoding chain
 
 ## Race condition

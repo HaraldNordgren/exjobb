@@ -1,20 +1,24 @@
+import sys
+sys.path.append("scripts/python")
+sys.path.append("scripts/python/definitions")
+
 import subprocess, os, time
-import filenames, downscaling, paths, raw_video, time_string
-import definitions.directories as directories
-import definitions.binaries as binaries
+import filenames, downscaling, paths, raw_video, time_string, command_line
+import directories
+import binaries
 
 
-input_file = "%s/BQTerrace_1920x1080_10_intra/BQTerrace_1920x1080_10_intra_dec.yuv" % directories.output_folder
+input_file = "sample_videos/MPEG_CfP_seqs/orig-draft-cfp_2009-07-23/BQSquare_416x240_60.yuv"
 
 input_file_basename = os.path.basename(input_file)
 input_file_shortpath = os.path.splitext(input_file_basename)[0]
 
 (width, height) = filenames.extract_dimensions(input_file_basename)
 
-downscaling_folder = "%s/%s_downscaling_test_%s" % (directories.output_folder, input_file_shortpath, time_string.current())
+downscaling_folder = "%s/%s_downscaling_test_%s" % (directories.test_folder, input_file_shortpath, time_string.current())
 paths.create_if_needed(downscaling_folder)
 
-parameters  = [0,1]
+parameters  = [0,0,0]
 half        = 0
 
 counter     = 1

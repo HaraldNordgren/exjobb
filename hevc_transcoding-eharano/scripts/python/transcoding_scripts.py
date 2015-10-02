@@ -10,8 +10,8 @@ orig_draft = "sample_videos/MPEG_CfP_seqs/orig-draft-cfp_2009-07-23/"
 originals = []
 
 #originals_shortpath = ["BQSquare_416x240_60.yuv", "RaceHorses_416x240_30.yuv"]
-#originals_shortpath = ["BQSquare_416x240_60.yuv" ]
-originals_shortpath = ["BQTerrace_1920x1080_60.yuv", "BasketballDrive_1920x1080_50.yuv", "ParkScene_1920x1080_24.yuv", "ChristmasTree_1920x1080_50.yuv"]
+originals_shortpath = ["BQSquare_416x240_60.yuv" ]
+#originals_shortpath = ["BQTerrace_1920x1080_60.yuv","BasketballDrive_1920x1080_50.yuv","ParkScene_1920x1080_24.yuv","ChristmasTree_1920x1080_50.yuv"]
 
 for seq in originals_shortpath:
     originals.append(orig_draft + seq)
@@ -20,9 +20,9 @@ for seq in originals_shortpath:
 """ [1], [0], [1,0] means two-thirds, half and one-third downscaling.
 This corresponds to 720p, 536p and 360p for a 1080p video. """
 
-downscale_parameter_list = [ [1], [0], [1,0] ]
+#downscale_parameter_list = [ [1], [0], [1,0] ]
 #downscale_parameter_list = [ [1,0,0], [1,0,0,0] ]
-#downscale_parameter_list = [ [0], [0,0] ]
+downscale_parameter_list = [ [0], [0,0] ]
 #downscale_parameter_list = [ [0] ]
 
 #QP_hq = [27]
@@ -65,7 +65,7 @@ for original_file in originals:
                 bsub_out = "%s/bsub_out.txt" % tmp_directory
                 bsub_err = "%s/bsub_err.txt" % tmp_directory
 
-                bsub_cmd = "bsub -o %s -e %s python scripts/python/guided_transcoding_modular.py %s %d %s %d %s" % \
+                bsub_cmd = "bsub -o %s -e %s python -u scripts/python/guided_transcoding_modular.py %s %d %s %d %s" % \
                     (bsub_out, bsub_err, original_file, qp_hq, downscale_parameters_string, qp_lq, current_time)
                 
                 #print "%s\n" % bsub_cmd
