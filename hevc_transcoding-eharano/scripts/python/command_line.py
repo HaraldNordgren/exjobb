@@ -5,6 +5,7 @@ indentation_level = "  "
 def call_indented(cmd, err_log_path=None):
 
 	print cmd
+	sys.stdout.flush()
 
 	#terminal_size = subprocess.check_output("stty size", shell=True)
 	#terminal_width = int(terminal_size.split()[1])

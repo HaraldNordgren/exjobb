@@ -1,6 +1,6 @@
 #!/bin/bash
 
-software=/home/harald/exjobb/hevc_transcoding-eharano/software
+software=$HOME/exjobb/hevc_transcoding-eharano/software
 bin=/usr/local/bin
 
 function symlink {
@@ -18,6 +18,6 @@ for hm in TAppEncoderStatic TAppDecoderStatic; do
     symlink $software/HM-16.6/bin/$hm $bin/$hm
 done
 
-#symlink $software/ffmpeg/ffmpeg-2.8-32bit-static/ffmpeg $bin/ffmpeg
+symlink $software/ffmpeg/ffmpeg-2.8-32bit-static/ffmpeg $bin/ffmpeg
 
 symlink $software/PSNRStatic/PSNRStatic $bin/PSNRStatic
