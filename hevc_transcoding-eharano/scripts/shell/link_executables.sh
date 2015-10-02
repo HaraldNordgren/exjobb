@@ -1,7 +1,10 @@
+#!/bin/bash
+
 software=/home/harald/exjobb/hevc_transcoding-eharano/software
 bin=/usr/local/bin
 
 function symlink {
+    chmod +x $1
     ln -s $1 $2
 }
 
@@ -16,3 +19,5 @@ for hm in TAppEncoderStatic TAppDecoderStatic; do
 done
 
 #symlink $software/ffmpeg/ffmpeg-2.8-32bit-static/ffmpeg $bin/ffmpeg
+
+symlink $software/PSNRStatic/PSNRStatic $bin/PSNRStatic

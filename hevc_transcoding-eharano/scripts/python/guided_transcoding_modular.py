@@ -303,6 +303,13 @@ if not os.path.isfile(rdoq_0_file):
                     shutil.copyfile(reconstructed_file_decoded_tmp, reconstructed_file_decoded)
 
 
+psnr_cmd = "%s %d %d %s %s" % (binaries.PSNRStatic, downscaled_width, downscaled_height, downscaled_original, reconstructed_file_decoded)
+command_line.call_indented(psnr_cmd)
+
+downscaled_original_encoded_size = os.path.getsize(downscaled_original_encoded)
+reconstructed_file_size = os.path.getsize(reconstructed_file)
+
+print "size ratio: %.2f" % (float(downscaled_original_encoded_size) / reconstructed_file_size)
 
 ## Compare downscaled_originals[i] with reconstructed_file_decoded (with PSNRStatic.exe)
 ## Compare file size of encoded downscaled_originals_encoded[i], with reconstructed_file (with os.path.getsize)

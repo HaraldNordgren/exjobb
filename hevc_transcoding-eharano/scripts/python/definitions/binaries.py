@@ -14,6 +14,7 @@ if platform.system() == "Windows":
     d65_gt_res_reconstruct  = path.normpath("software/d65_gt/bin/d65_dec_residual_reconstruct.exe")
     ffmpeg                  = path.normpath("software/ffmpeg/ffmpeg.exe")
     #ffplay                  = path.normpath("software/ffmpeg/ffplay.exe")
+    PSNRStatic              = path.normpath("software/PSNRStatic/PSNRStatic.exe")
 
 elif platform.system() == "Linux":
 
@@ -27,6 +28,7 @@ elif platform.system() == "Linux":
     d65_gt_res_reconstruct  = path.normpath("software/d65_gt/build_residual_reconstruct/d65_dec")
     ffmpeg                  = path.normpath("software/ffmpeg/ffmpeg-2.8-32bit-static/ffmpeg")
     #ffplay                  = path.normpath("software/ffmpeg/linux/ffmpeg/ffplay")
+    PSNRStatic              = path.normpath("software/PSNRStatic/PSNRStatic")
 
 else:
 

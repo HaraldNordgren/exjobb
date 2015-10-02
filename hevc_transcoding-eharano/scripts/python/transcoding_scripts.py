@@ -7,8 +7,8 @@ import definitions.config       as config
 
 
 orig_draft = "sample_videos/MPEG_CfP_seqs/orig-draft-cfp_2009-07-23"
-#originals = [ orig_draft + "/BQSquare_416x240_60.yuv", orig_draft + "/RaceHorses_416x240_30.yuv"]
-originals = [ orig_draft + "/BQSquare_416x240_60.yuv" ]
+originals = [ orig_draft + "/BQSquare_416x240_60.yuv", orig_draft + "/RaceHorses_416x240_30.yuv"]
+#originals = [ orig_draft + "/BQSquare_416x240_60.yuv" ]
 
 """ [1], [0], [1,0] means two-thirds, half and one-third downscaling.
 This corresponds to 720p, 536p and 360p for a 1080p video. """
