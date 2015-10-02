@@ -1,8 +1,13 @@
 import os, sys, shutil
 
 def create_if_needed(directory):
-    if not os.path.exists(directory):
+    try:
         os.makedirs(directory)
+    except OSError:
+        pass
+
+    #if not os.path.exists(directory):
+    #    os.makedirs(directory)
 
 def remove_and_recreate_directory(directory):
     if os.path.exists(directory):

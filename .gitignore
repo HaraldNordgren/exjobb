@@ -22,9 +22,10 @@
 hevc_transcoding-eharano/rec.yuv
 
 hevc_transcoding-eharano/output_data/
+hevc_transcoding-eharano/error_data/
+hevc_transcoding-eharano/test_data/
 hevc_transcoding-eharano/sample_videos/
 hevc_transcoding-eharano/bitstreams/
-hevc_transcoding-eharano/test_data/
 hevc_transcoding-eharano/sublime/
 
 hevc_transcoding-eharano/VideoSimScript/jobs/

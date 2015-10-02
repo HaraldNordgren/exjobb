@@ -6,9 +6,9 @@ def call_indented(cmd, err_log_path=None):
 
 	print cmd
 
-	terminal_size = subprocess.check_output("stty size", shell=True)
-	terminal_width = int(terminal_size.split()[1])
-	#terminal_width = 80
+	#terminal_size = subprocess.check_output("stty size", shell=True)
+	#terminal_width = int(terminal_size.split()[1])
+	terminal_width = 80
 
 	# Setting fold with terminal width minus 2 to compensate for indentation
 	indented_cmd = "%s | fold -s -w %s | sed 's/^/%s/g'" % (cmd, terminal_width - 2, indentation_level)

@@ -1536,14 +1536,16 @@ Bool TAppEncCfg::parseCfg( Int argc, Char* argv[] )
 
 Void TAppEncCfg::xCheckParameter()
 {
-  if (!m_decodedPictureHashSEIEnabled)
+  //hej
+
+  /*if (!m_decodedPictureHashSEIEnabled)
   {
     fprintf(stderr, "******************************************************************\n");
     fprintf(stderr, "** WARNING: --SEIDecodedPictureHash is now disabled by default. **\n");
     fprintf(stderr, "**          Automatic verification of decoded pictures by a     **\n");
     fprintf(stderr, "**          decoder requires this option to be enabled.         **\n");
     fprintf(stderr, "******************************************************************\n");
-  }
+  }*/
   if( m_profile==Profile::NONE )
   {
     fprintf(stderr, "***************************************************************************\n");

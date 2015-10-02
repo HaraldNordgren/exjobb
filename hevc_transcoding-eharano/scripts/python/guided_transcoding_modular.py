@@ -9,8 +9,8 @@ import definitions.directories  as directories
 import definitions.binaries     as binaries
 
 
-if len(sys.argv) != 5:
-    print "Usage: %s <original-yuv> <qp_hq> <downscale-parameters> <qp_lq>" % os.path.basename(sys.argv[0])
+if len(sys.argv) != 6:
+    print "Usage: %s <original-yuv> <qp_hq> <downscale-parameters> <qp_lq> <current_time>" % os.path.basename(sys.argv[0])
     sys.exit(1)
 
 
@@ -20,6 +20,7 @@ original_file           = sys.argv[1]
 qp_hq                   = int(sys.argv[2])
 downscale_parameters    = ast.literal_eval(sys.argv[3])
 qp_lq                   = int(sys.argv[4])
+current_time            = sys.argv[5]
 
 
 #Loop level 1
@@ -30,20 +31,22 @@ original_file_shortpath = os.path.splitext(original_file_basename)[0]
 
 (width, height)  = filenames.extract_dimensions(original_file_shortpath)
 
-(downscaled_width, downscaled_height) = downscaling.convert_dimensions(width, height, downscale_parameters)
-downscaled_height = downscaling.get_height_divisible_by_eight(downscaled_height)
-
 cfg_mode = filenames.extract_cfg_mode(config.cfg_file)
 
 hq_bitstream_framerate_replaced = filenames.replace_framerate(original_file_shortpath, config.framerate)
 hq_bitstream_mode_info = "%s_%df_%s" % (hq_bitstream_framerate_replaced, config.frames, cfg_mode)
 
-script_id = "%s_%s_%s_%sp_%s" % (time_string.current(), hq_bitstream_mode_info, qp_hq, downscaled_height, qp_lq)
+(downscaled_width, downscaled_height) = downscaling.convert_dimensions(width, height, downscale_parameters)
+downscaled_height = downscaling.get_height_divisible_by_eight(downscaled_height)
+
+script_id = "%s_%s_%s_%sp_%s" % (current_time, hq_bitstream_mode_info, qp_hq, downscaled_height, qp_lq)
 
 sequence_folder_modular = hq_bitstream_mode_info
-tmp_directory = "%s/%s" % (directories.tmp_folder, script_id)
 
-err_log_path = "%s/error_log.txt" % tmp_directory
+tmp_directory = "%s/%s" % (directories.tmp_folder, script_id)
+paths.create_if_needed(tmp_directory)
+
+#err_log_path = "%s/error_log.txt" % tmp_directory
 
 
 #Loop level 2
@@ -61,8 +64,8 @@ if not os.path.isfile(downscaled_original):
     paths.create_full_directory(tmp_directory, downscaled_originals_folder_modular)
     downscaled_original_tmp = paths.get_full_file(tmp_directory, downscaled_original_modular)
 
-    downscaling.perform_downscaling(width, height, original_file, downscaled_original_tmp, downscale_parameters, err_log_path=err_log_path)
-    raw_video.mux(downscaled_original_tmp, err_log_path=err_log_path)
+    downscaling.perform_downscaling(width, height, original_file, downscaled_original_tmp, downscale_parameters)
+    raw_video.mux(downscaled_original_tmp)
 
     if not os.path.isfile(downscaled_original):
 
@@ -98,9 +101,9 @@ if not os.path.isfile(hq_bitstream):
     paths.create_full_directory(tmp_directory, hq_bitstream_folder_modular)
     hq_bitstream_tmp = paths.get_full_file(tmp_directory, hq_bitstream_modular)
 
-    encode_hq_cmd = "%s -c %s -i %s -b %s -q %d -fr %s -f %s -wdt %s -hgt %s -SBH 1 --SEIDecodedPictureHash=2" % \
+    encode_hq_cmd = "%s -c %s -i %s -b %s -q %d -fr %s -f %s -wdt %s -hgt %s -SBH 1 --Level=5" % \
         (binaries.hm_encoder, config.cfg_file, original_file, hq_bitstream_tmp, qp_hq, config.framerate, config.frames, width, height)
-    command_line.call_indented(encode_hq_cmd, err_log_path=err_log_path)
+    command_line.call_indented(encode_hq_cmd)
 
     if not os.path.isfile(hq_bitstream):
 
@@ -112,8 +115,8 @@ if not os.path.isfile(hq_bitstream):
         hq_bitstream_decoded_tmp = paths.get_full_file(tmp_directory, hq_bitstream_decoded_modular)
 
         hq_decode_cmd = "%s -b %s -o %s" % (binaries.hm_decoder, hq_bitstream, hq_bitstream_decoded_tmp)
-        command_line.call_indented(hq_decode_cmd, err_log_path=err_log_path)
-        raw_video.mux(hq_bitstream_decoded_tmp, err_log_path=err_log_path)
+        command_line.call_indented(hq_decode_cmd)
+        raw_video.mux(hq_bitstream_decoded_tmp)
 
         if not os.path.isfile(hq_bitstream_decoded):
 
@@ -124,8 +127,8 @@ if not os.path.isfile(hq_bitstream):
             hq_bitstream_decoded_dec_order_tmp = paths.get_full_file(tmp_directory, hq_bitstream_decoded_dec_order_modular)
 
             dec_order_cmd = "%s -i %s -o %s" % (binaries.d65_gt_dec_order, hq_bitstream, hq_bitstream_decoded_dec_order_tmp)
-            command_line.call_indented(dec_order_cmd, err_log_path=err_log_path)
-            raw_video.mux(hq_bitstream_decoded_dec_order_tmp, err_log_path=err_log_path)
+            command_line.call_indented(dec_order_cmd)
+            raw_video.mux(hq_bitstream_decoded_dec_order_tmp)
 
             if not os.path.isfile(hq_bitstream_decoded_dec_order):
 
@@ -162,10 +165,10 @@ if not os.path.isfile(downscaled_original_encoded):
     paths.create_full_directory(tmp_directory, downscaled_originals_encoded_folder_modular)
     downscaled_original_encoded_tmp = paths.get_full_file(tmp_directory, downscaled_original_encoded_modular)
 
-    encode_downscaled_original_cmd = "%s -c %s -i %s -b %s -q %d -fr %s -f %s -wdt %s -hgt %s -SBH 1 --SEIDecodedPictureHash=2" % \
+    encode_downscaled_original_cmd = "%s -c %s -i %s -b %s -q %d -fr %s -f %s -wdt %s -hgt %s -SBH 1 --Level=5" % \
         (binaries.hm_encoder, config.cfg_file, downscaled_original, downscaled_original_encoded_tmp, 
         qp_hq, config.framerate, config.frames, downscaled_width, downscaled_height)
-    command_line.call_indented(encode_downscaled_original_cmd, err_log_path=err_log_path)
+    command_line.call_indented(encode_downscaled_original_cmd)
 
     if not os.path.isfile(downscaled_original_encoded):
 
@@ -178,8 +181,8 @@ if not os.path.isfile(downscaled_original_encoded):
         paths.create_full_directory(tmp_directory, downscale_folder_modular)
         downscaled_file_tmp = paths.get_full_file(tmp_directory, downscaled_file_modular)
 
-        downscaling.perform_downscaling(width, height, hq_bitstream_decoded, downscaled_file_tmp, downscale_parameters, err_log_path=err_log_path)
-        raw_video.mux(downscaled_file_tmp, err_log_path=err_log_path)
+        downscaling.perform_downscaling(width, height, hq_bitstream_decoded, downscaled_file_tmp, downscale_parameters)
+        raw_video.mux(downscaled_file_tmp)
 
         if not os.path.isfile(downscaled_file):
 
@@ -192,8 +195,8 @@ if not os.path.isfile(downscaled_original_encoded):
             hq_bitstream_decoded_dec_order_downscaled_tmp = paths.get_full_file(tmp_directory, hq_bitstream_decoded_dec_order_downscaled_modular)
 
             downscaling.perform_downscaling(width, height, hq_bitstream_decoded_dec_order, 
-                hq_bitstream_decoded_dec_order_downscaled_tmp, downscale_parameters, err_log_path=err_log_path)
-            raw_video.mux(hq_bitstream_decoded_dec_order_downscaled_tmp, err_log_path=err_log_path)
+                hq_bitstream_decoded_dec_order_downscaled_tmp, downscale_parameters)
+            raw_video.mux(hq_bitstream_decoded_dec_order_downscaled_tmp)
 
             if not os.path.isfile(hq_bitstream_decoded_dec_order_downscaled):
 
@@ -238,15 +241,17 @@ if not os.path.isfile(rdoq_0_file):
     paths.create_full_directory(tmp_directory, lq_bitstream_folder_modular)
     rdoq_0_file_tmp = paths.get_full_file(tmp_directory, rdoq_0_file_modular)
 
-    rdoq_0_cmd = "%s -c %s -i %s -b %s -q %d -fr %d -f %d -wdt %d -hgt %d --RDOQ=0 -SBH 0 --RDOQTS=0 --SEIDecodedPictureHash=2" % \
+    rdoq_0_cmd = "%s -c %s -i %s -b %s -q %d -fr %d -f %d -wdt %d -hgt %d --RDOQ=0 -SBH 0 --RDOQTS=0 --Level=5" % \
         (binaries.hm_encoder, config.cfg_file, downscaled_file, rdoq_0_file_tmp, qp_lq, 
         config.framerate, config.all_frames, downscaled_width, downscaled_height)
-    command_line.call_indented(rdoq_0_cmd, err_log_path=err_log_path)
+    command_line.call_indented(rdoq_0_cmd)
 
     if not os.path.isfile(rdoq_0_file):
 
         paths.create_full_directory(directories.storage_folder, lq_bitstream_folder_modular)
         shutil.copyfile(rdoq_0_file_tmp, rdoq_0_file)
+
+        #sys.exit(0)
 
         ## Prune (Sender side)
         ## This is the bitstream to transmit alongside hq_bitstream.
@@ -254,7 +259,7 @@ if not os.path.isfile(rdoq_0_file):
         pruned_file_tmp = paths.get_full_file(tmp_directory, pruned_file_modular)
 
         prune_cmd = "%s -i %s -n %s" % (binaries.d65_gt_pruning, rdoq_0_file, pruned_file_tmp)
-        command_line.call_indented(prune_cmd, err_log_path=err_log_path)
+        command_line.call_indented(prune_cmd)
 
         if not os.path.isfile(pruned_file):
 
@@ -267,19 +272,19 @@ if not os.path.isfile(rdoq_0_file):
                 pruned_file_decoded_tmp = paths.get_full_file(tmp_directory, pruned_file_decoded_modular)
 
                 prune_decoding_cmd = "%s -b %s -o %s" % (binaries.hm_decoder, pruned_file, pruned_file_decoded_tmp)
-                command_line.call_indented(prune_decoding_cmd, err_log_path=err_log_path)
-                raw_video.mux(pruned_file_decoded_tmp, err_log_path=err_log_path)
+                command_line.call_indented(prune_decoding_cmd)
+                raw_video.mux(pruned_file_decoded_tmp)
 
 
             # Put together the branches
-            
+
             ## Reconstruct residual (Receiver side)
 
             reconstructed_file_tmp = paths.get_full_file(tmp_directory, reconstructed_file_modular)
 
             res_reconstruct_cmd = "%s -i %s -u %s -n %s" % (binaries.d65_gt_res_reconstruct, pruned_file, 
                 hq_bitstream_decoded_dec_order_downscaled, reconstructed_file_tmp)
-            command_line.call_indented(res_reconstruct_cmd, err_log_path=err_log_path)
+            command_line.call_indented(res_reconstruct_cmd)
 
             if not os.path.isfile(reconstructed_file):
 
@@ -290,8 +295,8 @@ if not os.path.isfile(rdoq_0_file):
                 reconstructed_file_decoded_tmp = paths.get_full_file(tmp_directory, reconstructed_file_modular)
 
                 res_reconstruct_decode_cmd = "%s -b %s -o %s" % (binaries.hm_decoder, reconstructed_file, reconstructed_file_decoded_tmp)
-                command_line.call_indented(res_reconstruct_decode_cmd, err_log_path=err_log_path)
-                raw_video.mux(reconstructed_file_decoded_tmp, err_log_path=err_log_path)
+                command_line.call_indented(res_reconstruct_decode_cmd)
+                raw_video.mux(reconstructed_file_decoded_tmp)
 
                 if not os.path.isfile(reconstructed_file_decoded):
 
