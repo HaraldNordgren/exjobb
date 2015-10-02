@@ -1,5 +1,9 @@
 # Modular transcoding chain
 
+## Race condition
+- Map out direct dependecies in gtm.
+- Restructure file accordlingly.
+
 ## Cfg file
 - Send information about mode, frames, framerate through bsub too
 
