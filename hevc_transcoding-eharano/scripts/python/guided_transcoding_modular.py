@@ -46,8 +46,6 @@ sequence_folder_modular = hq_bitstream_mode_info
 tmp_directory = "%s/%s" % (directories.tmp_folder, script_id)
 paths.create_if_needed(tmp_directory)
 
-#err_log_path = "%s/error_log.txt" % tmp_directory
-
 
 #Loop level 2
 #for downscale_parameters in downscale_parameter_list:
@@ -63,6 +61,8 @@ if not os.path.isfile(downscaled_original):
 
     paths.create_full_directory(tmp_directory, downscaled_originals_folder_modular)
     downscaled_original_tmp = paths.get_full_file(tmp_directory, downscaled_original_modular)
+
+    print "# Downscale original"
 
     downscaling.perform_downscaling(width, height, original_file, downscaled_original_tmp, downscale_parameters)
     raw_video.mux(downscaled_original_tmp)
@@ -96,7 +96,7 @@ hq_bitstream_decoded_dec_order              = "%s/%s" % (directories.storage_fol
 
 if not os.path.isfile(hq_bitstream):
 
-    # Encode original sequence with given QP (Sender side)
+    print "# Encode original sequence with given QP (Sender side)"
     
     paths.create_full_directory(tmp_directory, hq_bitstream_folder_modular)
     hq_bitstream_tmp = paths.get_full_file(tmp_directory, hq_bitstream_modular)
@@ -110,7 +110,7 @@ if not os.path.isfile(hq_bitstream):
         paths.create_full_directory(directories.storage_folder, hq_bitstream_folder_modular)
         shutil.copyfile(hq_bitstream_tmp, hq_bitstream)
         
-        ## Decode HQ bitstream (Sender side)
+        print "## Decode HQ bitstream (Sender side)"
 
         hq_bitstream_decoded_tmp = paths.get_full_file(tmp_directory, hq_bitstream_decoded_modular)
 
@@ -122,7 +122,7 @@ if not os.path.isfile(hq_bitstream):
 
             shutil.copyfile(hq_bitstream_decoded_tmp, hq_bitstream_decoded)
 
-            ## Decode HQ bitstream in decoding order (Receiver side)
+            print "## Decode HQ bitstream in decoding order (Receiver side)"
 
             hq_bitstream_decoded_dec_order_tmp = paths.get_full_file(tmp_directory, hq_bitstream_decoded_dec_order_modular)
 
@@ -160,7 +160,7 @@ hq_bitstream_decoded_dec_order_downscaled               = "%s/%s" % (directories
 
 if not os.path.isfile(downscaled_original_encoded):
 
-    # Encode downscaled originals
+    print "# Encode downscaled originals"
 
     paths.create_full_directory(tmp_directory, downscaled_originals_encoded_folder_modular)
     downscaled_original_encoded_tmp = paths.get_full_file(tmp_directory, downscaled_original_encoded_modular)
@@ -175,8 +175,8 @@ if not os.path.isfile(downscaled_original_encoded):
         paths.create_full_directory(directories.storage_folder, downscaled_originals_encoded_folder_modular)
         shutil.copyfile(downscaled_original_encoded_tmp, downscaled_original_encoded)
 
-        # Branch 1
-        ## Downscale decoded HQ bistream (Sender side)
+        print "# Branch 1"
+        print "## Downscale decoded HQ bistream (Sender side)"
 
         paths.create_full_directory(tmp_directory, downscale_folder_modular)
         downscaled_file_tmp = paths.get_full_file(tmp_directory, downscaled_file_modular)
@@ -189,8 +189,8 @@ if not os.path.isfile(downscaled_original_encoded):
             paths.create_full_directory(directories.storage_folder, downscale_folder_modular)
             shutil.copyfile(downscaled_file_tmp, downscaled_file)
 
-            # Branch 2
-            ## Downscale decoding order HQ bitstream (Receiver side)
+            print "# Branch 2"
+            print "## Downscale decoding order HQ bitstream (Receiver side)"
 
             hq_bitstream_decoded_dec_order_downscaled_tmp = paths.get_full_file(tmp_directory, hq_bitstream_decoded_dec_order_downscaled_modular)
 
@@ -206,9 +206,6 @@ if not os.path.isfile(downscaled_original_encoded):
 
 #Loop level 4
 #for qp_lq in QP_lq:
-
-# Branch 1
-## Re-encode with RDOQ=0 (Sender side)
 
 qp_lq_string                                = "qp%d" % qp_lq
 lq_bitstream_folder_modular                 = "%s/%s" % (downscale_folder_modular, qp_lq_string)
@@ -241,6 +238,9 @@ if not os.path.isfile(rdoq_0_file):
     paths.create_full_directory(tmp_directory, lq_bitstream_folder_modular)
     rdoq_0_file_tmp = paths.get_full_file(tmp_directory, rdoq_0_file_modular)
 
+    print "# Branch 1"
+    print "## Re-encode with RDOQ=0 (Sender side)"
+
     rdoq_0_cmd = "%s -c %s -i %s -b %s -q %d -fr %d -f %d -wdt %d -hgt %d --RDOQ=0 -SBH 0 --RDOQTS=0 --Level=5" % \
         (binaries.hm_encoder, config.cfg_file, downscaled_file, rdoq_0_file_tmp, qp_lq, 
         config.framerate, config.all_frames, downscaled_width, downscaled_height)
@@ -251,9 +251,7 @@ if not os.path.isfile(rdoq_0_file):
         paths.create_full_directory(directories.storage_folder, lq_bitstream_folder_modular)
         shutil.copyfile(rdoq_0_file_tmp, rdoq_0_file)
 
-        #sys.exit(0)
-
-        ## Prune (Sender side)
+        print "## Prune (Sender side)"
         ## This is the bitstream to transmit alongside hq_bitstream.
 
         pruned_file_tmp = paths.get_full_file(tmp_directory, pruned_file_modular)
@@ -265,9 +263,9 @@ if not os.path.isfile(rdoq_0_file):
 
             shutil.copyfile(pruned_file_tmp, pruned_file)
 
-            # Decode pruned bitstream
-
             if debug.debug_1:
+
+                print "# Decode pruned bitstream"
 
                 pruned_file_decoded_tmp = paths.get_full_file(tmp_directory, pruned_file_decoded_modular)
 
@@ -276,9 +274,8 @@ if not os.path.isfile(rdoq_0_file):
                 raw_video.mux(pruned_file_decoded_tmp)
 
 
-            # Put together the branches
-
-            ## Reconstruct residual (Receiver side)
+            print "# Put together the branches"
+            print "## Reconstruct residual (Receiver side)"
 
             reconstructed_file_tmp = paths.get_full_file(tmp_directory, reconstructed_file_modular)
 
@@ -290,7 +287,7 @@ if not os.path.isfile(rdoq_0_file):
 
                 shutil.copyfile(reconstructed_file_tmp, reconstructed_file)
 
-                ## Decode transcoded video (Receiver side)
+                print "## Decode transcoded video (Receiver side)"
 
                 reconstructed_file_decoded_tmp = paths.get_full_file(tmp_directory, reconstructed_file_modular)
 
