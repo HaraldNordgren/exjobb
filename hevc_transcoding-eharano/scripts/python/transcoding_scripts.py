@@ -52,9 +52,12 @@ for original_file in originals:
 
         downscale_parameters_string = str(downscale_parameters).replace(" ", "")
 
-        for qp_lq in QP_lq:
 
-            for qp_hq in QP_hq:
+        # Causes race condition. Deploying jobs by looping over the QP_lqs first solves it somehow.
+
+        for qp_hq in QP_hq:
+            
+            for qp_lq in QP_lq:
 
                 current_time = time_string.current()
                 script_id = "%s_%s_%s_%sp_%s" % (time_string.current(), hq_bitstream_mode_info, qp_hq, downscaled_height, qp_lq)
@@ -62,8 +65,8 @@ for original_file in originals:
                 tmp_directory = "%s/%s" % (directories.tmp_folder, script_id)
                 paths.create_if_needed(tmp_directory)
 
-                bsub_out = "%s/bsub_out.txt" % tmp_directory
-                bsub_err = "%s/bsub_err.txt" % tmp_directory
+                bsub_out = "%s/bsub.out" % tmp_directory
+                bsub_err = "%s/bsub.err" % tmp_directory
 
                 bsub_cmd = "bsub -o %s -e %s python -u scripts/python/guided_transcoding_modular.py %s %d %s %d %s" % \
                     (bsub_out, bsub_err, original_file, qp_hq, downscale_parameters_string, qp_lq, current_time)

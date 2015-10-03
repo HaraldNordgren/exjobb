@@ -18,6 +18,7 @@
 **/.settings/
 **/.cproject/
 **/.project/
+**/BuildLog.htm
 
 hevc_transcoding-eharano/rec.yuv
 
