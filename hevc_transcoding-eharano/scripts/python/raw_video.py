@@ -16,12 +16,13 @@ def mux(yuv_file):
 
     return muxed_file
 
+"""
 def play_yuv(yuv_file):
     (width, height) = filenames.extract_dimensions(yuv_file)
 
     ffplay_cmd = "%s -i %s -video_size %dx%d -vcodec rawvideo -autoexit" % (binaries.ffplay, yuv_file, width, height)
-    #subprocess.call(ffplay_cmd, shell=True)
     command_line.call_indented(ffplay_cmd)
+"""
 
 def decode(bin_file):
     bin_file_no_extension = os.path.splitext(bin_file)[0]

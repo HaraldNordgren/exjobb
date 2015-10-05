@@ -6,14 +6,13 @@ def create_if_needed(directory):
     except OSError:
         pass
 
-    #if not os.path.exists(directory):
-    #    os.makedirs(directory)
-
+"""
 def remove_and_recreate_directory(directory):
     if os.path.exists(directory):
         shutil.rmtree(directory)
     
     os.makedirs(directory)
+"""
 
 def assert_hevc_directory():
     cwd = os.getcwd()
@@ -29,8 +28,6 @@ def assert_hevc_directory():
 def create_full_directory(root_folder, modular_folder):
     full_folder = "%s/%s" % (root_folder, modular_folder)
     create_if_needed(full_folder)
-
-    #return full_folder
 
 def get_full_file(root_folder, modular_folder):
     return "%s/%s" % (root_folder, modular_folder)

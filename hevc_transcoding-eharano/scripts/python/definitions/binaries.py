@@ -18,8 +18,6 @@ if platform.system() == "Windows":
 
 elif platform.system() == "Linux":
 
-	#downscaler              = path.normpath("bin/linux/downScale/downScale")
-
     hm_encoder              = path.normpath("software/HM-16.6/bin/TAppEncoderStatic")
     hm_decoder              = path.normpath("software/HM-16.6/bin/TAppDecoderStatic")
     downscaler              = path.normpath("software/d65_gt/tools/downScale/bin/linux/downScale")

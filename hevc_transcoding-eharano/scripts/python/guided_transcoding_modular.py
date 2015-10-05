@@ -14,7 +14,7 @@ if len(sys.argv) != 6:
     sys.exit(1)
 
 
-start_time = time.time()
+#start_time = time.time()
 
 original_file           = sys.argv[1]
 qp_hq                   = int(sys.argv[2])
@@ -340,10 +340,10 @@ command_line.call_indented(psnr_cmd)
 downscaled_original_encoded_size = os.path.getsize(downscaled_original_encoded)
 reconstructed_file_size = os.path.getsize(reconstructed_file)
 
-print "size ratio: %.2f" % (float(downscaled_original_encoded_size) / reconstructed_file_size)
+print "Transcoding compression ratio: %.2f" % (float(downscaled_original_encoded_size) / reconstructed_file_size)
 
 ## Compare downscaled_originals[i] with reconstructed_file_decoded (with PSNRStatic.exe)
 ## Compare file size of encoded downscaled_originals_encoded[i], with reconstructed_file (with os.path.getsize)
 
-end_time = time.time()
-print "total time: %.0fs" % (end_time - start_time)
+#end_time = time.time()
+#print "total time: %.0fs" % (end_time - start_time)

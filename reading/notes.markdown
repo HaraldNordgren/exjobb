@@ -1,3 +1,17 @@
+# Modular transcoding chain
+
+## File handling
+- Each script will create its own tmp directory structure.
+- Before each step, check if the corresponding file exists on storage.
+- If not, create it. Then check so that no other script created it in the meantime.
+- Move it over to the storage.
+
+## Folders
+- "output-folder/storage/seq/qp-hq/size/qp-lq" for final storage.
+- "output-folder/tmp/tmp-seq-qp-size-qp/seq/qp-hq/size/qp-lq" for creating the files.
+- Move file after running a command, creating folders in storage as needed.
+
+
 # Transmission
 
 ## Sender
