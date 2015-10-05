@@ -9,8 +9,8 @@ import definitions.config       as config
 orig_draft = "sample_videos/MPEG_CfP_seqs/orig-draft-cfp_2009-07-23/"
 originals = []
 
-#originals_shortpath = ["BQSquare_416x240_60.yuv", "RaceHorses_416x240_30.yuv"]
-originals_shortpath = ["BQSquare_416x240_60.yuv" ]
+originals_shortpath = ["BQSquare_416x240_60.yuv", "RaceHorses_416x240_30.yuv"]
+#originals_shortpath = ["BQSquare_416x240_60.yuv" ]
 #originals_shortpath = ["BQTerrace_1920x1080_60.yuv","BasketballDrive_1920x1080_50.yuv","ParkScene_1920x1080_24.yuv","ChristmasTree_1920x1080_50.yuv"]
 
 for seq in originals_shortpath:
@@ -51,9 +51,6 @@ for original_file in originals:
         downscaled_height = downscaling.get_height_divisible_by_eight(downscaled_height)
 
         downscale_parameters_string = str(downscale_parameters).replace(" ", "")
-
-
-        # Causes race condition. Deploying jobs by looping over the QP_lqs first solves it somehow.
 
         for qp_hq in QP_hq:
             

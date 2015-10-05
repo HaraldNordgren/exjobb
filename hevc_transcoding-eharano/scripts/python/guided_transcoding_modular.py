@@ -59,10 +59,10 @@ downscaled_original                         = "%s/%s" % (directories.storage_fol
 
 if not os.path.isfile(downscaled_original):
 
+    print "# Downscale original"
+
     paths.create_full_directory(tmp_directory, downscaled_originals_folder_modular)
     downscaled_original_tmp = paths.get_full_file(tmp_directory, downscaled_original_modular)
-
-    print "# Downscale original"
 
     downscaling.perform_downscaling(width, height, original_file, downscaled_original_tmp, downscale_parameters)
     raw_video.mux(downscaled_original_tmp)
@@ -71,6 +71,7 @@ if not os.path.isfile(downscaled_original):
 
         paths.create_full_directory(directories.storage_folder, downscaled_originals_folder_modular)
         shutil.copyfile(downscaled_original_tmp, downscaled_original)
+        raw_video.mux(downscaled_original)
 
 #end "#for downscale_parameters in downscale_parameter_list:"
 
@@ -115,6 +116,7 @@ if not os.path.isfile(hq_bitstream_decoded):
         
     print "## Decode HQ bitstream (Sender side)"
 
+    paths.create_full_directory(tmp_directory, hq_bitstream_folder_modular)
     hq_bitstream_decoded_tmp = paths.get_full_file(tmp_directory, hq_bitstream_decoded_modular)
 
     hq_decode_cmd = "%s -b %s -o %s" % (binaries.hm_decoder, hq_bitstream, hq_bitstream_decoded_tmp)
@@ -124,12 +126,14 @@ if not os.path.isfile(hq_bitstream_decoded):
     if not os.path.isfile(hq_bitstream_decoded):
 
         shutil.copyfile(hq_bitstream_decoded_tmp, hq_bitstream_decoded)
+        raw_video.mux(hq_bitstream_decoded)
 
 
 if not os.path.isfile(hq_bitstream_decoded_dec_order):
 
     print "## Decode HQ bitstream in decoding order (Receiver side)"
 
+    paths.create_full_directory(tmp_directory, hq_bitstream_folder_modular)
     hq_bitstream_decoded_dec_order_tmp = paths.get_full_file(tmp_directory, hq_bitstream_decoded_dec_order_modular)
 
     dec_order_cmd = "%s -i %s -o %s" % (binaries.d65_gt_dec_order, hq_bitstream, hq_bitstream_decoded_dec_order_tmp)
@@ -139,7 +143,7 @@ if not os.path.isfile(hq_bitstream_decoded_dec_order):
     if not os.path.isfile(hq_bitstream_decoded_dec_order):
 
         shutil.copyfile(hq_bitstream_decoded_dec_order_tmp, hq_bitstream_decoded_dec_order)
-
+        raw_video.mux(hq_bitstream_decoded_dec_order)
 
 
 #Loop level 3
@@ -197,6 +201,7 @@ if not os.path.isfile(downscaled_file):
 
         paths.create_full_directory(directories.storage_folder, downscale_folder_modular)
         shutil.copyfile(downscaled_file_tmp, downscaled_file)
+        raw_video.mux(downscaled_file)
 
 
 if not os.path.isfile(hq_bitstream_decoded_dec_order_downscaled):
@@ -204,6 +209,7 @@ if not os.path.isfile(hq_bitstream_decoded_dec_order_downscaled):
     print "# Branch 2"
     print "## Downscale decoding order HQ bitstream (Receiver side)"
 
+    paths.create_full_directory(tmp_directory, downscale_folder_modular)
     hq_bitstream_decoded_dec_order_downscaled_tmp = paths.get_full_file(tmp_directory, hq_bitstream_decoded_dec_order_downscaled_modular)
 
     downscaling.perform_downscaling(width, height, hq_bitstream_decoded_dec_order, 
@@ -213,6 +219,7 @@ if not os.path.isfile(hq_bitstream_decoded_dec_order_downscaled):
     if not os.path.isfile(hq_bitstream_decoded_dec_order_downscaled):
 
         shutil.copyfile(hq_bitstream_decoded_dec_order_downscaled_tmp, hq_bitstream_decoded_dec_order_downscaled)
+        raw_video.mux(hq_bitstream_decoded_dec_order_downscaled)
 
 
 
@@ -233,7 +240,7 @@ pruned_file                                 = "%s/%s" % (directories.storage_fol
 if debug.debug_1:
     pruned_file_decoded_shortpath           = "%s_dec" % pruned_file_shortpath
     pruned_file_decoded_modular             = "%s/%s.yuv" % (lq_bitstream_folder_modular, pruned_file_decoded_shortpath)
-    pruned_file_decoded                     = "%s/%s" % (directories.storage_folder, pruned_file_decoded_modular)
+    #pruned_file_decoded                     = "%s/%s" % (directories.storage_folder, pruned_file_decoded_modular)
 
 hq_bitstream_dimensions_replaced            = filenames.replace_dimensions(hq_bitstream_shortpath, downscaled_width, downscaled_height)
 reconstructed_file_shortpath                = "%s_qp%d_transcoded" % (hq_bitstream_dimensions_replaced, qp_lq)
@@ -247,11 +254,11 @@ reconstructed_file_decoded                  = "%s/%s" % (directories.storage_fol
 
 if not os.path.isfile(rdoq_0_file):
 
-    paths.create_full_directory(tmp_directory, lq_bitstream_folder_modular)
-    rdoq_0_file_tmp = paths.get_full_file(tmp_directory, rdoq_0_file_modular)
-
     print "# Branch 1"
     print "## Re-encode with RDOQ=0 (Sender side)"
+
+    paths.create_full_directory(tmp_directory, lq_bitstream_folder_modular)
+    rdoq_0_file_tmp = paths.get_full_file(tmp_directory, rdoq_0_file_modular)
 
     rdoq_0_cmd = "%s -c %s -i %s -b %s -q %d -fr %d -f %d -wdt %d -hgt %d --RDOQ=0 -SBH 0 --RDOQTS=0 --Level=5" % \
         (binaries.hm_encoder, config.cfg_file, downscaled_file, rdoq_0_file_tmp, qp_lq, 
@@ -269,6 +276,7 @@ if not os.path.isfile(pruned_file):
     print "## Prune (Sender side)"
     ## This is the bitstream to transmit alongside hq_bitstream.
 
+    paths.create_full_directory(tmp_directory, lq_bitstream_folder_modular)
     pruned_file_tmp = paths.get_full_file(tmp_directory, pruned_file_modular)
 
     prune_cmd = "%s -i %s -n %s" % (binaries.d65_gt_pruning, rdoq_0_file, pruned_file_tmp)
@@ -283,6 +291,7 @@ if debug.debug_1:
 
     print "# Decode pruned bitstream"
 
+    paths.create_full_directory(tmp_directory, lq_bitstream_folder_modular)
     pruned_file_decoded_tmp = paths.get_full_file(tmp_directory, pruned_file_decoded_modular)
 
     prune_decoding_cmd = "%s -b %s -o %s" % (binaries.hm_decoder, pruned_file, pruned_file_decoded_tmp)
@@ -295,6 +304,7 @@ if not os.path.isfile(reconstructed_file):
     print "# Put together the branches"
     print "## Reconstruct residual (Receiver side)"
 
+    paths.create_full_directory(tmp_directory, lq_bitstream_folder_modular)
     reconstructed_file_tmp = paths.get_full_file(tmp_directory, reconstructed_file_modular)
 
     res_reconstruct_cmd = "%s -i %s -u %s -n %s" % (binaries.d65_gt_res_reconstruct, pruned_file, 
@@ -310,6 +320,7 @@ if not os.path.isfile(reconstructed_file_decoded):
 
     print "## Decode transcoded video (Receiver side)"
 
+    paths.create_full_directory(tmp_directory, lq_bitstream_folder_modular)
     reconstructed_file_decoded_tmp = paths.get_full_file(tmp_directory, reconstructed_file_modular)
 
     res_reconstruct_decode_cmd = "%s -b %s -o %s" % (binaries.hm_decoder, reconstructed_file, reconstructed_file_decoded_tmp)
@@ -319,6 +330,7 @@ if not os.path.isfile(reconstructed_file_decoded):
     if not os.path.isfile(reconstructed_file_decoded):
 
         shutil.copyfile(reconstructed_file_decoded_tmp, reconstructed_file_decoded)
+        raw_video.mux(reconstructed_file_decoded)
 
 
 
