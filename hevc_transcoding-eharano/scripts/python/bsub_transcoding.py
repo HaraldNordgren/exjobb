@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 
-import subprocess, os, sys
+import subprocess, os
 import paths, time_string, downscaling, filenames
+
 import definitions.directories  as directories
 import definitions.config       as config
 
@@ -53,7 +54,6 @@ for original_file in originals:
             downscaled_height = downscaling.get_height_divisible_by_eight(downscaled_height)
 
             downscale_parameters_string = str(downscale_parameters).replace(" ", "")
-
             
             for qp_lq in QP_lq:
 
@@ -66,21 +66,14 @@ for original_file in originals:
                 bsub_out = "%s/bsub.out" % tmp_directory
                 bsub_err = "%s/bsub.err" % tmp_directory
 
-                python_args = "%s %s %d %d   %d %s   %s %d %d   %d %s   %s" % \
-                    (original_file, original_file_shortpath, width, height,
-                    qp_hq, hq_bitstream_mode_info,
-                    downscale_parameters_string, downscaled_width, downscaled_height,
-                    qp_lq, tmp_directory,
-                    current_time)
+                python_args = "%s %s %d %d %d %s %s %d %d %d %s %s" % \
+                    (original_file, original_file_shortpath, width, height, qp_hq, hq_bitstream_mode_info, downscale_parameters_string, 
+                    downscaled_width, downscaled_height, qp_lq, tmp_directory, current_time)
 
                 bsub_cmd = "bsub -J %s -o %s -e %s python -u scripts/python/guided_transcoding_modular.py %s" % \
                     (script_id, bsub_out, bsub_err, python_args)
 
                 bsub_cmds.append(bsub_cmd)
-                #bsub_cmds.append(script_id)
-                
-                #print "%s\n" % bsub_cmd
-                #subprocess.call(bsub_cmd, shell=True)
 
 
 for i in range(len(QP_lq)):
@@ -93,22 +86,4 @@ for i in range(len(QP_lq)):
             qp_hqs = downscale_parameters[k::len(QP_hq)]
             
             for job in qp_hqs:
-                #print job
                 subprocess.call(job, shell=True)
-
-"""
-for i in range(len(originals)):
-    downscale_parameters = bsub_cmds[i::len(originals)]
-    print downscale_parameters
-
-    for j in range(len(downscale_parameter_list)):
-        qp_hq = downscale_parameters[j::len(downscale_parameter_list)]
-        #print downscale_parameters[j]
-
-        for k in range(len(QP_hq)):
-            pass
-            #subprocess.call(qp_hq[k], shell=True)
-
-        print
-    print
-"""

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
-import sys, os, subprocess, time, ast, shutil
-import downscaling, filenames, paths, raw_video, time_string, command_line
+import sys, os, time, ast, shutil
+import downscaling, filenames, paths, raw_video, command_line
 
 import definitions.config       as config
 import definitions.debug        as debug
@@ -29,7 +29,7 @@ def already_locked(lock_file, output_file, output_folder_modular):
         return False
 
     except OSError:
-        print "### Wait while file is being created by another process"
+        print "### Wait while file is being created by another process\n"
         while not os.path.isfile(output_file):
             time.sleep(5)
         
@@ -72,17 +72,13 @@ original_file           = sys.argv[1]
 original_file_shortpath = sys.argv[2]
 width                   = int(sys.argv[3])
 height                  = int(sys.argv[4])
-
 qp_hq                   = int(sys.argv[5])
 hq_bitstream_mode_info  = sys.argv[6]
-
 downscale_parameters    = ast.literal_eval(sys.argv[7])
 downscaled_width        = int(sys.argv[8])
 downscaled_height       = int(sys.argv[9])
-
 qp_lq                   = int(sys.argv[10])
 tmp_directory           = sys.argv[11]
-
 current_time            = sys.argv[12]
 
 
@@ -148,7 +144,7 @@ pruned_file_shortpath                                   = "%s_pruned" % rdoq_0_f
 pruned_file_modular                                     = "%s/%s.bin" % (lq_bitstream_folder_modular, pruned_file_shortpath)
 pruned_file                                             = "%s/%s" % (directories.storage_folder, pruned_file_modular)
 
-if debug.debug_1:
+if debug.decode_pruned:
     pruned_file_decoded_shortpath                       = "%s_dec" % pruned_file_shortpath
     pruned_file_decoded_modular                         = "%s/%s.yuv" % (lq_bitstream_folder_modular, pruned_file_decoded_shortpath)
     pruned_file_decoded                                 = "%s/%s" % (directories.storage_folder, pruned_file_decoded_modular)
@@ -192,7 +188,7 @@ if not os.path.isfile(hq_bitstream_decoded):
     hq_bitstream_decoded_tmp = paths.get_full_file(tmp_directory, hq_bitstream_decoded_modular)
     hq_decode_cmd = "%s -b %s -o %s" % (binaries.hm_decoder, hq_bitstream, hq_bitstream_decoded_tmp)
 
-    create_file(hq_decode_cmd, hq_bitstream_decoded, hq_bitstream_decoded_tmp, hq_bitstream_folder_modular, enable_muxing=True)
+    create_file(hq_decode_cmd, hq_bitstream_decoded, hq_bitstream_decoded_tmp, hq_bitstream_folder_modular, enable_muxing=debug.muxing)
 
 
 if not os.path.isfile(hq_bitstream_decoded_dec_order):
@@ -203,7 +199,7 @@ if not os.path.isfile(hq_bitstream_decoded_dec_order):
     dec_order_cmd = "%s -i %s -o %s" % (binaries.d65_gt_dec_order, hq_bitstream, hq_bitstream_decoded_dec_order_tmp)
 
     create_file(dec_order_cmd, hq_bitstream_decoded_dec_order, hq_bitstream_decoded_dec_order_tmp, 
-        hq_bitstream_folder_modular, enable_muxing=True)
+        hq_bitstream_folder_modular, enable_muxing=debug.muxing)
 
 
 #Loop level 3
@@ -265,14 +261,14 @@ if not os.path.isfile(pruned_file):
     create_file(prune_cmd, pruned_file, pruned_file_tmp, lq_bitstream_folder_modular, enable_muxing=False)
 
 
-if debug.debug_1 and not os.path.isfile(pruned_file_decoded):
+if debug.decode_pruned and not os.path.isfile(pruned_file_decoded):
 
     print "## Decode pruned bitstream"
 
     pruned_file_decoded_tmp = paths.get_full_file(tmp_directory, pruned_file_decoded_modular)
     prune_decoding_cmd = "%s -b %s -o %s" % (binaries.hm_decoder, pruned_file, pruned_file_decoded_tmp)
 
-    create_file(prune_decoding_cmd, pruned_file_decoded, pruned_file_decoded_tmp, lq_bitstream_folder_modular, enable_muxing=True)
+    create_file(prune_decoding_cmd, pruned_file_decoded, pruned_file_decoded_tmp, lq_bitstream_folder_modular, enable_muxing=debug.muxing)
 
 
 if not os.path.isfile(reconstructed_file):
@@ -295,7 +291,7 @@ if not os.path.isfile(reconstructed_file_decoded):
     res_reconstruct_decode_cmd = "%s -b %s -o %s" % (binaries.hm_decoder, reconstructed_file, reconstructed_file_decoded_tmp)
 
     create_file(res_reconstruct_decode_cmd, reconstructed_file_decoded, reconstructed_file_decoded_tmp, 
-        lq_bitstream_folder_modular, enable_muxing=True)
+        lq_bitstream_folder_modular, enable_muxing=debug.muxing)
 
 
 

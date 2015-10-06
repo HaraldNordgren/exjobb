@@ -1,1 +1,2 @@
-debug_1 = True
+decode_pruned	= True
+muxing			= True
