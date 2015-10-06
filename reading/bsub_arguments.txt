@@ -1,0 +1,16 @@
+original_file           = sys.argv[1]
+original_file_shortpath = 2
+width                   = 3
+height                  = 4
+
+qp_hq                   = int(sys.argv[5])
+hq_bitstream_mode_info  = 6
+
+downscale_parameters    = ast.literal_eval(sys.argv[7])
+downscaled_width        = 8
+downscaled_height       = 9
+
+qp_lq                   = int(sys.argv[10])
+tmp_directory           = 11
+
+current_time            = sys.argv[12]

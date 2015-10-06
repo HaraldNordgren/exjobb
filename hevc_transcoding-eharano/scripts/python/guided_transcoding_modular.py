@@ -10,6 +10,7 @@ import definitions.binaries     as binaries
 
 
 def move_to_storage(output_file, tmp_file, lock_file, enable_muxing=False):
+
     shutil.copyfile(tmp_file, output_file)
 
     if enable_muxing:
@@ -20,21 +21,23 @@ def move_to_storage(output_file, tmp_file, lock_file, enable_muxing=False):
 
 
 def already_locked(lock_file, output_file, output_folder_modular):
+
     paths.create_full_directory(directories.storage_folder, output_folder_modular)
 
     try:
         os.mknod(lock_file)
         return False
 
-    # If lock_file cannot be created, then the lock was acquired by another
-    # process which is currently creating the file, so wait for that to finish.
     except OSError:
+        print "### Wait while file is being created by another process"
         while not os.path.isfile(output_file):
             time.sleep(5)
+        
         return True
 
 
 def create_file(cmd, output_file, tmp_file, output_folder_modular, enable_muxing=False):
+
     lock_file = "%s.lock" % output_file
 
     if already_locked(lock_file, output_file, output_folder_modular):
@@ -47,6 +50,7 @@ def create_file(cmd, output_file, tmp_file, output_folder_modular, enable_muxing
 
 
 def create_downscaled_file(input_file, output_file, output_file_modular, output_folder_modular):
+
     lock_file = "%s.lock" % output_file
     
     if already_locked(lock_file, output_file, output_folder_modular):
@@ -59,43 +63,32 @@ def create_downscaled_file(input_file, output_file, output_file_modular, output_
     move_to_storage(output_file, tmp_file, lock_file, enable_muxing=True)
 
 
-if len(sys.argv) != 6:
-    print "Usage: %s <original-yuv> <qp_hq> <downscale-parameters> <qp_lq> <current_time>" % os.path.basename(sys.argv[0])
+if len(sys.argv) != 13:
+    print "Incorrect number of arguments!"
     sys.exit(1)
 
 
 original_file           = sys.argv[1]
-qp_hq                   = int(sys.argv[2])
-downscale_parameters    = ast.literal_eval(sys.argv[3])
-qp_lq                   = int(sys.argv[4])
-current_time            = sys.argv[5]
+original_file_shortpath = sys.argv[2]
+width                   = int(sys.argv[3])
+height                  = int(sys.argv[4])
 
+qp_hq                   = int(sys.argv[5])
+hq_bitstream_mode_info  = sys.argv[6]
 
-#Loop level 1
+downscale_parameters    = ast.literal_eval(sys.argv[7])
+downscaled_width        = int(sys.argv[8])
+downscaled_height       = int(sys.argv[9])
 
-original_file_basename = os.path.basename(original_file)
-original_file_shortpath = os.path.splitext(original_file_basename)[0]
+qp_lq                   = int(sys.argv[10])
+tmp_directory           = sys.argv[11]
 
-(width, height)  = filenames.extract_dimensions(original_file_shortpath)
-
-cfg_mode = filenames.extract_cfg_mode(config.cfg_file)
-
-hq_bitstream_framerate_replaced = filenames.replace_framerate(original_file_shortpath, config.framerate)
-hq_bitstream_mode_info = "%s_%df_%s" % (hq_bitstream_framerate_replaced, config.frames, cfg_mode)
-
-(downscaled_width, downscaled_height) = downscaling.convert_dimensions(width, height, downscale_parameters)
-downscaled_height = downscaling.get_height_divisible_by_eight(downscaled_height)
-
-script_id = "%s_%s_%s_%sp_%s" % (current_time, hq_bitstream_mode_info, qp_hq, downscaled_height, qp_lq)
-
-sequence_folder_modular = hq_bitstream_mode_info
-
-tmp_directory = "%s/%s" % (directories.tmp_folder, script_id)
-paths.create_if_needed(tmp_directory)
+current_time            = sys.argv[12]
 
 
 #Loop level 2.1
 
+sequence_folder_modular                                 = hq_bitstream_mode_info
 downscaled_originals_folder_modular                     = "%s/downscaled_originals" % sequence_folder_modular
 
 downscaled_original_shortpath                           = filenames.replace_dimensions(original_file_shortpath, downscaled_width, downscaled_height)
@@ -175,7 +168,7 @@ reconstructed_file_decoded                              = "%s/%s" % (directories
 
 if not os.path.isfile(downscaled_original):
 
-    print "# Downscale original"
+    print "## Downscale original"
     create_downscaled_file(original_file, downscaled_original, downscaled_original_modular, downscaled_originals_folder_modular)
 
 
@@ -183,7 +176,7 @@ if not os.path.isfile(downscaled_original):
 
 if not os.path.isfile(hq_bitstream):
 
-    print "# Encode original sequence with given QP (Sender side)"
+    print "## Encode original sequence with given QP (Sender side)"
 
     hq_bitstream_tmp = paths.get_full_file(tmp_directory, hq_bitstream_modular)
     encode_hq_cmd = "%s -c %s -i %s -b %s -q %d -fr %s -f %s -wdt %s -hgt %s -SBH 1 --Level=5" % \
@@ -217,7 +210,7 @@ if not os.path.isfile(hq_bitstream_decoded_dec_order):
 
 if not os.path.isfile(downscaled_original_encoded):
 
-    print "# Encode downscaled originals"
+    print "## Encode downscaled originals"
 
     downscaled_original_encoded_tmp = paths.get_full_file(tmp_directory, downscaled_original_encoded_modular)
     encode_downscaled_original_cmd = "%s -c %s -i %s -b %s -q %d -fr %s -f %s -wdt %s -hgt %s -SBH 1 --Level=5" % \
@@ -274,7 +267,7 @@ if not os.path.isfile(pruned_file):
 
 if debug.debug_1 and not os.path.isfile(pruned_file_decoded):
 
-    print "# Decode pruned bitstream"
+    print "## Decode pruned bitstream"
 
     pruned_file_decoded_tmp = paths.get_full_file(tmp_directory, pruned_file_decoded_modular)
     prune_decoding_cmd = "%s -b %s -o %s" % (binaries.hm_decoder, pruned_file, pruned_file_decoded_tmp)
@@ -315,6 +308,3 @@ pruned_file_size                    = os.path.getsize(pruned_file)
 
 print "Pruned bitstream compared to downscaled original (simulcast)"
 print "Size ratio: %.2f" % (float(pruned_file_size) / downscaled_original_encoded_size)
-
-## Compare downscaled_originals[i] with reconstructed_file_decoded (with PSNRStatic.exe)
-## Compare file size of encoded downscaled_originals_encoded[i], with reconstructed_file (with os.path.getsize)
