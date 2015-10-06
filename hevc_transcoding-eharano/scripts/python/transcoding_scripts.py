@@ -30,9 +30,6 @@ downscale_parameter_list = [ [0] ]
 QP_hq = [22, 27, 32, 37]
 QP_lq = [qp + 2 for qp in QP_hq]
 
-
-#bsub_output_folder = "%s/bsub_output" % directories.output_folder
-
 for original_file in originals:
 
     original_file_basename = os.path.basename(original_file)

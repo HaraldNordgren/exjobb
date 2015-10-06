@@ -8,33 +8,55 @@ import definitions.debug        as debug
 import definitions.directories  as directories
 import definitions.binaries     as binaries
 
-def move_to_storage(output_file, tmp_file, output_folder_modular, enable_muxing=False):
-    
+
+def move_to_storage(output_file, tmp_file, lock_file, enable_muxing=False):
+    shutil.copyfile(tmp_file, output_file)
+
     if enable_muxing:
         raw_video.mux(tmp_file)
+        raw_video.mux(output_file)
 
-    if not os.path.isfile(output_file):
+    os.remove(lock_file)
 
-        paths.create_full_directory(directories.storage_folder, output_folder_modular)
-        shutil.copyfile(tmp_file, output_file)
 
-        if enable_muxing:
-            raw_video.mux(output_file)
+def already_locked(lock_file, output_file, output_folder_modular):
+    paths.create_full_directory(directories.storage_folder, output_folder_modular)
+
+    try:
+        os.mknod(lock_file)
+        return False
+
+    # If lock_file cannot be created, then the lock was acquired by another
+    # process which is currently creating the file, so wait for that to finish.
+    except OSError:
+        while not os.path.isfile(output_file):
+            time.sleep(5)
+        return True
+
 
 def create_file(cmd, output_file, tmp_file, output_folder_modular, enable_muxing=False):
+    lock_file = "%s.lock" % output_file
 
-    paths.create_full_directory(tmp_directory, output_folder_modular)
+    if already_locked(lock_file, output_file, output_folder_modular):
+        return
+
+    paths.create_full_directory(tmp_directory, output_folder_modular)    
     
     command_line.call_indented(cmd)
-    move_to_storage(output_file, tmp_file, output_folder_modular, enable_muxing=enable_muxing)
+    move_to_storage(output_file, tmp_file, lock_file, enable_muxing=enable_muxing)
+
 
 def create_downscaled_file(input_file, output_file, output_file_modular, output_folder_modular):
+    lock_file = "%s.lock" % output_file
+    
+    if already_locked(lock_file, output_file, output_folder_modular):
+        return
 
     paths.create_full_directory(tmp_directory, output_folder_modular)
     tmp_file = paths.get_full_file(tmp_directory, output_file_modular)
 
     downscaling.perform_downscaling(width, height, input_file, tmp_file, downscale_parameters)
-    move_to_storage(output_file, tmp_file, output_folder_modular, enable_muxing=True)
+    move_to_storage(output_file, tmp_file, lock_file, enable_muxing=True)
 
 
 if len(sys.argv) != 6:
@@ -50,7 +72,6 @@ current_time            = sys.argv[5]
 
 
 #Loop level 1
-#for original_file in originals:
 
 original_file_basename = os.path.basename(original_file)
 original_file_shortpath = os.path.splitext(original_file_basename)[0]
@@ -74,41 +95,91 @@ paths.create_if_needed(tmp_directory)
 
 
 #Loop level 2.1
-#for downscale_parameters in downscale_parameter_list:
 
-downscaled_originals_folder_modular         = "%s/downscaled_originals" % sequence_folder_modular
+downscaled_originals_folder_modular                     = "%s/downscaled_originals" % sequence_folder_modular
 
-downscaled_original_shortpath               = filenames.replace_dimensions(original_file_shortpath, downscaled_width, downscaled_height)
-downscaled_original_modular                 = "%s/%s.yuv" % (downscaled_originals_folder_modular, downscaled_original_shortpath)
-downscaled_original                         = "%s/%s" % (directories.storage_folder, downscaled_original_modular)
+downscaled_original_shortpath                           = filenames.replace_dimensions(original_file_shortpath, downscaled_width, downscaled_height)
+downscaled_original_modular                             = "%s/%s.yuv" % (downscaled_originals_folder_modular, downscaled_original_shortpath)
+downscaled_original                                     = "%s/%s" % (directories.storage_folder, downscaled_original_modular)
 
+
+#Loop level 2.2
+
+qp_hq_string                                            = "qp%d" % qp_hq
+hq_bitstream_folder_modular                             = "%s/%s" % (sequence_folder_modular, qp_hq_string)
+
+hq_bitstream_shortpath                                  = "%s_%s" % (hq_bitstream_mode_info, qp_hq_string)
+hq_bitstream_modular                                    = "%s/%s.bin" % (hq_bitstream_folder_modular, hq_bitstream_shortpath)
+hq_bitstream                                            = "%s/%s" % (directories.storage_folder, hq_bitstream_modular)
+
+hq_bitstream_decoded_shortpath                          = "%s_dec" % hq_bitstream_shortpath
+hq_bitstream_decoded_modular                            = "%s/%s.yuv" % (hq_bitstream_folder_modular, hq_bitstream_decoded_shortpath)
+hq_bitstream_decoded                                    = "%s/%s" % (directories.storage_folder, hq_bitstream_decoded_modular)
+
+hq_bitstream_decoded_dec_order_shortpath                = "%s_dec_dec_order" % hq_bitstream_shortpath
+hq_bitstream_decoded_dec_order_modular                  = "%s/%s.yuv" % (hq_bitstream_folder_modular, hq_bitstream_decoded_dec_order_shortpath)
+hq_bitstream_decoded_dec_order                          = "%s/%s" % (directories.storage_folder, hq_bitstream_decoded_dec_order_modular)
+
+
+#Loop level 3
+
+downscaled_originals_encoded_folder_modular             = "%s/downscaled_originals_encoded" % hq_bitstream_folder_modular
+downscale_folder_modular                                = "%s/%dp" % (hq_bitstream_folder_modular, downscaled_height)
+
+downscaled_original_encoded_modular                     = "%s/%s_%s.bin" % \
+    (downscaled_originals_encoded_folder_modular, downscaled_original_shortpath, qp_hq_string)
+downscaled_original_encoded                             = "%s/%s" % (directories.storage_folder, downscaled_original_encoded_modular)
+
+downscaled_file_shortpath                               = \
+    filenames.replace_dimensions(hq_bitstream_decoded_shortpath, downscaled_width, downscaled_height)
+downscaled_file_modular                                 = "%s/%s.yuv" % (downscale_folder_modular, downscaled_file_shortpath)
+downscaled_file                                         = "%s/%s" % (directories.storage_folder, downscaled_file_modular)
+
+hq_bitstream_decoded_dec_order_downscaled_shortpath     = \
+    filenames.replace_dimensions(hq_bitstream_decoded_dec_order_shortpath, downscaled_width, downscaled_height)
+hq_bitstream_decoded_dec_order_downscaled_modular       = "%s/%s.yuv" % \
+    (downscale_folder_modular, hq_bitstream_decoded_dec_order_downscaled_shortpath)
+hq_bitstream_decoded_dec_order_downscaled               = "%s/%s" % (directories.storage_folder, hq_bitstream_decoded_dec_order_downscaled_modular)
+
+
+#Loop level 4
+
+qp_lq_string                                            = "qp%d" % qp_lq
+lq_bitstream_folder_modular                             = "%s/%s" % (downscale_folder_modular, qp_lq_string)
+
+rdoq_0_file_shortpath                                   = "%s_rdoq_0_%s" % (downscaled_file_shortpath, qp_lq_string)
+rdoq_0_file_modular                                     = "%s/%s.bin" % (lq_bitstream_folder_modular, rdoq_0_file_shortpath)
+rdoq_0_file                                             = "%s/%s" % (directories.storage_folder, rdoq_0_file_modular)
+
+pruned_file_shortpath                                   = "%s_pruned" % rdoq_0_file_shortpath
+pruned_file_modular                                     = "%s/%s.bin" % (lq_bitstream_folder_modular, pruned_file_shortpath)
+pruned_file                                             = "%s/%s" % (directories.storage_folder, pruned_file_modular)
+
+if debug.debug_1:
+    pruned_file_decoded_shortpath                       = "%s_dec" % pruned_file_shortpath
+    pruned_file_decoded_modular                         = "%s/%s.yuv" % (lq_bitstream_folder_modular, pruned_file_decoded_shortpath)
+    pruned_file_decoded                                 = "%s/%s" % (directories.storage_folder, pruned_file_decoded_modular)
+
+hq_bitstream_dimensions_replaced                        = filenames.replace_dimensions(hq_bitstream_shortpath, downscaled_width, downscaled_height)
+reconstructed_file_shortpath                            = "%s_qp%d_transcoded" % (hq_bitstream_dimensions_replaced, qp_lq)
+reconstructed_file_modular                              = "%s/%s.bin" % (lq_bitstream_folder_modular, reconstructed_file_shortpath)
+reconstructed_file                                      = "%s/%s" % (directories.storage_folder, reconstructed_file_modular)
+
+reconstructed_file_decoded_shortpath                    = "%s_dec" % reconstructed_file_shortpath
+reconstructed_file_decoded_modular                      = "%s/%s.yuv" % (lq_bitstream_folder_modular, reconstructed_file_decoded_shortpath)
+reconstructed_file_decoded                              = "%s/%s" % (directories.storage_folder, reconstructed_file_decoded_modular)
+
+
+
+#Loop level 2.1
 
 if not os.path.isfile(downscaled_original):
 
     print "# Downscale original"
     create_downscaled_file(original_file, downscaled_original, downscaled_original_modular, downscaled_originals_folder_modular)
 
-#end "#for downscale_parameters in downscale_parameter_list:"
-
 
 #Loop level 2.2
-#for qp_hq in QP_hq:
-
-qp_hq_string                                = "qp%d" % qp_hq
-hq_bitstream_folder_modular                 = "%s/%s" % (sequence_folder_modular, qp_hq_string)
-
-hq_bitstream_shortpath                      = "%s_%s" % (hq_bitstream_mode_info, qp_hq_string)
-hq_bitstream_modular                        = "%s/%s.bin" % (hq_bitstream_folder_modular, hq_bitstream_shortpath)
-hq_bitstream                                = "%s/%s" % (directories.storage_folder, hq_bitstream_modular)
-
-hq_bitstream_decoded_shortpath              = "%s_dec" % hq_bitstream_shortpath
-hq_bitstream_decoded_modular                = "%s/%s.yuv" % (hq_bitstream_folder_modular, hq_bitstream_decoded_shortpath)
-hq_bitstream_decoded                        = "%s/%s" % (directories.storage_folder, hq_bitstream_decoded_modular)
-
-hq_bitstream_decoded_dec_order_shortpath    = "%s_dec_dec_order" % hq_bitstream_shortpath
-hq_bitstream_decoded_dec_order_modular      = "%s/%s.yuv" % (hq_bitstream_folder_modular, hq_bitstream_decoded_dec_order_shortpath)
-hq_bitstream_decoded_dec_order              = "%s/%s" % (directories.storage_folder, hq_bitstream_decoded_dec_order_modular)
-
 
 if not os.path.isfile(hq_bitstream):
 
@@ -143,26 +214,6 @@ if not os.path.isfile(hq_bitstream_decoded_dec_order):
 
 
 #Loop level 3
-#for i in range(len(downscaled_originals)):
-
-downscaled_originals_encoded_folder_modular             = "%s/downscaled_originals_encoded" % hq_bitstream_folder_modular
-downscale_folder_modular                                = "%s/%dp" % (hq_bitstream_folder_modular, downscaled_height)
-
-downscaled_original_encoded_modular                     = "%s/%s_%s.bin" % \
-    (downscaled_originals_encoded_folder_modular, downscaled_original_shortpath, qp_hq_string)
-downscaled_original_encoded                             = "%s/%s" % (directories.storage_folder, downscaled_original_encoded_modular)
-
-downscaled_file_shortpath                               = \
-    filenames.replace_dimensions(hq_bitstream_decoded_shortpath, downscaled_width, downscaled_height)
-downscaled_file_modular                                 = "%s/%s.yuv" % (downscale_folder_modular, downscaled_file_shortpath)
-downscaled_file                                         = "%s/%s" % (directories.storage_folder, downscaled_file_modular)
-
-hq_bitstream_decoded_dec_order_downscaled_shortpath     = \
-    filenames.replace_dimensions(hq_bitstream_decoded_dec_order_shortpath, downscaled_width, downscaled_height)
-hq_bitstream_decoded_dec_order_downscaled_modular       = "%s/%s.yuv" % \
-    (downscale_folder_modular, hq_bitstream_decoded_dec_order_downscaled_shortpath)
-hq_bitstream_decoded_dec_order_downscaled               = "%s/%s" % (directories.storage_folder, hq_bitstream_decoded_dec_order_downscaled_modular)
-
 
 if not os.path.isfile(downscaled_original_encoded):
 
@@ -196,33 +247,6 @@ if not os.path.isfile(hq_bitstream_decoded_dec_order_downscaled):
 
 
 #Loop level 4
-#for qp_lq in QP_lq:
-
-qp_lq_string                                = "qp%d" % qp_lq
-lq_bitstream_folder_modular                 = "%s/%s" % (downscale_folder_modular, qp_lq_string)
-
-rdoq_0_file_shortpath                       = "%s_rdoq_0_%s" % (downscaled_file_shortpath, qp_lq_string)
-rdoq_0_file_modular                         = "%s/%s.bin" % (lq_bitstream_folder_modular, rdoq_0_file_shortpath)
-rdoq_0_file                                 = "%s/%s" % (directories.storage_folder, rdoq_0_file_modular)
-
-pruned_file_shortpath                       = "%s_pruned" % rdoq_0_file_shortpath
-pruned_file_modular                         = "%s/%s.bin" % (lq_bitstream_folder_modular, pruned_file_shortpath)
-pruned_file                                 = "%s/%s" % (directories.storage_folder, pruned_file_modular)
-
-if debug.debug_1:
-    pruned_file_decoded_shortpath           = "%s_dec" % pruned_file_shortpath
-    pruned_file_decoded_modular             = "%s/%s.yuv" % (lq_bitstream_folder_modular, pruned_file_decoded_shortpath)
-    pruned_file_decoded                     = "%s/%s" % (directories.storage_folder, pruned_file_decoded_modular)
-
-hq_bitstream_dimensions_replaced            = filenames.replace_dimensions(hq_bitstream_shortpath, downscaled_width, downscaled_height)
-reconstructed_file_shortpath                = "%s_qp%d_transcoded" % (hq_bitstream_dimensions_replaced, qp_lq)
-reconstructed_file_modular                  = "%s/%s.bin" % (lq_bitstream_folder_modular, reconstructed_file_shortpath)
-reconstructed_file                          = "%s/%s" % (directories.storage_folder, reconstructed_file_modular)
-
-reconstructed_file_decoded_shortpath        = "%s_dec" % reconstructed_file_shortpath
-reconstructed_file_decoded_modular          = "%s/%s.yuv" % (lq_bitstream_folder_modular, reconstructed_file_decoded_shortpath)
-reconstructed_file_decoded                  = "%s/%s" % (directories.storage_folder, reconstructed_file_decoded_modular)
-
 
 if not os.path.isfile(rdoq_0_file):
 
@@ -285,10 +309,12 @@ if not os.path.isfile(reconstructed_file_decoded):
 psnr_cmd = "%s %d %d %s %s" % (binaries.PSNRStatic, downscaled_width, downscaled_height, downscaled_original, reconstructed_file_decoded)
 command_line.call_indented(psnr_cmd)
 
-downscaled_original_encoded_size = os.path.getsize(downscaled_original_encoded)
-reconstructed_file_size = os.path.getsize(reconstructed_file)
+downscaled_original_encoded_size    = os.path.getsize(downscaled_original_encoded)
+#reconstructed_file_size             = os.path.getsize(reconstructed_file)
+pruned_file_size                    = os.path.getsize(pruned_file)
 
-print "Transcoding compression ratio: %.2f" % (float(downscaled_original_encoded_size) / reconstructed_file_size)
+print "Pruned bitstream compared to downscaled original (simulcast)"
+print "Size ratio: %.2f" % (float(pruned_file_size) / downscaled_original_encoded_size)
 
 ## Compare downscaled_originals[i] with reconstructed_file_decoded (with PSNRStatic.exe)
 ## Compare file size of encoded downscaled_originals_encoded[i], with reconstructed_file (with os.path.getsize)

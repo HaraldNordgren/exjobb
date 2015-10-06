@@ -2,6 +2,9 @@
 - Useful aliases to add to bashrc at work
 - alias ll='ls -alF'
 
+# If switching to Python 3
+- FileExistsError instead of OSError
+
 # Create test anchor
 
 ## Theory
