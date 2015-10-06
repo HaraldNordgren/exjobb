@@ -9,8 +9,8 @@ import definitions.config       as config
 orig_draft = "sample_videos/MPEG_CfP_seqs/orig-draft-cfp_2009-07-23/"
 originals = []
 
-originals_shortpath = ["BQSquare_416x240_60.yuv", "RaceHorses_416x240_30.yuv"]
-#originals_shortpath = ["BQSquare_416x240_60.yuv" ]
+#originals_shortpath = ["BQSquare_416x240_60.yuv", "RaceHorses_416x240_30.yuv"]
+originals_shortpath = ["BQSquare_416x240_60.yuv" ]
 #originals_shortpath = ["BQTerrace_1920x1080_60.yuv","BasketballDrive_1920x1080_50.yuv","ParkScene_1920x1080_24.yuv","ChristmasTree_1920x1080_50.yuv"]
 
 for seq in originals_shortpath:
@@ -22,8 +22,8 @@ This corresponds to 720p, 536p and 360p for a 1080p video. """
 
 #downscale_parameter_list = [ [1], [0], [1,0] ]
 #downscale_parameter_list = [ [1,0,0], [1,0,0,0] ]
-downscale_parameter_list = [ [0], [0,0] ]
-#downscale_parameter_list = [ [0] ]
+#downscale_parameter_list = [ [0], [0,0] ]
+downscale_parameter_list = [ [0] ]
 
 #QP_hq = [27]
 #QP_hq = [27, 32]

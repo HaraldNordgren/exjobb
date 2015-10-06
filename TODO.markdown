@@ -19,6 +19,9 @@
 - Choose 1080p test sequences: BQTerrace, etc.
 - BD (Two coder configs at four quantizer settings)
 
+## Read files
+- RunEvalGeneric.py, psnr.py, jobCtrl.py
+
 # Fixes for Modular transcoding chain
 - Rename files like "downscaled-file".
 - Restructure chain, original branch, then two branches that lead to the reconstruction.
