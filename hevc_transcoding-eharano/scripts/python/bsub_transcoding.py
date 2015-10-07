@@ -11,7 +11,8 @@ orig_draft = "sample_videos/MPEG_CfP_seqs/orig-draft-cfp_2009-07-23/"
 originals = []
 
 #originals_shortpath = ["BQSquare_416x240_60.yuv", "RaceHorses_416x240_30.yuv"]
-originals_shortpath = ["BQSquare_416x240_60.yuv" ]
+#originals_shortpath = ["BQSquare_416x240_60.yuv" ]
+originals_shortpath = ["BQTerrace_1920x1080_60.yuv"]
 #originals_shortpath = ["BQTerrace_1920x1080_60.yuv","BasketballDrive_1920x1080_50.yuv","ParkScene_1920x1080_24.yuv","ChristmasTree_1920x1080_50.yuv"]
 
 for seq in originals_shortpath:
@@ -21,16 +22,20 @@ for seq in originals_shortpath:
 """ [1], [0], [1,0] means two-thirds, half and one-third downscaling.
 This corresponds to 720p, 536p and 360p for a 1080p video. """
 
-#downscale_parameter_list = [ [1], [0], [1,0] ]
+downscale_parameter_list = [ [1], [0], [1,0] ]
+#downscale_parameter_list = [ [1] ]
 #downscale_parameter_list = [ [1,0,0], [1,0,0,0] ]
-downscale_parameter_list = [ [0], [0,0] ]
+#downscale_parameter_list = [ [0], [0,0] ]
 #downscale_parameter_list = [ [0] ]
 
 #QP_hq = [27]
 #QP_hq = [27, 32]
-QP_hq = [22, 27, 32]
-#QP_hq = [22, 27, 32, 37]
-QP_lq = [qp + 2 for qp in QP_hq]
+#QP_hq = [22, 27, 32]
+QP_hq = [22, 27, 32, 37]
+#QP_lq = [qp + 2 for qp in QP_hq]
+
+QP_lqs = 2
+qp_delta = 2
 
 bsub_cmds = []
 
@@ -43,8 +48,14 @@ for original_file in originals:
 
     cfg_mode = filenames.extract_cfg_mode(config.cfg_file)
 
-    hq_bitstream_framerate_replaced = filenames.replace_framerate(original_file_shortpath, config.framerate)
-    hq_bitstream_mode_info = "%s_%df_%s" % (hq_bitstream_framerate_replaced, config.frames, cfg_mode)
+    if config.preserve_framerate:
+        framerate = filenames.extract_framerate(original_file_shortpath)
+        hq_bitstream_mode_info = "%s_%df_%s" % (original_file_shortpath, config.frames, cfg_mode)
+
+    else:
+        framerate = config.new_framerate
+        hq_bitstream_framerate_replaced = filenames.replace_framerate(original_file_shortpath, framerate)
+        hq_bitstream_mode_info = "%s_%df_%s" % (hq_bitstream_framerate_replaced, config.frames, cfg_mode)
     
     for qp_hq in QP_hq:
         
@@ -55,7 +66,9 @@ for original_file in originals:
 
             downscale_parameters_string = str(downscale_parameters).replace(" ", "")
             
-            for qp_lq in QP_lq:
+            for i in range(QP_lqs):
+                qp_lq = qp_hq + i * qp_delta
+            #for qp_lq in QP_lq:
 
                 script_id = "%s_%s_%sp_%s" % (original_file_shortpath, qp_hq, downscaled_height, qp_lq)
                 current_time = time_string.current()
@@ -66,8 +79,8 @@ for original_file in originals:
                 bsub_out = "%s/bsub.out" % tmp_directory
                 bsub_err = "%s/bsub.err" % tmp_directory
 
-                python_args = "%s %s %d %d %d %s %s %d %d %d %s %s" % \
-                    (original_file, original_file_shortpath, width, height, qp_hq, hq_bitstream_mode_info, downscale_parameters_string, 
+                python_args = "%s %s %d %d %d %d %s %s %d %d %d %s %s" % \
+                    (original_file, original_file_shortpath, width, height, qp_hq, framerate, hq_bitstream_mode_info, downscale_parameters_string, 
                     downscaled_width, downscaled_height, qp_lq, tmp_directory, current_time)
 
                 bsub_cmd = "bsub -J %s -o %s -e %s python -u scripts/python/guided_transcoding_modular.py %s" % \
@@ -76,8 +89,8 @@ for original_file in originals:
                 bsub_cmds.append(bsub_cmd)
 
 
-for i in range(len(QP_lq)):
-    qp_lqs = bsub_cmds[i::len(QP_lq)]
+for i in range(QP_lqs):
+    qp_lqs = bsub_cmds[i::QP_lqs]
 
     for j in range(len(downscale_parameter_list)):
         downscale_parameters = qp_lqs[j::len(downscale_parameter_list)]

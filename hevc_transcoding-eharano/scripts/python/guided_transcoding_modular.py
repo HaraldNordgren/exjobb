@@ -63,7 +63,7 @@ def create_downscaled_file(input_file, output_file, output_file_modular, output_
     move_to_storage(output_file, tmp_file, lock_file, enable_muxing=True)
 
 
-if len(sys.argv) != 13:
+if len(sys.argv) != 14:
     print "Incorrect number of arguments!"
     sys.exit(1)
 
@@ -73,13 +73,14 @@ original_file_shortpath = sys.argv[2]
 width                   = int(sys.argv[3])
 height                  = int(sys.argv[4])
 qp_hq                   = int(sys.argv[5])
-hq_bitstream_mode_info  = sys.argv[6]
-downscale_parameters    = ast.literal_eval(sys.argv[7])
-downscaled_width        = int(sys.argv[8])
-downscaled_height       = int(sys.argv[9])
-qp_lq                   = int(sys.argv[10])
-tmp_directory           = sys.argv[11]
-current_time            = sys.argv[12]
+framerate               = int(sys.argv[6])
+hq_bitstream_mode_info  = sys.argv[7]
+downscale_parameters    = ast.literal_eval(sys.argv[8])
+downscaled_width        = int(sys.argv[9])
+downscaled_height       = int(sys.argv[10])
+qp_lq                   = int(sys.argv[11])
+tmp_directory           = sys.argv[12]
+current_time            = sys.argv[13]
 
 
 #Loop level 2.1
@@ -136,7 +137,7 @@ hq_bitstream_decoded_dec_order_downscaled               = "%s/%s" % (directories
 qp_lq_string                                            = "qp%d" % qp_lq
 lq_bitstream_folder_modular                             = "%s/%s" % (downscale_folder_modular, qp_lq_string)
 
-rdoq_0_file_shortpath                                   = "%s_rdoq_0_%s" % (downscaled_file_shortpath, qp_lq_string)
+rdoq_0_file_shortpath                                   = "%s_rdoq=0_%s" % (downscaled_file_shortpath, qp_lq_string)
 rdoq_0_file_modular                                     = "%s/%s.bin" % (lq_bitstream_folder_modular, rdoq_0_file_shortpath)
 rdoq_0_file                                             = "%s/%s" % (directories.storage_folder, rdoq_0_file_modular)
 
@@ -160,13 +161,6 @@ reconstructed_file_decoded                              = "%s/%s" % (directories
 
 
 
-#Loop level 2.1
-
-if not os.path.isfile(downscaled_original):
-
-    print "## Downscale original"
-    create_downscaled_file(original_file, downscaled_original, downscaled_original_modular, downscaled_originals_folder_modular)
-
 
 #Loop level 2.2
 
@@ -176,7 +170,7 @@ if not os.path.isfile(hq_bitstream):
 
     hq_bitstream_tmp = paths.get_full_file(tmp_directory, hq_bitstream_modular)
     encode_hq_cmd = "%s -c %s -i %s -b %s -q %d -fr %s -f %s -wdt %s -hgt %s -SBH 1 --Level=5" % \
-        (binaries.hm_encoder, config.cfg_file, original_file, hq_bitstream_tmp, qp_hq, config.framerate, config.frames, width, height)
+        (binaries.hm_encoder, config.cfg_file, original_file, hq_bitstream_tmp, qp_hq, framerate, config.frames, width, height)
     
     create_file(encode_hq_cmd, hq_bitstream, hq_bitstream_tmp, hq_bitstream_folder_modular, enable_muxing=False)
 
@@ -202,6 +196,14 @@ if not os.path.isfile(hq_bitstream_decoded_dec_order):
         hq_bitstream_folder_modular, enable_muxing=debug.muxing)
 
 
+#Loop level 2.1
+
+if not os.path.isfile(downscaled_original):
+
+    print "## Downscale original"
+    create_downscaled_file(original_file, downscaled_original, downscaled_original_modular, downscaled_originals_folder_modular)
+
+
 #Loop level 3
 
 if not os.path.isfile(downscaled_original_encoded):
@@ -211,7 +213,7 @@ if not os.path.isfile(downscaled_original_encoded):
     downscaled_original_encoded_tmp = paths.get_full_file(tmp_directory, downscaled_original_encoded_modular)
     encode_downscaled_original_cmd = "%s -c %s -i %s -b %s -q %d -fr %s -f %s -wdt %s -hgt %s -SBH 1 --Level=5" % \
         (binaries.hm_encoder, config.cfg_file, downscaled_original, downscaled_original_encoded_tmp, 
-        qp_hq, config.framerate, config.frames, downscaled_width, downscaled_height)
+        qp_hq, framerate, config.frames, downscaled_width, downscaled_height)
 
     create_file(encode_downscaled_original_cmd, downscaled_original_encoded, downscaled_original_encoded_tmp, 
         downscaled_originals_encoded_folder_modular, enable_muxing=False)
@@ -245,7 +247,7 @@ if not os.path.isfile(rdoq_0_file):
     rdoq_0_file_tmp = paths.get_full_file(tmp_directory, rdoq_0_file_modular)
     rdoq_0_cmd = "%s -c %s -i %s -b %s -q %d -fr %d -f %d -wdt %d -hgt %d --RDOQ=0 -SBH 0 --RDOQTS=0 --Level=5" % \
         (binaries.hm_encoder, config.cfg_file, downscaled_file, rdoq_0_file_tmp, qp_lq, 
-        config.framerate, config.all_frames, downscaled_width, downscaled_height)
+        framerate, config.all_frames, downscaled_width, downscaled_height)
 
     create_file(rdoq_0_cmd, rdoq_0_file, rdoq_0_file_tmp, lq_bitstream_folder_modular, enable_muxing=False)
 

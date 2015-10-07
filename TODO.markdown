@@ -32,6 +32,10 @@
 
 # Lower priority
 
+##
+- Find a way to make subprocess calls unbuffered.
+- Maybe use split() to convert cmds to string to avoid having to use shell=True which seems to be discouraged.
+
 ## Cluster (Bash)
 - Useful aliases to add to bashrc at work.
 - alias ll='ls -alF'

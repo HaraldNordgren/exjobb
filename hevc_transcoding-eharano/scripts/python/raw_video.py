@@ -9,9 +9,10 @@ def mux(yuv_file):
     muxed_file = yuv_file_no_extension + ".avi"
 
     (width, height) = filenames.extract_dimensions(yuv_file)
+    framerate       = filenames.extract_framerate(yuv_file)
 
-    ffmpeg_cmd = "%s -loglevel error -f rawvideo -pix_fmt yuv420p -s:v %dx%d -i %s -c:v copy %s" % \
-        (binaries.ffmpeg, width, height, yuv_file, muxed_file)
+    ffmpeg_cmd = "%s -loglevel error -f rawvideo -pix_fmt yuv420p -s:v %dx%d -i %s -c:v copy -r %d %s" % \
+        (binaries.ffmpeg, width, height, yuv_file, framerate, muxed_file)
     command_line.call_indented(ffmpeg_cmd)
 
     return muxed_file

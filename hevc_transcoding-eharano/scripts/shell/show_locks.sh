@@ -20,3 +20,5 @@ while [[ "$bjobs_out" != "No unfinished job found" ]]; do
 done
 
 clear
+echo All jobs finished
+echo

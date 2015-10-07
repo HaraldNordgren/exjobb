@@ -1,0 +1,24 @@
+Hej Harald,
+
+Vad skoj att du har fått ihop kedjan! Nästa steg blir att skapa referensdata i exceldokument. Alltså läsa från resulatet i dina körningar med något som motsvarar RunEvalGeneric.py
+
+Här kommer ett exempel på exceldokument där jag evaluerat prestanda för guided transcoding tidigare. Det skapades helt manuellt.
+
+Framgår också lite om detta i dokumentet Thomas skickade dig tidigare (31 aug). 
+
+Ett ark har kodning av orginalet som motsvarar simulcast: Single layer HM-12, ett ark uplänk som motsvarar det som skickas till en box  i mitten: Uplink, sedan ett ark nedlänk som motsvarar det som transkodats ock skickas till slutanvändare: Downlink.
+
+Dessa tre ark representerar indata som du skulle kunna uppdatera med resulat från körningar i din kedja. Interpolated bitrate kolumner kommer från den bitrate som behövs i uplänk/respektive nedlänk för att  få motsvarande kvalite (PSNR) som för single lager. Bitrate är estimerad från ett polynom  som är bestämt mha PSNR och bitrate för nedlänk resp uplänk. 
+
+Vikterna för polynomen beräknas i DownlinkPoly och UplinkPoly.
+
+Sedan finns två ark som jämför prestanda mellan simulcast och nedlänk resp uplänk, Compare uplink, Compare downlink.
+
+Dina körningar skulle kunna skapa ett excel ark som motsvarar single layer, uplink och downlink.  
+
+
+Mvh
+Kenneth
+
+
+(Bifogat: EvalGTexample.xlsx)
