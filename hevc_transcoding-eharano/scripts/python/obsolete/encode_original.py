@@ -41,5 +41,4 @@ print output_file
 
 encode_cmd = "%s -c %s -i %s -b %s -fr %s -f %s -wdt %s -hgt %s -SBH 1 --SEIDecodedPictureHash=2" % \
 	(binaries.hm_encoder, config.cfg_file, original_file, output_file, config.framerate, config.frames, width, height)
-#subprocess.call(encode_cmd, shell=True)
 command_line.call_indented(encode_cmd)

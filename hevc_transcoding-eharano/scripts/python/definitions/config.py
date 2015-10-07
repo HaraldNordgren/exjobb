@@ -7,5 +7,5 @@ preserve_framerate  = True
 new_framerate       = 30
 
 all_frames          = 2000
-frames              = all_frames
-#frames              = 10
+#frames              = all_frames
+frames              = 10

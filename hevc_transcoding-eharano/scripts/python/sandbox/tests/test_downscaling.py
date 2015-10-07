@@ -36,7 +36,6 @@ for p in parameters:
     
     downscaling_cmd_1 = "%s %s %s %s %s %d %d" % \
         (binaries.downscaler, width, height, input_file, intermediate_file, half, p)
-    #subprocess.call(downscaling_cmd_1, shell=True)
     command_line.call_indented(downscaling_cmd_1)
 
     raw_video.mux(intermediate_file)
@@ -55,7 +54,6 @@ for p in parameters:
 
         downscaling_cmd_2 = "%s %s %s %s %s %d %d" % \
             (binaries.downscaler, downscaled_width_1, downscaled_height_1, intermediate_file, end_file, half, q)
-        #subprocess.call(downscaling_cmd_2, shell=True)
         command_line.call_indented(downscaling_cmd_2)
 
         raw_video.mux(end_file)

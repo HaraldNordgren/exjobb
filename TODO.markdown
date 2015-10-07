@@ -4,7 +4,7 @@
 - Four 1080p sequences chosen. (BQTerrace, etc.)
 - Downscale to 720p, 536p and 360p.
 - Encode with QP-hqs [22, 27, 32, 37]
-- Then again with QP-lqs [24, 29, 34, 39]
+- Then again with QP-lqs as [qp-hq, qp-hq + 2, ...]
 
 ## Theory
 - PSNR calculated for each transcoded video by comparing to downscaled original.
@@ -32,16 +32,21 @@
 
 # Lower priority
 
-##
+## Config
+- Move entire "configuration" to bsub-transcoding.py.
+- All data that is needed in gtm.py should be passed as an argument.
+
+## Subprocess
 - Find a way to make subprocess calls unbuffered.
-- Maybe use split() to convert cmds to string to avoid having to use shell=True which seems to be discouraged.
+- Seems to be difficult.
 
 ## Cluster (Bash)
 - Useful aliases to add to bashrc at work.
+- alias ls='ls --color=auto'
 - alias ll='ls -alF'
 
 ## Python 3
-- See if cluster has python3, then switch.
+- See if cluster has python3. If so, switch.
 - FileExistsError instead of OSError for locks.
 
 ## Fixes for Modular transcoding chain
