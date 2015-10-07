@@ -17,6 +17,7 @@
 - Any improvements on the encoder will be measured against this.
 
 ## VideoSimScript
+- RunEvalGeneric, ExcelChart, ExcelPlot, BDelta, psnr
 - See if you can find any hooks for PSNR data.
 - Seems very difficult since I have no config files, no RunEncodingGeneric output.
 - How does PSNRStatic differ from Ericsson PSNR calculation?
