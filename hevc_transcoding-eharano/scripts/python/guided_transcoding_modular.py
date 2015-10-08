@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 import sys, os, time, ast, shutil
 import downscaling, filenames, paths, raw_video, command_line
 
@@ -30,7 +28,8 @@ def already_locked(lock_file, output_file, output_folder_modular):
 
     except OSError:
         print "### Wait while file is being created by another process\n"
-        while not os.path.isfile(output_file):
+        #while not os.path.isfile(output_file):
+        while os.path.isfile(lock_file):
             time.sleep(5)
         
         return True
@@ -63,7 +62,7 @@ def create_downscaled_file(input_file, output_file, output_file_modular, output_
     move_to_storage(output_file, tmp_file, lock_file, enable_muxing=True)
 
 
-if len(sys.argv) != 14:
+if len(sys.argv) != 15:
     print "Incorrect number of arguments!"
     sys.exit(1)
 
@@ -74,13 +73,14 @@ width                   = int(sys.argv[3])
 height                  = int(sys.argv[4])
 qp_hq                   = int(sys.argv[5])
 framerate               = int(sys.argv[6])
-hq_bitstream_mode_info  = sys.argv[7]
-downscale_parameters    = ast.literal_eval(sys.argv[8])
-downscaled_width        = int(sys.argv[9])
-downscaled_height       = int(sys.argv[10])
-qp_lq                   = int(sys.argv[11])
-tmp_directory           = sys.argv[12]
-current_time            = sys.argv[13]
+frames                  = int(sys.argv[7])
+hq_bitstream_mode_info  = sys.argv[8]
+downscale_parameters    = ast.literal_eval(sys.argv[9])
+downscaled_width        = int(sys.argv[10])
+downscaled_height       = int(sys.argv[11])
+qp_lq                   = int(sys.argv[12])
+tmp_directory           = sys.argv[13]
+current_time            = sys.argv[14]
 
 
 #Loop level 2.1
@@ -170,7 +170,7 @@ if not os.path.isfile(hq_bitstream):
 
     hq_bitstream_tmp = paths.get_full_file(tmp_directory, hq_bitstream_modular)
     encode_hq_cmd = "%s -c %s -i %s -b %s -q %d -fr %s -f %s -wdt %s -hgt %s -SBH 1 --Level=5" % \
-        (binaries.hm_encoder, config.cfg_file, original_file, hq_bitstream_tmp, qp_hq, framerate, config.frames, width, height)
+        (binaries.hm_encoder, config.cfg_file, original_file, hq_bitstream_tmp, qp_hq, framerate, frames, width, height)
     
     create_file(encode_hq_cmd, hq_bitstream, hq_bitstream_tmp, hq_bitstream_folder_modular, enable_muxing=False)
 
@@ -213,7 +213,7 @@ if not os.path.isfile(downscaled_original_encoded):
     downscaled_original_encoded_tmp = paths.get_full_file(tmp_directory, downscaled_original_encoded_modular)
     encode_downscaled_original_cmd = "%s -c %s -i %s -b %s -q %d -fr %s -f %s -wdt %s -hgt %s -SBH 1 --Level=5" % \
         (binaries.hm_encoder, config.cfg_file, downscaled_original, downscaled_original_encoded_tmp, 
-        qp_hq, framerate, config.frames, downscaled_width, downscaled_height)
+        qp_hq, framerate, frames, downscaled_width, downscaled_height)
 
     create_file(encode_downscaled_original_cmd, downscaled_original_encoded, downscaled_original_encoded_tmp, 
         downscaled_originals_encoded_folder_modular, enable_muxing=False)

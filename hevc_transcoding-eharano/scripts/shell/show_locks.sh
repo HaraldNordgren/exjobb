@@ -15,7 +15,7 @@ while [[ "$bjobs_out" != "No unfinished job found" ]]; do
     clear
     echo Current locks:
     find -name *.lock | sed 's/^/\n/'
-    sleep 1
+    sleep 2
     bjobs_out=`bjobs 2>&1`
 done
 

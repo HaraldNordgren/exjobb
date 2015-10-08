@@ -1,6 +1,6 @@
 #!/bin/bash
 
-reset
+clear
 
 set -e
 shopt -s globstar
@@ -35,19 +35,34 @@ echo
 
 err_counter=0
 
+
 cd tmp
 mkdir -p $err
 
-echo "Non-zero log files:"
-for folder in *; do
-    log=${folder}/bsub.err
-    if [ -a $log ]; then
-        size=$(stat $log --printf="%s")
-        if [ $size != 0 ]; then
-            echo $log
-            cp $log $err/$folder.err
-            ((++err_counter))
+echo Non-zero log files:
+for simulation in *; do
+    sim_counter=0
+
+    mkdir $err/$simulation
+
+    for branch in $simulation/*; do
+        log=$branch/bsub.err
+ 
+        if [ -a $log ]; then
+            size=$(stat $log --printf="%s")
+            if [ $size != 0 ]; then
+                echo $log
+                cp $log $err/$branch.err
+                ((++sim_counter))
+            fi
         fi
+
+    done
+
+    if [ $sim_counter == 0 ]; then
+        rmdir $err/$simulation
+    else
+        ((++err_counter))
     fi
 done
 

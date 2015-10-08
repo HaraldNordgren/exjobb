@@ -7,37 +7,57 @@ import definitions.directories  as directories
 import definitions.config       as config
 
 
-orig_draft = "sample_videos/MPEG_CfP_seqs/orig-draft-cfp_2009-07-23/"
-originals = []
-
-#originals_shortpath = ["BQSquare_416x240_60.yuv", "RaceHorses_416x240_30.yuv"]
-originals_shortpath = ["BQSquare_416x240_60.yuv" ]
-#originals_shortpath = ["BQTerrace_1920x1080_60.yuv"]
-#originals_shortpath = ["BQTerrace_1920x1080_60.yuv","BasketballDrive_1920x1080_50.yuv","ParkScene_1920x1080_24.yuv","ChristmasTree_1920x1080_50.yuv"]
-
-for seq in originals_shortpath:
-    originals.append(orig_draft + seq)
-
-
 """ [1], [0], [1,0] means two-thirds, half and one-third downscaling.
 This corresponds to 720p, 536p and 360p for a 1080p video. """
 
-#downscale_parameter_list = [ [1], [0], [1,0] ]
-#downscale_parameter_list = [ [1] ]
-#downscale_parameter_list = [ [1,0,0], [1,0,0,0] ]
-#downscale_parameter_list = [ [0], [0,0] ]
-downscale_parameter_list = [ [0] ]
+#(configuration_1, configuration_2, configuration_3, configuration_4) = (True, False, False, False)
+#(configuration_1, configuration_2, configuration_3, configuration_4) = (False, True, False, False)
+#(configuration_1, configuration_2, configuration_3, configuration_4) = (False, False, True, False)
+(configuration_1, configuration_2, configuration_3, configuration_4) = (False, False, False, True)
 
-#QP_hq = [27]
-QP_hq = [27, 32]
-#QP_hq = [22, 27, 32]
-#QP_hq = [22, 27, 32, 37]
-#QP_lq = [qp + 2 for qp in QP_hq]
+if configuration_1:
+    originals_shortpath = [ "BQSquare_416x240_60.yuv" ]
+    downscale_parameter_list = [ [0], [0,0] ]
+    QP_hq = [22, 27, 32, 37]
+    frames = 10
+
+elif configuration_2:
+    originals_shortpath = [ "BQTerrace_1920x1080_60.yuv" ]
+    downscale_parameter_list = [ [1], [0], [1,0] ]
+    QP_hq = [22, 27, 32, 37]
+    frames = 2
+
+elif configuration_3:
+    originals_shortpath = [ "BQTerrace_1920x1080_60.yuv" ]
+    downscale_parameter_list = [ [1], [0], [1,0] ]
+    QP_hq = [22, 27, 32, 37]
+    frames = config.all_frames
+
+elif configuration_4:
+    originals_shortpath = [ "BQTerrace_1920x1080_60.yuv", "BasketballDrive_1920x1080_50.yuv", "ParkScene_1920x1080_24.yuv", "ChristmasTree_1920x1080_50.yuv" ]
+    downscale_parameter_list = [ [1], [0], [1,0] ]
+    QP_hq = [22, 27, 32, 37]
+    frames = config.all_frames
+
+#originals_shortpath = ["BQSquare_416x240_60.yuv", "RaceHorses_416x240_30.yuv"]
+
+
 
 QP_lqs = 2
 qp_delta = 2
 
+orig_draft = "sample_videos/MPEG_CfP_seqs/orig-draft-cfp_2009-07-23/"
+originals = []
+
+for seq in originals_shortpath:
+    originals.append(orig_draft + seq)
+
+current_time = time_string.current()
+simulation_directory = "%s/%s" % (directories.tmp_folder, current_time)
+
 bsub_cmds = []
+
+
 
 for original_file in originals:
 
@@ -50,12 +70,12 @@ for original_file in originals:
 
     if config.preserve_framerate:
         framerate = filenames.extract_framerate(original_file_shortpath)
-        hq_bitstream_mode_info = "%s_%df_%s" % (original_file_shortpath, config.frames, cfg_mode)
+        hq_bitstream_mode_info = "%s_%df_%s" % (original_file_shortpath, frames, cfg_mode)
 
     else:
         framerate = config.new_framerate
         hq_bitstream_framerate_replaced = filenames.replace_framerate(original_file_shortpath, framerate)
-        hq_bitstream_mode_info = "%s_%df_%s" % (hq_bitstream_framerate_replaced, config.frames, cfg_mode)
+        hq_bitstream_mode_info = "%s_%df_%s" % (hq_bitstream_framerate_replaced, frames, cfg_mode)
     
     for qp_hq in QP_hq:
         
@@ -68,19 +88,18 @@ for original_file in originals:
             
             for i in range(QP_lqs):
                 qp_lq = qp_hq + i * qp_delta
-            #for qp_lq in QP_lq:
 
-                script_id = "%s_%s_%sp_%s" % (original_file_shortpath, qp_hq, downscaled_height, qp_lq)
+                script_id = "%s_%df_qp%s_%sp_qp%s" % (original_file_shortpath, frames, qp_hq, downscaled_height, qp_lq)
                 current_time = time_string.current()
 
-                tmp_directory = "%s/%s_%s" % (directories.tmp_folder, current_time, script_id)
+                tmp_directory = "%s/%s" % (simulation_directory, script_id)
                 paths.create_if_needed(tmp_directory)
 
                 bsub_out = "%s/bsub.out" % tmp_directory
                 bsub_err = "%s/bsub.err" % tmp_directory
 
-                python_args = "%s %s %d %d %d %d %s %s %d %d %d %s %s" % \
-                    (original_file, original_file_shortpath, width, height, qp_hq, framerate, hq_bitstream_mode_info, downscale_parameters_string, 
+                python_args = "%s %s %d %d %d %d %d %s %s %d %d %d %s %s" % \
+                    (original_file, original_file_shortpath, width, height, qp_hq, framerate, frames, hq_bitstream_mode_info, downscale_parameters_string, 
                     downscaled_width, downscaled_height, qp_lq, tmp_directory, current_time)
 
                 bsub_cmd = "bsub -J %s -o %s -e %s python -u scripts/python/guided_transcoding_modular.py %s" % \
