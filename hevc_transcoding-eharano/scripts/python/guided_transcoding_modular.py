@@ -28,7 +28,6 @@ def already_locked(lock_file, output_file, output_folder_modular):
 
     except OSError:
         print "### Wait while file is being created by another process\n"
-        #while not os.path.isfile(output_file):
         while os.path.isfile(lock_file):
             time.sleep(5)
         

@@ -30,26 +30,15 @@
 - Mejla Mike Doggett
 
 
-# Lower priority
+# For v1.1
 
 ## Config
 - Move entire "configuration" to bsub-transcoding.py.
-- All data that is needed in gtm.py should be passed as an argument.
-
-## Subprocess
-- Find a way to make subprocess calls unbuffered.
-- Seems to be difficult.
-
-## Cluster (Bash)
-- Useful aliases to add to bashrc at work.
-- alias ls='ls --color=auto'
-- alias ll='ls -alF'
-
-## Python 3
-- See if cluster has python3. If so, switch.
-- FileExistsError instead of OSError for locks.
+- cfg_file, preserve_framerate, new_framerate.
+- Move all_frames to new constants file.
 
 ## Fixes for Modular transcoding chain
+- Will break os.path.exits() checks so 14-hour chain will have to be rerun
 - Rename files like "downscaled-file" for clarity.
 - Restructure chain: First the "originals" branch.
 - Then the two branches that lead to the reconstruction.

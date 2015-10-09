@@ -21,14 +21,9 @@ elif configuration == 2:
     downscale_parameter_list = [ [1], [0], [1,0] ]
     QP_hq = [22, 27, 32, 37]
     frames = 2
+    #frames = config.all_frames
 
 elif configuration == 3:
-    originals_shortpath = [ "BQTerrace_1920x1080_60.yuv" ]
-    downscale_parameter_list = [ [1], [0], [1,0] ]
-    QP_hq = [22, 27, 32, 37]
-    frames = config.all_frames
-
-elif configuration == 4:
     originals_shortpath = \
         [ "BQTerrace_1920x1080_60.yuv", "BasketballDrive_1920x1080_50.yuv", "ParkScene_1920x1080_24.yuv", "ChristmasTree_1920x1080_50.yuv" ]
     downscale_parameter_list = [ [1], [0], [1,0] ]
@@ -40,13 +35,12 @@ elif configuration == 4:
 QP_lqs = 2
 qp_delta = 2
 
-originals = [ "sample_videos/MPEG_CfP_seqs/orig-draft-cfp_2009-07-23/" + seq for seq in originals_shortpath]
+originals = [ "sample_videos/MPEG_CfP_seqs/orig-draft-cfp_2009-07-23/" + seq for seq in originals_shortpath ]
 
 current_time = time_string.current()
 simulation_directory = "%s/%s" % (directories.tmp_folder, current_time)
 
 bsub_cmds = []
-
 
 
 
