@@ -7,50 +7,40 @@ import definitions.directories  as directories
 import definitions.config       as config
 
 
-""" [1], [0], [1,0] means two-thirds, half and one-third downscaling.
-This corresponds to 720p, 536p and 360p for a 1080p video. """
+configuration = 1
 
-#(configuration_1, configuration_2, configuration_3, configuration_4) = (True, False, False, False)
-#(configuration_1, configuration_2, configuration_3, configuration_4) = (False, True, False, False)
-#(configuration_1, configuration_2, configuration_3, configuration_4) = (False, False, True, False)
-(configuration_1, configuration_2, configuration_3, configuration_4) = (False, False, False, True)
-
-if configuration_1:
+if configuration == 1:
     originals_shortpath = [ "BQSquare_416x240_60.yuv" ]
+    #originals_shortpath = [ "BQSquare_416x240_60.yuv", "RaceHorses_416x240_30.yuv" ]
     downscale_parameter_list = [ [0], [0,0] ]
     QP_hq = [22, 27, 32, 37]
     frames = 10
 
-elif configuration_2:
+elif configuration == 2:
     originals_shortpath = [ "BQTerrace_1920x1080_60.yuv" ]
     downscale_parameter_list = [ [1], [0], [1,0] ]
     QP_hq = [22, 27, 32, 37]
     frames = 2
 
-elif configuration_3:
+elif configuration == 3:
     originals_shortpath = [ "BQTerrace_1920x1080_60.yuv" ]
     downscale_parameter_list = [ [1], [0], [1,0] ]
     QP_hq = [22, 27, 32, 37]
     frames = config.all_frames
 
-elif configuration_4:
-    originals_shortpath = [ "BQTerrace_1920x1080_60.yuv", "BasketballDrive_1920x1080_50.yuv", "ParkScene_1920x1080_24.yuv", "ChristmasTree_1920x1080_50.yuv" ]
+elif configuration == 4:
+    originals_shortpath = \
+        [ "BQTerrace_1920x1080_60.yuv", "BasketballDrive_1920x1080_50.yuv", "ParkScene_1920x1080_24.yuv", "ChristmasTree_1920x1080_50.yuv" ]
     downscale_parameter_list = [ [1], [0], [1,0] ]
     QP_hq = [22, 27, 32, 37]
     frames = config.all_frames
-
-#originals_shortpath = ["BQSquare_416x240_60.yuv", "RaceHorses_416x240_30.yuv"]
 
 
 
 QP_lqs = 2
 qp_delta = 2
 
-orig_draft = "sample_videos/MPEG_CfP_seqs/orig-draft-cfp_2009-07-23/"
-originals = []
-
-for seq in originals_shortpath:
-    originals.append(orig_draft + seq)
+originals = [ "sample_videos/MPEG_CfP_seqs/orig-draft-cfp_2009-07-23/" + seq for seq in originals_shortpath]
 
 current_time = time_string.current()
 simulation_directory = "%s/%s" % (directories.tmp_folder, current_time)
@@ -58,6 +48,10 @@ simulation_directory = "%s/%s" % (directories.tmp_folder, current_time)
 bsub_cmds = []
 
 
+
+
+""" [1], [0], [1,0] means two-thirds, half and one-third downscaling.
+This corresponds to 720p, 536p and 360p for a 1080p video. """
 
 for original_file in originals:
 
