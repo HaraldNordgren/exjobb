@@ -1,3 +1,12 @@
+# Test anchor
+
+## Sequences
+- Four 1080p sequences chosen. (BQTerrace, etc.)
+- Downscale to 720p, 536p and 360p.
+- Encode with QP-hqs [22, 27, 32, 37]
+- Then again with QP-lqs as [qp-hq, qp-hq + 2, ...]
+
+
 # Modular transcoding chain
 
 ## File handling
