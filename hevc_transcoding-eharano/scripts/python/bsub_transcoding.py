@@ -12,30 +12,40 @@ configuration = 1
 if configuration == 1:
     originals_shortpath = [ "BQSquare_416x240_60.yuv" ]
     #originals_shortpath = [ "BQSquare_416x240_60.yuv", "RaceHorses_416x240_30.yuv" ]
-    downscale_parameter_list = [ [0], [0,0] ]
-    QP_hq = [22, 27, 32, 37]
-    frames = 10
+    downscale_parameter_list = [ [0] ]
+    QP_hq = [ 22 ]
+    QP_lqs = 1
+    #frames = 10
+    frames = 100
 
 elif configuration == 2:
     originals_shortpath = [ "BQTerrace_1920x1080_60.yuv" ]
     downscale_parameter_list = [ [1], [0], [1,0] ]
-    QP_hq = [22, 27, 32, 37]
+    QP_hq = [ 22, 27, 32, 37 ]
+    QP_lqs = 2
     frames = 2
-    #frames = config.all_frames
 
 elif configuration == 3:
     originals_shortpath = \
         [ "BQTerrace_1920x1080_60.yuv", "BasketballDrive_1920x1080_50.yuv", "ParkScene_1920x1080_24.yuv", "ChristmasTree_1920x1080_50.yuv" ]
     downscale_parameter_list = [ [1], [0], [1,0] ]
-    QP_hq = [22, 27, 32, 37]
+    QP_hq = [ 22, 27, 32, 37 ]
+    QP_lqs = 2
+    frames = config.all_frames
+
+elif configuration == 4:
+    originals_shortpath = [ "smala_sussie_544x304_25.yuv" ]
+    downscale_parameter_list = [ [0] ]
+    QP_hq = [ 22, 37 ]
+    QP_lqs = 2
     frames = config.all_frames
 
 
-
-QP_lqs = 2
 qp_delta = 2
 
 originals = [ "sample_videos/MPEG_CfP_seqs/orig-draft-cfp_2009-07-23/" + seq for seq in originals_shortpath ]
+
+cfg_mode = filenames.extract_cfg_mode(config.cfg_file)
 
 current_time = time_string.current()
 simulation_directory = "%s/%s" % (directories.tmp_folder, current_time)
@@ -52,19 +62,12 @@ for original_file in originals:
     original_file_basename = os.path.basename(original_file)
     original_file_shortpath = os.path.splitext(original_file_basename)[0]
 
-    (width, height)  = filenames.extract_dimensions(original_file_shortpath)
+    (width, height) = filenames.extract_dimensions(original_file_shortpath)
 
-    cfg_mode = filenames.extract_cfg_mode(config.cfg_file)
+    framerate = filenames.extract_framerate(original_file_shortpath)
 
-    if config.preserve_framerate:
-        framerate = filenames.extract_framerate(original_file_shortpath)
-        hq_bitstream_mode_info = "%s_%df_%s" % (original_file_shortpath, frames, cfg_mode)
+    hq_bitstream_mode_info = "%s_%df_%s" % (original_file_shortpath, frames, cfg_mode)
 
-    else:
-        framerate = config.new_framerate
-        hq_bitstream_framerate_replaced = filenames.replace_framerate(original_file_shortpath, framerate)
-        hq_bitstream_mode_info = "%s_%df_%s" % (hq_bitstream_framerate_replaced, frames, cfg_mode)
-    
     for qp_hq in QP_hq:
         
         for downscale_parameters in downscale_parameter_list:
@@ -87,8 +90,8 @@ for original_file in originals:
                 bsub_err = "%s/bsub.err" % tmp_directory
 
                 python_args = "%s %s %d %d %d %d %d %s %s %d %d %d %s %s" % \
-                    (original_file, original_file_shortpath, width, height, qp_hq, framerate, frames, hq_bitstream_mode_info, downscale_parameters_string, 
-                    downscaled_width, downscaled_height, qp_lq, tmp_directory, current_time)
+                    (original_file, original_file_shortpath, width, height, qp_hq, framerate, frames, hq_bitstream_mode_info, 
+                    downscale_parameters_string, downscaled_width, downscaled_height, qp_lq, tmp_directory, current_time)
 
                 bsub_cmd = "bsub -J %s -o %s -e %s python -u scripts/python/guided_transcoding_modular.py %s" % \
                     (script_id, bsub_out, bsub_err, python_args)

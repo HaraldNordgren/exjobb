@@ -1,7 +1,7 @@
 import re
 
 dimensions_regex    = re.compile("(.*_)(\d+)x(\d+)(.*)")
-framerate_regex     = re.compile("(.*_)(\d+)($|_.*)")
+framerate_regex     = re.compile("(.*_)(\d+)($|_.*|\.[a-z]+)")
 cfg_regex           = re.compile(".*encoder_([a-z]+)_.*")
 
 def extract_dimensions(filename):
@@ -42,6 +42,7 @@ def replace_dimensions(original_name, scaled_width, scaled_height):
 
     return "%s%dx%d%s" % (name_start, scaled_width, scaled_height, name_end)
 
+"""
 def replace_framerate(original_name, new_framerate):
     m = framerate_regex.match(original_name)
     
@@ -52,3 +53,4 @@ def replace_framerate(original_name, new_framerate):
     name_end = m.group(3)
 
     return "%s%d%s" % (name_start, new_framerate, name_end)
+"""

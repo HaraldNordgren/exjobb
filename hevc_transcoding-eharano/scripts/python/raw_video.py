@@ -11,11 +11,12 @@ def mux(yuv_file):
     (width, height) = filenames.extract_dimensions(yuv_file)
     framerate       = filenames.extract_framerate(yuv_file)
 
-    ffmpeg_cmd = "%s -loglevel error -f rawvideo -pix_fmt yuv420p -s:v %dx%d -i %s -c:v copy -r %d %s" % \
-        (binaries.ffmpeg, width, height, yuv_file, framerate, muxed_file)
+    ffmpeg_cmd = "%s -loglevel error -f rawvideo -pix_fmt yuv420p -s:v %dx%d -r %d -i %s -c:v copy %s" % \
+        (binaries.ffmpeg, width, height, framerate, yuv_file, muxed_file)
+    
     command_line.call_indented(ffmpeg_cmd)
 
-    return muxed_file
+    #return muxed_file
 
 """
 def play_yuv(yuv_file):
