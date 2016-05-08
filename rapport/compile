@@ -1,0 +1,18 @@
+#!/bin/bash
+
+echo -ne '\0033\0143'
+
+set -e
+
+mkdir -p build/output
+pdflatex -output-directory build/output src/rapport.tex
+mv build/output/rapport.pdf build
+
+echo; echo
+
+bibtex build/output/rapport.aux
+
+echo; echo
+
+cd src
+makeglossaries -d ../build/output/ rapport

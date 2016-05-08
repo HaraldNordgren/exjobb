@@ -1,0 +1,6 @@
+HEVC general:
+https://en.wikipedia.org/wiki/High_Efficiency_Video_Coding
+http://forum.doom9.org/showthread.php?t=167081
+
+ffmpeg:
+http://superuser.com/questions/322354/using-ffmpeg-to-encode-a-raw-video-to-h-264-format

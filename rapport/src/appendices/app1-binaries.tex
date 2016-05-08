@@ -1,0 +1,17 @@
+\chapter{Binaries}
+
+\section{HM encoder}
+\label[secinapp]{app:binaries}
+Fraunhofer standard encoder. Allows options QP, RDOQ, SBH. Open-source, written in C++~\cite[p.~15]{Wien_Coding_Tools}
+
+\section{HM decoder}
+Decodes any conforming HEVC bitstream. Open-source, written in C++.~\cite[p.~16]{Wien_Coding_Tools}
+
+\section{d65{\_}gt}
+Our biggest contribution to this project. One piece of source code, that by setting different preprocessor macros can compile into pruner, decoding order decoder and reconstructor. Written in C.
+
+\section{d65? downscaler}
+A 5 tap downscaler which generates a pretty quick downsampling of any raw (decoded) video. [Explain downsampling here probably]
+
+\section{PSNR Static}
+A simple program that compares an encoded video with its original to gauge the level of compression. Gives values for each frames in 3 components (Y, Cb, Cr) and a grand total for the sequence, which is the one we are most interested in.

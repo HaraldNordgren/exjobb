@@ -1,0 +1,2 @@
+hevc_transcoding-eharano/scripts/python/bsub_transcoding.py filter=bsub
+hevc_transcoding-eharano/scripts/python/definitions/config.py filter=config

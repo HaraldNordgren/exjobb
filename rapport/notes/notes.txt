@@ -1,0 +1,20 @@
+QUANTIZATION
+Slides, 9-29
+
+RATE DISTORTION
+Slides, 9-20
+
+LOSSLESS CODING (VLC)
+Slides, 9-12: Variable length coding, prefix codes
+
+PSNR
+Gonazles (3ed, p. 375) discusses SNR (as they call it) in general terms. Mentions that it might not "relate well to images quality".
+
+SUBSAMPLING (Could be useful for explaining downsampling with 5/13 taps)
+Gonzalez (p. 65-) talks about interpolation of pixels. The process that happens when an images is resized in image software. Trade-off between efficiency and and quality.
+
+Slides, 4-9
+
+CHROMA SUBSAMPLING
+Ratios like 4:2:0, 4:1:1, etc.
+http://dougkerr.net/Pumpkin/articles/Subsampling.pdf

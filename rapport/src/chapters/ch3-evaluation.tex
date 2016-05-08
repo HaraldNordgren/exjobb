@@ -1,0 +1,186 @@
+\chapter{Evaluation}
+
+%\section{Experimental Setup}
+\section{The Guided Transcoding Chain}
+Our test environment for running \gls{gt} simulations has many components. A full simulation chain entails several encodings at multiple \gls{qp} values, decoding and downscaling each encoding to a number of different sizes, re-encoding, generating \gls{si} and reconstructing the sequences. Additionally, we want to measure bit rate and \gls{psnr} at several points in the simulation, and be able to access all the data in a structured manner to try to make sense of it and to compare different simulations.
+
+We wrote a test environment in Python that allows us to easily specify sets of \gls{qp} values and downscaled sizes, together with \gls{gt} schemes; pruning, partial pruning or deflation, and options like \gls{sbh} and \gls{rdoq}.
+
+\subsection{Encoding the Original}
+The pruning and deflation scenarios differ in the way side-information is generated but many parts of the chain works the same way, using most of the same programs. We first describe the \gls{gt} approach common to both methods and then elaborate on the details of each case.
+
+The first step is always to encode the original test sequences. Our suite uses five \gls{hevc} sequences that belong to the \gls{jvt} common test conditions, class B: Kimono, ParkScene, Cactus, BasketballDrive and BQTerrace. Still frames can be seen in \cref{fig:test-sequences}. They represent a wide variety of possible use-cases for video encoding: varying degrees of movement, static camera and panning movements, and frame rates varying from 24 to 60 \gls{fps}. All sequences have a bit depth of 8 bits and $1920 \times 1080$ resolution~\cite{Wien_Coding_Tools}. Each clip is ten seconds long, giving frame count between 240 and 600 which \gls{jvt} considers sufficient to get a qualified assessment of video quality, while still keeping the required encoding complexity sufficiently low~\cite{Wien_Coding_Tools}.
+
+Some of our sequences have a copyright frame as the last one, giving a total of 601 frames for a 60 \gls{fps} video. This frame frame is not expected to used in simulations, and we exclude it from all of our encodings and references, and it should therefor have no effect on our results.
+
+\begin{figure}[!tbp]
+  \centering
+  \begin{minipage}[b]{0.4\textwidth}
+    \includegraphics[scale=0.1]{pictures/yuv-player-captures/BQTerrace_1920x1080_60_1}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[b]{0.4\textwidth}
+    \includegraphics[scale=0.1]{pictures/yuv-player-captures/BasketballDrive_1920x1080_50_1}
+  \end{minipage}
+  \caption{Still frames from our HEVC standard sequences}
+  \label{fig:test-sequences}
+\end{figure}
+
+All the videos we work with are stored in progressive scan, meaning simply that each individual frame contains information about all of its own pixels, as opposed to interlaced scan where a frame is split over two successive frames, each one holding half. We will follow the convention regarding scan modes and refer our resolutions as 1080p, 720p, etc., thus omitting the frame width.
+
+For each original video we create four encoding with \gls{qp} values 22, 26, 30 and 34, and refer to these as $QP_{base}$. All encoding and later re-encoding are performed using the \gls{hm} encoder with a configuration file specifying \textit{\gls{hevc} Main profile} and the \textit{randomaccess} \gls{gop} structure~\cite{Wien_Coding_Tools}. Randomaccess has a GOP size of 8 and coding order 0-8-4-2-1-3-6-5-7, after which it skips to frame 16, repeats the same pattern, and then continues like that for the whole sequence~\cite{Wien_Coding_Tools}.
+
+All of the outputs from the initial encoding step are referred to as \gls{hq} bitstreams. Generating these is by far the most expensive part of any simulation in terms of computational complexity, taking around 15 hours on our cluster environment (see \cref{subsec:cluster}), so we make sure to store them and always try to re-use bitstreams for any simulation where all the applicable test parameters are the same.
+
+\subsection{Re-Encoding and Pruning}
+\label{subsec:re-encoding}
+For the pruning scenario, the next step is to decode the \gls{hq} bitstreams and downscale from 1080p to 720p, 540p and 360p representations which we refer to as the \gls{lq} resolutions. Our downscaler only supports downscaling to 1/2 or 2/3 size, so to generate a 360p video from 1080p we always have to get there via an intermediate 720p step.
+
+We re-encode with the same $QP$ value and with $QP + 2$. That is, for an \gls{hq} bitstream generated with $QP=22$ we create re-encodings with \gls{qp} values 22 and 24, for \gls{hq} bitstreams generated with $QP=26$ we use 26 and 28, and so on. This gives us a wide array of test cases to accurately quantify the effect on \gls{qp} value on video quality, bit rate and reconstruction time.
+
+After re-encoding, we prune the \gls{lq} bitsteams to generate \gls{si}. We either do partial or full pruning, the difference at this stage is just an input parameter. In an real real-world application we would then store the \gls{si} instead of the \gls{lq} bitsteam, saving a certain amount of storage space. Of course, for the sake of the simulation, we keep both. We sometimes refer to the \gls{si} and the bitstreams as \textit{uplink data}.
+
+We also downscale the original sequences to the \gls{lq} resolutions for use as reference data when calculating \gls{psnr}, and then encode them to act as \gls{lq} bitstreams in the deflation scenario. For this we use all applicable \gls{qp} values; 22, 24, 26, 28, 30, 32, 34 and 36, which we refer to as $QP_{extended}$.
+
+\subsection{Regenerating Sequences}
+The HQ bitstreams together with the \gls{si} is used to reconstruct videos. For each test case, we reconstruct the video to make sure everything works as expected, then measure bit rate and \gls{psnr} again. This is not strictly necessary because by definition the reconstructions are perfect, so we could just as well have re-used the data for the corresponding \gls{lq} bitstream. But this acts as a good sanity check for the simulation.
+
+
+%\section{Evaluation Environment}
+\section{Cluster Simulations}
+\label{subsec:cluster}
+For any simulation of five tests sequences, four \gls{qp} values, three \gls{lq} resolutions and two additional \gls{qp} values, we get a total of $5 \times 4 \times 3 \times2 = 120$ test cases.
+
+Each combination is submitted to a cluster system as a self-contained \textit{job}. The cluster allows for faster calculations than running locally, and allows hundreds of jobs to run in parallel without affecting performance. The cluster is shared among many users and a has its own scheduler. One job will for example correspond to BasketballDrive, \gls{qp} 22, 540p and \gls{qp} 24, and will then only be concerned with the creation of the specific files needed for that test case.
+
+A separate meta-script is responsible for iterating over simulation parameters and starting each of the 120 jobs that make up one simulation. Jobs will then work in parallel, sharing many of the same files, and together generate every combination of files needed to evaluate a full simulation. This script also creates a test{\_}data file to keep track of the locations of all data files holding bit rate and \gls{psnr} information.
+
+To allow jobs to work in parallel and read and write from the same directory structure without destroying data, we implemented a locking system. Because cluster jobs cannot directly communicate with each other we could not utilize traditional threading. So we represented locks as empty files named as the target file plus the extra file extension ".lock", it is then up to each script to respect the lock. All the jobs share the same storage area, but also have private tmp areas where files are created. Whenever a job wants to create a file, it attempts to lock it in the storage area. If the lock creation fails because the lock file already exists then we assume that some other job is busy creating that file, and we enter a sleep loop that regularly checks the existence of the lock and only exists when the lock has been removed, at which point our desired file must exist in the storage area.
+
+The execution works as follows; if two jobs both have parameters BasketballDrive and \gls{qp} 22, but one has \gls{lq} resolution 720p and the other 540p, then both will want to create an \gls{hq} bitstream of BasketballDrive with \gls{qp} 22. Assuming that this file does not already exist from a previous simulation -- if it does then both scripts move on the their next step -- both jobs will try to acquire the lock but only one will succeed. The job that grabs the lock starts creating the bitstream in its tmp area while the other jobs sleeps. After the file has been created, the job moves the file over to the public storage area and then removes the lock. This way, no in-progress or incomplete files will ever exist in the storage area, and furthermore we won't have to worry about race conditions in the code. If the file is not locked -- and it exists in the storage area -- it is guaranteed to be complete.
+
+Especially early on in a simulation chain, many jobs will share the same files. Only the \gls{lq} encoding is actually unique to a specific job. For example, out of 120 jobs, evenly divided groups of 24 jobs each share the exact same \gls{hq} bitstream file.
+
+Every file in the simulation chain follows the same pattern of creation; the job checks for the existence of the file in the storage area and whenever it find it there, it swiftly moves on to the next step. If all files are already created, the jobs runs through the whole chain without actually creating any files and then exits cleanly. This structure allows for maximum file reuse whenever we want to test new simulation parameters. If we run a simulation where a parameter that only affects the latter part our chain has been changed, the jobs will find many of its files already present and won't have to spend any to recreate them. In many simulations we thus can avoid the encoding the \gls{hq} bitstreams, for example, cutting down the total simulation time by many hours.
+
+\input{src/dirs/cactus}
+
+\Cref{fig:cactus-dirtree} shows an excerpt from the directory structure of one our or simulations. Notice how the folder names contain all the test parameters so that each file can be uniquely addressed. \texttt{Bin} files are bitstreams and \texttt{yuv} is code for \gls{ycbcr} so these are decoded files. Through clever naming of files and folders, each job will always know which files already exist and which ones it needs to create. We also store test data in the same directory structure. We extract bit rate and \gls{psnr} into txt files during execution, and using the information written to test{\_}data when starting the simulation we can later navigate the directory structure to locate all data files.
+
+\section{Simulation Data}
+\subsection{Measuring Bit Rate}
+%\label{subsec:bitrate}
+Bit rate is an absolute measure of file size per time unit of video content. It is often presented in \gls{kbit/s}. We use the size of each output file to calculate an average across the whole sequence. Because file sizes in most operating systems are presented in bytes, we get the number of bits as in \cref{eq:bits}. To calculate the bit rate (in \gls{kbit/s}) we then use \cref{eq:bitrate}.
+
+\begin{equation}
+\label{eq:bits}
+\text{bits} = \text{file size} \cdot 8
+\end{equation}
+
+%Bit rate formula and concept here~\cite{Wien_Coding_Tools}
+\begin{equation}
+\label{eq:bitrate}
+\text{bit rate} = \frac{\text{bits} \cdot \text{framerate}}{\text{frames} \cdot 1000}
+\end{equation}
+
+\subsection{Measuring Video Quality}
+%\label{subsec:video-quality}
+The common way to measure video quality objectively is to use \gls{psnr}~\cite{Wien_Coding_Tools}. For two sequences emanating from the same source both with the same resolution $n \times m$, referred to as $I$ and $K$, usually the original and some encoded version of it, we take the difference per pixel and calculate the sum across the whole frame to get the \gls{mse}. This is shown in \cref{eq:mse}.
+
+%MSE:~\cite[ch~4.1]{Sauer}
+\begin{equation}
+\label{eq:mse}
+{MSE} = \frac{1}{m\,n}\sum_{i=0}^{m-1}\sum_{j=0}^{n-1} [I(i,j) - K(i,j)]^2
+\end{equation}
+
+The \gls{psnr} per frame is then calculated as in \cref{eq:psnr}, where $MAX_I$ is the maximum value of the intensity function; $2^8 - 1 = 255$ for an 8 bit image. To get get the \gls{psnr} for the whole sequence we take the average over all frames. \gls{psnr} is calculated separately for the luma and two chroma components. We save the data for all three, but we are generally only interested in the luma \gls{psnr}.
+
+\begin{equation}
+\label{eq:psnr}
+PSNR = 10 \cdot \log_{10} \left( \frac{\mathit{MAX}_I^2}{\mathit{MSE}} \right)
+\end{equation}
+
+The more similar two sequences are -- the less distorted the encoded version is -- the higher the \gls{psnr} value will be. \gls{psnr} as a number carries no significance in itself, but a higher \gls{psnr} is always better, so the relative difference between two \gls{psnr} values is meaningful. We always measure the \gls{psnr} against the original sequence, which means that each \gls{hq} bitstream is decoded and compared, and the \gls{lq} encodings are compared to downscaled versions of the original.
+
+
+\subsection{Gains}
+We refer to bit rate savings as gains and calculate the \textit{\gls{gt} gain} using \cref{eq:gt-gain} which represents the disk space we can save for all \gls{abr} resolutions by storing the \gls{si} instead of the \gls{lq} resolutions.
+
+\begin{equation}
+\label{eq:gt-gain}
+\text{GT gain} = \frac{(\text{HQ} + \text{LQ}) - (\text{HQ} + \text{SI})}{\text{HQ} + \text{LQ}} = \frac{\text{LQ} - \text{SI}}{\text{HQ} + \text{LQ}}
+\end{equation}
+\vspace{0.2em}
+
+The \textit{max gain} represents the theoretical upper limit of any guided transcoding application where the \gls{si} is decreased to nothing, and is calculated using \cref{eq:max-gt-gain}. The ratio between the \gls{gt} gain and the theoretical maximum gives a good indication of how effective the method is.
+
+%\begin{dmath}
+\begin{equation}
+\label{eq:max-gt-gain}
+\text{Max gain} = \frac{\text{LQ bitstreams}}{\text{HQ bitstream} + \text{LQ bitstreams}}
+\end{equation}
+%\end{dmath}
+\vspace{0.2em}
+
+We also measure \textit{rate reductions} showing us how much bit rate we can save per sequence by storing the \gls{si} instead of the \gls{lq} bitstream, calculated using \cref{eq:rate-reduction}.
+
+\begin{equation}
+\label{eq:rate-reduction}
+\text{Rate reduction} = \frac{\text{LQ} - \text{SI}}{\text{LQ}}
+\end{equation}
+
+
+\subsection{Costs}
+We use the \gls{psnr} data to compensate for the transcoding loss in the pruning scenario. Using $QP_{base}$, we calculate a third degree polynomial to interpolate the bit rate required for the \gls{lq} re-encodings in the pruning case, in order to achieve the same \gls{psnr} after transcoding that the simulcast case has~\cite{Bjontegaard}. We refer to this increase in bit rate as \textit{cost}. We calculate interpolation coefficients using the bit rates from the simulcast reference data together with the \gls{psnr} values between for the different \gls{lq} representations, then plug the pruned bit rates to get an interpolation.
+
+In the data in tables presented below, the \textit{Average bitrates} sections contain our interpolated bit rates. In the deflation scenario the cost is always 0.
+
+\begin{equation}
+\label{eq:cost}
+\text{Cost} = \frac{LQ_{transcoded} - LQ_{interpolated}}{LQ_{transcoded}}
+\end{equation}
+
+\section{Results}
+\subsection{Excel Sheets}
+One full simulation means running the chain of 120 test cases for a given set of test parameters; pruning, partial pruning or deflation, together with options like \gls{sbh} and \gls{rdoq}.
+
+To compare different simulations we wrote a big Python script to extract all the test data into an Excel sheet using the \textit{openpyxl} library. This allows us to automatically calculate bit rate reductions, \gls{gt} gains and losses introduced by re-encoding data. We average all the data to get values per sequence and size.
+
+%\begin{equation}
+%\label{interpolation}
+%k_3 x^3 + k_2 x^2 + k_1 x + k_0
+%\end{equation}
+
+\subsection{Pruning}
+We simulated full and partial pruning levels 1-3 and measured reconstruction time, which can be seen in \cref{tab:sbh0_pruning_rdoq0_fp,%
+tab:sbh0_pruning_rdoq0_pp_l1,%
+tab:sbh0_pruning_rdoq0_pp_l2,%
+tab:sbh0_pruning_rdoq0_pp_l3}.
+
+To measure regeneration time, three operations need to be performed; decoding the \gls{hq} bitstream, downscaling it, and regenerating transform coefficients. We used an Intel Core i7 3.3 GHz processor that we forced to run on a single execution thread. To get accurate timing data, these three steps have to be continually re-done and the intermediate files thrown away between iterations. For the \gls{gt} scheme to work realistically, the three steps should to be done is real-time or at least close to this, so we want to regenerate frames at a higher \gls{fps} than that of the video.
+
+Our chain cannot fully handle \gls{rdoq} and \gls{sbh}. In both the pruning and deflation scenarios, at least one program malfunctions or gives worse results with either option turned on. However, both method generally give better results, so we would like to include them in our simulations. For the pruning case it is only the regeneration causing problems with \gls{sbh}, so utilizing the fact that the reconstruction is a perfect process -- this is asserted programmatically every time a pruned file is reconstructed without \gls{sbh} -- we can use the bit rates and \gls{psnr} data calculated for the \gls{lq} bitstreams instead. This way, we can present data for a \gls{sbh} simulation that we were not actually able to run, see \cref{tab:sbh1_pruning_rdoq0_fp,%
+tab:sbh1_pruning_rdoq0_pp_l1,%
+tab:sbh1_pruning_rdoq0_pp_l2,%
+tab:sbh1_pruning_rdoq0_pp_l3}.
+
+Naturally, these have no time measurements. \gls{rdoq} is always turned off in the pruning simulations.
+
+\subsection{Deflation}
+The deflation simulations are shown in \cref{tab:sbh0_deflation_rdoq1,,%
+tab:sbh0_deflation_rdoq0}. We did not have time to implement \gls{rdoq} in the deflator so having it turned on for the \gls{hq} encoding introduces a discrepancy between the two videos, lowering the effectiveness of the scheme. In this scenario neither the deflator or inflator work with \gls{sbh}. Thus it is turned off, and we cannot use the work-around from the pruning case. Given all of this, the only fair comparisons between the two methods are given for \gls{sbh} and \gls{rdoq} turned off.
+
+We have no timing data from the deflation scenario because the algorithm was never optimized for efficiency. While our inverse pruner heavily utilized parallelization, the inflator was built for correctness first, efficiency second. However, simple simulations confirm that the complexity is somewhere in the range of inverse pruning, much closer to decoding than actual encoding.
+
+\input{../ericsson/excel/160311_pruning_timing/160309_1915_5t_sbh0_pruning_rdoq0_fp_sao_off/table}
+\input{../ericsson/excel/160311_pruning_timing/160309_1939_5t_sbh0_pruning_rdoq0_pp_l1_sao_off/table}
+\input{../ericsson/excel/160311_pruning_timing/160309_1939_5t_sbh0_pruning_rdoq0_pp_l2_sao_off/table}
+\input{../ericsson/excel/160311_pruning_timing/160309_1939_5t_sbh0_pruning_rdoq0_pp_l3_sao_off/table}
+
+\input{../ericsson/excel/160310_pruning/160309_1959_5t_sbh1_pruning_rdoq0_fp_sao_off/table}
+\input{../ericsson/excel/160310_pruning/160309_1959_5t_sbh1_pruning_rdoq0_pp_l1_sao_off/table}
+\input{../ericsson/excel/160310_pruning/160309_1959_5t_sbh1_pruning_rdoq0_pp_l2_sao_off/table}
+\input{../ericsson/excel/160310_pruning/160309_1959_5t_sbh1_pruning_rdoq0_pp_l3_sao_off/table}
+
+\input{../ericsson/excel/160310_deflation/160310_1703_5t_sbh0_deflation_rdoq0_fd/table}
+\input{../ericsson/excel/160310_deflation/160310_1704_5t_sbh0_deflation_rdoq1_fd/table}

@@ -1,0 +1,50 @@
+% Regular acronyms
+\newacronym[description=Adaptive Bit Rate]{abr}{ABR}{adaptive bit rate}
+\newacronym[description=Just-in-Time]{jit}{JIT}{just-in-time}
+\newacronym[description=Side-Information]{si}{SI}{side-information}
+\newacronym[description=Scalable Video Coding]{svc}{SVC}{scalable video coding}
+\newacronym[description=Scalable High Efficiency Video Coding]{shvc}{SHVC}{scalable high efficiency video coding}
+\newacronym[description=Quantization Parameter]{qp}{QP}{quantization parameter}
+\newacronym[description=High Quality]{hq}{HQ}{high-quality}
+\newacronym[description=Low Quality]{lq}{LQ}{low-quality}
+\newacronym[description=Sign-Bit Hiding]{sbh}{SBH}{sign-bit hiding}
+\newacronym[description=Peak Signal-to-Noise Ratio]{psnr}{PSNR}{peak signal-to-noise ratio}
+\newacronym[description=Guided Transcoding]{gt}{GT}{guided transcoding}
+\newacronym[description=Discrete Cosine Transform]{dct}{DCT}{discrete cosine transform}
+\newacronym[description=High-Definition]{hd}{HD}{high-definition}
+\newacronym{jvt}{JVT}{Joint Video Team}
+\newacronym[description=Group of Pictures, longplural=groups of pictures]{gop}{GOP}{group of pictures}
+\newacronym[description=Rate-Distortion Optimization]{rdo}{RDO}{rate-distortion optimization}
+\newacronym[description=Rate-Distortion Optimized Quantization]{rdoq}{RDOQ}{rate-distortion optimized quantization}
+\newacronym{hm}{HM}{HEVC Test Model}
+\newacronym[description={Red, Green and Blue}]{rgb}{RGB}{{red, green and blue}}
+\newacronym[description=Mean Squared Error]{mse}{MSE}{mean squared error}
+\newacronym[description=Coding Tree Block]{ctb}{CTB}{coding tree block}
+%\newacronym[description=Coding Tree Unit]{ctu}{CTU}{coding tree unit}
+%\newacronym[description=Coding Unit]{cu}{CU}{coding unit}
+\newacronym[description=Context-Adaptive Binary Arithmetic Coding]{cabac}{CABAC}{context-adaptive binary arithmetic coding}
+\newacronym[description=Motion Vector]{mv}{MV}{motion vector}
+
+% Lowercase
+\newacronym[description=frames per second]{fps}{fps}{frames per second}
+\newacronym[description=kilobits per second]{kbit/s}{kbit/s}{kilobits per second}
+
+% Synonyms
+%\newacronym[description={Sign-Data Hiding, synonym of \textbf{SBH}}]{sdh}{SDH}{Sign-Data Hiding}
+%\newacronym[description={Advanced Video Coding, synonym of \textbf{H.264}}]{avc}{AVC}{Advanced Video Coding}
+\newacronym[description={High Efficiency Video Coding, synonym of \textbf{H.265}}]{hevc}{HEVC}{High Efficiency Video Coding}
+
+% Only for acronym list
+\newacronym[description={Video coding standard, successor to \textbf{H.264}}]{h265}{H.265}{}
+\newacronym[description=Video coding standard]{h264}{H.264}{}
+\newacronym[description=Color format often used instead of \textbf{RGB}]{ycbcr}{YCbCr}{}
+
+\glsunset{h264}
+\glsunset{h265}
+\glsunset{ycbcr}
+
+% Print "longform (acronym)" in reverse order -> "acronym (longform)"
+\newcommand*\myacr[2][]{\glsdisp[#1]{#2}{\glsentryshort{#2} (\Glsentrylong{#2})}}
+
+% Print plural long form:	\acrlongpl{}
+% Print plural:				\glspl{}

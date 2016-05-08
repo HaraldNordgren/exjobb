@@ -1,0 +1,5 @@
+BasketballDrive
+
+Original (YUV): 1 555 200 000 bytes
+QP22 (bin):	   22 624 914 bytes (Compression ratio 69)
+QP34 (bin):	    2 893 074 bytes (Compression ratio 538)

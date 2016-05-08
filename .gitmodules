@@ -1,0 +1,3 @@
+[submodule "rapport/msccls"]
+	path = rapport/msccls
+	url = https://bitbucket.org/flavius_gruian/msccls

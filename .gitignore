@@ -1,0 +1,19 @@
+*~
+~$*
+*#
+*.swp
+*.swo
+*.ppm
+**/.svn/
+
+sandbox/
+hevc_transcoding-eharano/
+GitlHEVCAnalyzer/
+software/
+rapport/build/
+
+ericsson/powerpoint/
+ericsson/reports/
+ericsson/excel/160219_partial_deflation/
+
+reading/High Efficiency Video Coding - Coding Tools and Specification (2015).pdf

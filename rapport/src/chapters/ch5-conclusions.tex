@@ -1,0 +1,13 @@
+\chapter{Conclusions}
+
+Guided transcoding is an excellent method for saving bit rates on the transmitting side in any \gls{abr} application. We trade a small amount of computational complexity for gains around 20--30\% which is actually quite astonishing. We ran our simulations using \gls{h265}, but there nothing about either pruning or deflation that says it cannot be used in \gls{h264}, or any other standard like VP8 or VP9. As long as there is a division between mode information and transform coefficients then \gls{gt} works.
+
+Pruning has higher rate reductions than deflation, close to 30\% although but at the cost of some degradation for transcoding that needs to be handled by increasing the bit rate.
+
+We investigated partial pruning as method for bringing the complexity down further. In our simulations, partial pruning level 2 seems to have a very good balance between bit rate gains and decrease in computational complexity. The scheme could be deployed dynamically, so that we use partial pruning on the higher resolutions where complexity is more critical, but prune fully the smaller resolutions were regeneration is already less complex. Finding a sweet spot where gains are high enough, but computational complexity is still decreased is up to each provider to decide based on their available hardware and how much they need strict real-time regeneration.  If strict real-time regeneration is not necessary then full pruning is still probably the best option.
+
+For the time measurements, the double downscaling for 360p (see \cref{subsec:re-encoding}) takes extra time, and most likely explains why regenerating a 360p video takes longer than 540p, although it contains fewer coefficients are should actually be faster. In a real scenario we would use a downscaler that perform this is a single step.
+
+Deflation has a gains just above 20\%, but with no quality loss. This is a very attractive quality because there is no need to tinker with the bit rate to find out how much to increase it in order to keep the quality at the same level as for simulcasting. You just encode the sequences and deflate, and when the video is inflated it will be same as it was in the simulcast case. As for the complexity of the deflation scenario, we suspect that regeneration will be slower than for pruning because more steps are involved. At the very least they should be of the same complexity.
+
+We ran our simulations on seven principal resolutions and qualities. 1080p encoded at QP, and 720p, 540p and 360p encoded at QP and QP+2. A realisitic scenario could offer a lot more versions than that and this would make guided transcoding even more effective.

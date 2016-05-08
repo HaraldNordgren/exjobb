@@ -1,0 +1,1 @@
+The vertical dots represents repetiontion. We show two LQ representations, but the idea is easily expanddable to an arbitray amount.

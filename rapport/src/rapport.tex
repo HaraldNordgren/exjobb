@@ -1,0 +1,79 @@
+\documentclass{cslthse-msc}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{makeidx}
+\usepackage{graphicx}
+\usepackage[titletoc, header, page]{appendix}
+%\usepackage[numbers]{natbib}
+\usepackage[numbers]{natbib}
+\usepackage{dirtree}
+\usepackage{booktabs}
+\usepackage{amsmath}
+%\usepackage{breqn}
+\usepackage{caption, copyrightbox}
+\usepackage[hidelinks]{hyperref}
+\usepackage{cleveref}
+%\usepackage[nomain, acronym, toc, nopostdot]{glossaries}
+\usepackage[nomain, acronym, toc]{glossaries}
+
+%\raggedbottom
+
+%\crefname{secinapp}{appendix}{appendices}
+%\Crefname{secinapp}{Appendix}{Appendices}
+
+\pagenumbering{roman}
+
+\author{
+	Harald Nordgren \\
+	{\normalsize \href{mailto:ada09hno@student.lth.se}{\texttt{ada09hno@student.lth.se}}}
+}
+
+\title{Guided Transcoding for Next-Generation Video Coding (HEVC)}
+%\subtitle{[Subtitle]}
+\company{Ericsson AB}
+\supervisors{Kenneth Andersson, \href{mailto:kenneth.r.andersson@ericsson.com}{\texttt{kenneth.r.andersson@ericsson.com}}}{Ruoyang Yu, \href{mailto:ruoyang.yu@ericsson.com}{\texttt{ruoyang.yu@ericsson.com}}}{Michael Doggett, \href{mailto:michael.doggett@cs.lth.se}{\texttt{michael.doggett@cs.lth.se}}}
+%\supervisor{John Deer, \href{mailto:jdeer@company.com}{\texttt{jdeer@company.com}}}
+\examiner{Jörn W. Janneck, \href{mailto:jwj@cs.lth.se}{\texttt{jwj@cs.lth.se}}}
+
+\date{\today}
+
+\input{src/misc/misc2-acknowledgements}
+\input{src/misc/misc1-abstract}
+\input{src/misc/misc3-dictionary}
+
+\keywords{Video Compression, Adaptive Streaming, Transcoding, H.265, HEVC}
+
+%% Only used to display font sizes
+\makeatletter
+\newcommand\thefontsize[1]{{#1 \f@size pt\par}}
+\makeatother
+%%%%%%%%%%
+
+\makeglossaries
+
+\begin{document}
+\makefrontmatter
+
+%\glsaddall[types=\acronymtype]
+\printglossary[type=\acronymtype, style=index]
+
+\input{src/chapters/ch1-introduction}
+\input{src/chapters/ch2-approach}
+\input{src/chapters/ch3-evaluation}
+%\input{src/chapters/ch4-discussion}
+\input{src/chapters/ch5-conclusions}
+
+%\listoffigures
+
+\makebibliography{bibliography}
+
+%\begin{appendices}
+%\input{src/appendices/app1-binaries}
+%\end{appendices}
+
+\glsaddallunused
+
+\end{document}

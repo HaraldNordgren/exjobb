@@ -1,0 +1,3 @@
+# Oral
+- My background: I wrote my thesis on guided transcoding in H.265. I have been focusing on bitstreams. I expected more on the topic of video compression going in to the report, how predictions are performed, and so on. I suppose it was not really the scope of the work.
+- Overall: A good thesis report. The results section is thorough and interesting to read. It gets better the closer you come to the end, so consider restructuring to put more appealing stuff earlier. The first few pages are weak and don't explain where the report is heading. I did not understand what the scope of the report was until half-way into the Approach chapter. It needs a better Introduction to encourage people to continue reading.
