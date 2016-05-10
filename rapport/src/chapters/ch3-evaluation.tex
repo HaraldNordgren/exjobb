@@ -43,7 +43,7 @@ After re-encoding, we prune the \gls{lq} bitsteams to generate \gls{si}. We eith
 We also downscale the original sequences to the \gls{lq} resolutions for use as reference data when calculating \gls{psnr}, and then encode them to act as \gls{lq} bitstreams in the deflation scenario. For this we use all applicable \gls{qp} values; 22, 24, 26, 28, 30, 32, 34 and 36, which we refer to as $QP_{extended}$.
 
 \subsection{Regenerating Sequences}
-The HQ bitstreams together with the \gls{si} is used to reconstruct videos. For each test case, we reconstruct the video to make sure everything works as expected, then measure bit rate and \gls{psnr} again. This is not strictly necessary because by definition the reconstructions are perfect, so we could just as well have re-used the data for the corresponding \gls{lq} bitstream. But this acts as a good sanity check for the simulation.
+The HQ bitstreams together with the \gls{si} is used to reconstruct videos. For each test case, we reconstruct the video to make sure everything works as expected, then measure bit rate and \gls{psnr}.
 
 
 %\section{Evaluation Environment}
@@ -106,39 +106,44 @@ The more similar two sequences are -- the less distorted the encoded version is 
 \subsection{Gains}
 We refer to bit rate savings as gains and calculate the \textit{\gls{gt} gain} using \cref{eq:gt-gain} which represents the disk space we can save for all \gls{abr} resolutions by storing the \gls{si} instead of the \gls{lq} resolutions.
 
+Here $R_{HQ}$, $R_{LQ}$ and $R_{SI}$ represent the bit rates for the \gls{hq}, \gls{lq} and \gls{si} bitstreams respectively. For the pruning scenario, $R_{LQ}$ always refers to an interpolated bit rate, see \cref{subsec:costs}.
+
 \begin{equation}
 \label{eq:gt-gain}
-\text{GT gain} = \frac{(\text{HQ} + \text{LQ}) - (\text{HQ} + \text{SI})}{\text{HQ} + \text{LQ}} = \frac{\text{LQ} - \text{SI}}{\text{HQ} + \text{LQ}}
+\text{GT gain} = \frac{(R_{HQ} + R_{LQ}) - (R_{HQ} + R_{SI})}{R_{HQ} + R_{LQ}} = \frac{R_{LQ} - R_{SI}}{R_{HQ} + R_{LQ}}
 \end{equation}
 \vspace{0.2em}
 
 The \textit{max gain} represents the theoretical upper limit of any guided transcoding application where the \gls{si} is decreased to nothing, and is calculated using \cref{eq:max-gt-gain}. The ratio between the \gls{gt} gain and the theoretical maximum gives a good indication of how effective the method is.
 
-%\begin{dmath}
 \begin{equation}
 \label{eq:max-gt-gain}
-\text{Max gain} = \frac{\text{LQ bitstreams}}{\text{HQ bitstream} + \text{LQ bitstreams}}
+\text{Max gain} = \frac{R_{LQ}}{R_{HQ} + R_{LQ}}
 \end{equation}
-%\end{dmath}
 \vspace{0.2em}
 
 We also measure \textit{rate reductions} showing us how much bit rate we can save per sequence by storing the \gls{si} instead of the \gls{lq} bitstream, calculated using \cref{eq:rate-reduction}.
 
 \begin{equation}
 \label{eq:rate-reduction}
-\text{Rate reduction} = \frac{\text{LQ} - \text{SI}}{\text{LQ}}
+\text{Rate reduction} = \frac{R_{LQ} - R_{SI}}{R_{LQ}}
 \end{equation}
 
-
 \subsection{Costs}
-We use the \gls{psnr} data to compensate for the transcoding loss in the pruning scenario. Using $QP_{base}$, we calculate a third degree polynomial to interpolate the bit rate required for the \gls{lq} re-encodings in the pruning case, in order to achieve the same \gls{psnr} after transcoding that the simulcast case has~\cite{Bjontegaard}. We refer to this increase in bit rate as \textit{cost}. We calculate interpolation coefficients using the bit rates from the simulcast reference data together with the \gls{psnr} values between for the different \gls{lq} representations, then plug the pruned bit rates to get an interpolation.
-
-In the data in tables presented below, the \textit{Average bitrates} sections contain our interpolated bit rates. In the deflation scenario the cost is always 0.
+\label{subsec:costs}
+Using $QP_{base}$, we calculate a third degree polynomial to interpolate the bit rate required for the \gls{lq} re-encodings, in the pruning case, in order to achieve the same \gls{psnr} after transcoding as the simulcast case has~\cite{Bjontegaard}. We refer to the increase in bit rate caused by transcoding as \textit{cost} and it is defined in \cref{eq:cost}, where $R_{LQ_{transcoded}}$ is the bitrate of the transcoded bitstream and $R_{LQ}$ is the bit rate of the directly encoded bitstream.
 
 \begin{equation}
 \label{eq:cost}
-\text{Cost} = \frac{LQ_{transcoded} - LQ_{interpolated}}{LQ_{transcoded}}
+\text{Cost} = \frac{R_{LQ_{transcoded}} - R_{LQ}}{R_{LQ}}
 \end{equation}
+
+$R_{LQ}$ is interpolated to match the \gls{psnr} of the transcoded bitstream. We calculate interpolation coefficients using the bit rates from the simulcast reference data together with the \gls{psnr} values for the different \gls{lq} representations amd then plug the pruned bit rates in to get an interpolation. In the data in tables presented below, the \textit{Average bitrates} sections contain our interpolated bit rates. In the deflation scenario the cost is always 0.
+
+%\begin{equation}
+%\label{eq:cost}
+%\text{Cost} = \frac{LQ_{transcoded} - LQ_{interpolated}}{LQ_{transcoded}}
+%\end{equation}
 
 \section{Results}
 \subsection{Excel Sheets}

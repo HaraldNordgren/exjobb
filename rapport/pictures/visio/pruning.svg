@@ -267,18 +267,18 @@
 			<text x="4" y="191.35" class="st9" v:langID="1053"><v:paragraph/><v:tabList/>HQ bitstream</text>		</g>
 		<g id="shape213-162" v:mID="213" v:groupContext="shape" transform="translate(129.706,-101.005)">
 			<title>Sheet.213</title>
-			<desc>LQ bitstream</desc>
+			<desc>LQ transcoded</desc>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
-			<v:textRect cx="24.8031" cy="189.254" width="49.61" height="17.0079"/>
-			<rect x="0" y="180.75" width="49.6063" height="17.0079" class="st6"/>
-			<text x="4" y="191.35" class="st9" v:langID="1053"><v:paragraph/><v:tabList/>LQ bitstream</text>		</g>
+			<v:textRect cx="26.0433" cy="189.254" width="52.09" height="17.0079"/>
+			<rect x="0" y="180.75" width="52.0866" height="17.0079" class="st6"/>
+			<text x="4" y="191.35" class="st9" v:langID="1053"><v:paragraph/><v:tabList/>LQ transcoded</text>		</g>
 		<g id="shape214-165" v:mID="214" v:groupContext="shape" transform="translate(129.706,-44.312)">
 			<title>Sheet.214</title>
-			<desc>LQ bitstream</desc>
+			<desc>LQ transcoded</desc>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
-			<v:textRect cx="24.8031" cy="189.254" width="49.61" height="17.0079"/>
-			<rect x="0" y="180.75" width="49.6063" height="17.0079" class="st6"/>
-			<text x="4" y="191.35" class="st9" v:langID="1053"><v:paragraph/><v:tabList/>LQ bitstream</text>		</g>
+			<v:textRect cx="26.0433" cy="189.254" width="52.09" height="17.0079"/>
+			<rect x="0" y="180.75" width="52.0866" height="17.0079" class="st6"/>
+			<text x="4" y="191.35" class="st9" v:langID="1053"><v:paragraph/><v:tabList/>LQ transcoded</text>		</g>
 		<g id="shape218-168" v:mID="218" v:groupContext="shape" transform="translate(60.6112,-137.855)">
 			<title>Sheet.218</title>
 			<desc>decoding</desc>
@@ -310,20 +310,20 @@
 			<text x="4" y="191.35" class="st9" v:langID="1053"><v:paragraph/><v:tabList/>Side-info</text>		</g>
 		<g id="shape223-187" v:mID="223" v:groupContext="shape" transform="translate(359.312,-95.3356)">
 			<title>Sheet.223</title>
-			<desc>Regenerated LQ bitstream</desc>
+			<desc>Regenerated bitstream</desc>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
 			<v:textRect cx="24.8031" cy="189.254" width="49.61" height="17.0079"/>
 			<rect x="0" y="180.75" width="49.6063" height="17.0079" class="st6"/>
 			<text x="4" y="187.15" class="st9" v:langID="1053"><v:paragraph/><v:tabList/>Regenerated <tspan x="4" dy="1.2em"
-						class="st3">LQ bitstream</tspan></text>		</g>
+						class="st3">bitstream</tspan></text>		</g>
 		<g id="shape224-191" v:mID="224" v:groupContext="shape" transform="translate(359.312,-38.6427)">
 			<title>Sheet.224</title>
-			<desc>Regenerated LQ bitstream</desc>
+			<desc>Regenerated bitstream</desc>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
 			<v:textRect cx="24.8031" cy="189.254" width="49.61" height="17.0079"/>
 			<rect x="0" y="180.75" width="49.6063" height="17.0079" class="st6"/>
 			<text x="4" y="187.15" class="st9" v:langID="1053"><v:paragraph/><v:tabList/>Regenerated <tspan x="4" dy="1.2em"
-						class="st3">LQ bitstream</tspan></text>		</g>
+						class="st3">bitstream</tspan></text>		</g>
 		<g id="shape225-195" v:mID="225" v:groupContext="shape" transform="translate(353.643,-180.375)">
 			<title>Sheet.225</title>
 			<desc>HQ bitstream</desc>

@@ -168,17 +168,17 @@
 			<text x="4" y="174.65" class="st9" v:langID="1053"><v:paragraph/><v:tabList/>HQ bitstream</text>		</g>
 		<g id="shape210-90" v:mID="210" v:groupContext="shape" transform="translate(203.761,-92.501)">
 			<title>Sheet.210</title>
-			<desc>LQ bitstream</desc>
+			<desc>LQ transcoded</desc>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
 			<v:textRect cx="27.9921" cy="172.246" width="55.99" height="17.0079"/>
 			<rect x="0" y="163.742" width="55.9843" height="17.0079" class="st7"/>
-			<text x="4" y="174.65" class="st9" v:langID="1053"><v:paragraph/><v:tabList/>LQ bitstream</text>		</g>
+			<text x="4" y="174.65" class="st9" v:langID="1053"><v:paragraph/><v:tabList/>LQ transcoded</text>		</g>
 		<g id="shape211-93" v:mID="211" v:groupContext="shape" transform="translate(203.761,-35.8081)">
 			<title>Sheet.211</title>
-			<desc>LQ bitstream</desc>
+			<desc>LQ transcoded</desc>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
 			<v:textRect cx="27.9921" cy="172.246" width="55.99" height="17.0079"/>
 			<rect x="0" y="163.742" width="55.9843" height="17.0079" class="st7"/>
-			<text x="4" y="174.65" class="st9" v:langID="1053"><v:paragraph/><v:tabList/>LQ bitstream</text>		</g>
+			<text x="4" y="174.65" class="st9" v:langID="1053"><v:paragraph/><v:tabList/>LQ transcoded</text>		</g>
 	</g>
 </svg>
