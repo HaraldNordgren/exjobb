@@ -4,7 +4,9 @@
 *.swp
 *.swo
 *.ppm
+
 **/.svn/
+*.DS_Store
 
 sandbox/
 hevc_transcoding-eharano/
