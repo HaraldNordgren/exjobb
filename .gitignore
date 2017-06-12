@@ -12,7 +12,9 @@ sandbox/
 hevc_transcoding-eharano/
 GitlHEVCAnalyzer/
 software/
+
 rapport/build/
+!rapport/build/rapport.pdf
 
 ericsson/powerpoint/
 ericsson/reports/
